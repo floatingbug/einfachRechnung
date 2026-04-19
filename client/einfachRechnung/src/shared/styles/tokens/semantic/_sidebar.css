@@ -1,0 +1,28 @@
+:root {
+	/* Sidebar Base */
+	--sidebar-bg: var(--p-primary-700);
+
+	/* Borders & Dividers */
+	--sidebar-border: var(--p-primary-600);
+	--sidebar-divider: var(--p-primary-800);
+
+	/* Text */
+	--sidebar-text: #ffffff;
+	--sidebar-text-muted: var(--p-primary-200);
+
+	/* Icons */
+	--sidebar-icon: var(--p-primary-100);
+	--sidebar-icon-muted: var(--p-primary-300);
+
+	/* States */
+	--sidebar-hover: var(--p-primary-600);
+	--sidebar-active: var(--p-primary-200);
+
+	/* Accessibility */
+	--sidebar-focus-ring: var(--p-primary-400);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+	}
+}
