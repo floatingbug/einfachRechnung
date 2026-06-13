@@ -2,13 +2,6 @@
 import {computed} from "vue";
 import {useRoute} from "vue-router";
 import { Sidebar, Topbar } from "../../shared/components";
-import {getSidebarItems} from "../navigation";
-
-const route = useRoute();
-
-const sidebarItems = computed(() => {
-	return getSidebarItems({context: route.meta.context});
-});
 
 </script>
 
@@ -18,7 +11,6 @@ const sidebarItems = computed(() => {
 		/>
 
 		<Sidebar class="sidebar"
-			:items="sidebarItems"
 		/>
 
 		<div class="main">
@@ -70,8 +62,8 @@ const sidebarItems = computed(() => {
 .main {
 	grid-area: main;
 	width: 100%;
+	min-width: 0;
 	display: flex;
 	justify-content: center;
-	margin-bottom: 12rem;
 }
 </style>

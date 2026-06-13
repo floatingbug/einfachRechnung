@@ -1,63 +1,180 @@
+const customers = [
+	{
+		id: "c1",
+		name: "Müller Heizungsbau GmbH",
+		street: "Hauptstraße 12",
+		postalCode: "56470",
+		city: "Bad Marienberg",
+		countryCode: "DE",
+		email: "info@mueller-heizung.de",
+		vatId: "DE123456789",
+	},
+	{
+		id: "c2",
+		name: "Schneider Elektrotechnik",
+		street: "Industriestraße 8",
+		postalCode: "57537",
+		city: "Wissen",
+		countryCode: "DE",
+		email: "kontakt@schneider-elektro.de",
+		vatId: "DE987654321",
+	},
+	{
+		id: "c3",
+		name: "Bauunternehmen Weber",
+		street: "Am Bauhof 3",
+		postalCode: "57627",
+		city: "Hachenburg",
+		countryCode: "DE",
+		email: "info@weber-bau.de",
+		vatId: "",
+	},
+	{
+		id: "c4",
+		name: "Fliesenlegerbetrieb Kaya",
+		street: "Gartenweg 5",
+		postalCode: "57518",
+		city: "Betzdorf",
+		countryCode: "DE",
+		email: "service@kaya-fliesen.de",
+		vatId: "",
+	},
+	{
+		id: "c5",
+		name: "Zimmerei Hoffmann",
+		street: "Waldstraße 22",
+		postalCode: "57610",
+		city: "Altenkirchen",
+		countryCode: "DE",
+		email: "mail@hoffmann-zimmerei.de",
+		vatId: "DE555555555",
+	},
+];
+
+const invoices = [
+	{
+		id: "i1",
+		invoiceNumber: "INV-0001",
+		customer: customers[0],
+		invoiceDate: "2025-03-01",
+		dueDate: "2025-03-15",
+		status: "sent",
+		paymentStatus: "paid",
+		items: [
+			{
+				name: "Wartung Heizungsanlage",
+				description: "Jährliche Wartung",
+				quantity: 1,
+				unitPrice: 180,
+				taxRate: 19,
+			},
+		],
+		netTotal: 180,
+		taxAmount: 34.2,
+		grossTotal: 214.2,
+		paidAmount: 214.2,
+		openAmount: 0,
+		note: "",
+	},
+	{
+		id: "i2",
+		invoiceNumber: "INV-0002",
+		customer: customers[1],
+		invoiceDate: "2025-03-05",
+		dueDate: "2025-03-20",
+		status: "sent",
+		paymentStatus: "partial",
+		items: [
+			{
+				name: "Elektroinstallation",
+				description: "Verkabelung Neubau",
+				quantity: 10,
+				unitPrice: 75,
+				taxRate: 19,
+			},
+		],
+		netTotal: 750,
+		taxAmount: 142.5,
+		grossTotal: 892.5,
+		paidAmount: 400,
+		openAmount: 492.5,
+		note: "",
+	},
+	{
+		id: "i3",
+		invoiceNumber: "INV-0003",
+		customer: customers[2],
+		invoiceDate: "2025-03-10",
+		dueDate: "2025-03-25",
+		status: "sent",
+		paymentStatus: "unpaid",
+		items: [
+			{
+				name: "Rohbauarbeiten",
+				description: "Fundament + Mauerwerk",
+				quantity: 1,
+				unitPrice: 2500,
+				taxRate: 19,
+			},
+		],
+		netTotal: 2500,
+		taxAmount: 475,
+		grossTotal: 2975,
+		paidAmount: 0,
+		openAmount: 2975,
+		note: "",
+	},
+	{
+		id: "i4",
+		invoiceNumber: "INV-0004",
+		customer: customers[3],
+		invoiceDate: "2025-02-20",
+		dueDate: "2025-03-05",
+		status: "sent",
+		paymentStatus: "paid",
+		items: [
+			{
+				name: "Badfliesen verlegen",
+				description: "Material + Arbeit",
+				quantity: 1,
+				unitPrice: 1200,
+				taxRate: 19,
+			},
+		],
+		netTotal: 1200,
+		taxAmount: 228,
+		grossTotal: 1428,
+		paidAmount: 1428,
+		openAmount: 0,
+		note: "",
+	},
+	{
+		id: "i5",
+		invoiceNumber: "INV-0005",
+		customer: customers[4],
+		invoiceDate: "2025-03-15",
+		dueDate: "2025-03-30",
+		status: "draft",
+		paymentStatus: "unpaid",
+		items: [
+			{
+				name: "Dachstuhl Aufbau",
+				description: "Holzkonstruktion",
+				quantity: 1,
+				unitPrice: 4800,
+				taxRate: 19,
+			},
+		],
+		netTotal: 4800,
+		taxAmount: 912,
+		grossTotal: 5712,
+		paidAmount: 0,
+		openAmount: 5712,
+		note: "",
+	},
+];
+
 export default {
-	invoices: [
-		{
-			id: "inv_1001",
-			invoiceNumber: "INV-2026-1001",
-
-			customer: {
-				name: "Max Mustermann",
-				street: "Teststraße 1",
-				city: "Koblenz",
-				postalCode: "56068",
-				countryCode: "DE",
-				email: "max@example.com"
-			},
-
-			seller: {
-				name: "Meine Firma",
-				street: "Straße 1",
-				city: "Koblenz",
-				postalCode: "56068",
-				countryCode: "DE",
-				vatId: "DE123456789",
-				email: "info@firma.de"
-			},
-
-			invoiceDate: "2026-04-01",
-			dueDate: "2026-04-15",
-			currency: "EUR",
-
-			items: [
-				{
-					name: "Test",
-					description: "",
-					quantity: 1,
-					unitPrice: 100,
-					taxRate: 19,
-					netTotal: 100,
-					taxAmount: 19,
-					grossTotal: 119
-				}
-			],
-
-			netTotal: 100,
-			taxAmount: 19,
-			grossTotal: 119,
-
-			openAmount: 119,
-			paidAmount: 0,
-			paymentStatus: "unpaid",
-			status: "draft",
-
-			payments: [],
-
-			createdAt: "2026-04-18T08:50:55.503Z",
-			updatedAt: "2026-04-18T08:50:55.503Z"
-		}
-	],
-
-	ui: {
-		isDemo: true,
-		showDemoBanner: true
-	}
+	customers,
+	invoices,
 };

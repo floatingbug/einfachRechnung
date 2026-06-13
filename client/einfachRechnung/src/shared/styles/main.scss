@@ -1,4 +1,4 @@
-@import './tokens/index.css';
-@import './_base.scss';
-@import './_breakpoints.scss';
-@import './_media.scss';
+@use './tokens/index.css';
+@use './_base.scss';
+@use './_breakpoints.scss';
+@use './_media.scss';

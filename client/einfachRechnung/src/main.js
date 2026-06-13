@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './app/router'
 import customPreset from "./shared/config/primevue/customPreset.js"
 import Button from "primevue/button";
+import ToastService from "primevue/toastservice";
 
 
 
@@ -26,6 +27,7 @@ app.use(PrimeVue, {
         preset: customPreset,
     }
 });
+app.use(ToastService);
 
 app.component("Button", Button);
 

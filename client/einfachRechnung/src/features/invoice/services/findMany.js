@@ -22,8 +22,6 @@ export default async function findMany({
 
 	const result = await invoiceApi.findMany({ query });
 
-	console.log(result);
-
 	return {
 		invoices: mapInvoiceDtosToEntities(result.data.items),
 		pagination: result.data.pagination,

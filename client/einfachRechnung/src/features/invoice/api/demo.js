@@ -17,24 +17,8 @@ function loadState(){
 	catch(error){
 		return null;
 	}
-}
 
-function saveState(state){
-	localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
 
-function ensureState(){
-	let state = loadState();
-
-	if(!state || !Array.isArray(state.invoices)){
-		state = {
-			invoices: []
-		};
-
-		saveState(state);
-	}
-
-	return state;
 }
 
 /**
@@ -77,13 +61,9 @@ function calculateTotals(invoice){
 	};
 }
 
-/**
- * --- API (IMPORTANT: backend compatible) ---
- */
+// --- api calls ---
 
 async function findById({ invoiceId }){
-	const state = ensureState();
-
 	const invoice = state.invoices.find((inv) => inv.id === invoiceId);
 
 	if(!invoice){
@@ -95,15 +75,9 @@ async function findById({ invoiceId }){
 	};
 }
 
-/**
- * ✔️ MUST MATCH BACKEND STRUCTURE EXACTLY
- */
-async function findMany({ query }){
-	const state = ensureState();
 
-	let invoices = Array.isArray(state.invoices)
-		? [...state.invoices]
-		: [];
+async function findMany({ query }){
+	const invoices = loadState().invoices;
 
 	// filtering
 	if(query){
@@ -120,6 +94,7 @@ async function findMany({ query }){
 		}
 	}
 
+	// pagination
 	const page = Number(query?.page || 1);
 	const limit = Number(query?.limit || 20);
 
@@ -145,8 +120,6 @@ async function findMany({ query }){
  * create
  */
 async function create(payload){
-	const state = ensureState();
-
 	const totals = calculateTotals(payload);
 
 	const invoice = {
@@ -179,8 +152,6 @@ async function create(payload){
  * update
  */
 async function update({ invoiceId, payload }){
-	const state = ensureState();
-
 	const index = state.invoices.findIndex((inv) => inv.id === invoiceId);
 
 	if(index === -1){
@@ -213,8 +184,6 @@ async function update({ invoiceId, payload }){
  * remove
  */
 async function remove({ invoiceId }){
-	const state = ensureState();
-
 	state.invoices = state.invoices.filter((inv) => inv.id !== invoiceId);
 
 	saveState(state);
@@ -228,8 +197,6 @@ async function remove({ invoiceId }){
  * send
  */
 async function send({ invoiceId }){
-	const state = ensureState();
-
 	const invoice = state.invoices.find((inv) => inv.id === invoiceId);
 
 	if(!invoice){
@@ -246,17 +213,6 @@ async function send({ invoiceId }){
 	};
 }
 
-/**
- * reset
- */
-async function reset(){
-	localStorage.removeItem(STORAGE_KEY);
-
-	return {
-		data: true
-	};
-}
-
 export default {
 	findById,
 	findMany,
@@ -264,5 +220,4 @@ export default {
 	update,
 	remove,
 	send,
-	reset
 };

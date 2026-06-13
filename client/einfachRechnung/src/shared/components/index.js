@@ -1,2 +1,2 @@
-export {default as Sidebar} from "./navigation/Sidebar.vue";
-export {default as Topbar} from "./navigation/Topbar.vue";
+export {default as Sidebar} from "./navigation/sidebar/Sidebar.vue";
+export {default as Topbar} from "./navigation/topbar/Topbar.vue";
