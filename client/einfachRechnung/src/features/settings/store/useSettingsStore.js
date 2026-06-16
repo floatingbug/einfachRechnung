@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import actions from "./actions";
+import {actions} from "./actions";
 
 
 const useSettingsStore = defineStore("settings", {

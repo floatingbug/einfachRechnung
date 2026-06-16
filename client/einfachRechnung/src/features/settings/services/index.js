@@ -1,8 +1,20 @@
-export {findCompany} from "./findCompany.js";
-export {findEmail} from "./findEmail.js";
-export {findInvoice} from "./findInvoice.js";
-export {findTax} from "./findTax.js";
-export {updateEmail} from "./updateEmail.js";
-export {updateCompany} from "./updateCompany.js";
-export {updateInvoice} from "./updateInvoice.js";
-export {updateTax} from "./updateTax.js";
+import {getCompany} from "./getCompany.js";
+import {getEmail} from "./getEmail.js";
+import {getInvoice} from "./getInvoice.js";
+import {getTax} from "./getTax.js";
+import {updateEmail} from "./updateEmail.js";
+import {updateCompany} from "./updateCompany.js";
+import {updateInvoice} from "./updateInvoice.js";
+import {updateTax} from "./updateTax.js";
+
+
+export const services = {
+	getCompany,
+	getEmail,
+    getInvoice,
+    getTax,
+    updateEmail,
+    updateCompany,
+    updateInvoice,
+    updateTax,
+}

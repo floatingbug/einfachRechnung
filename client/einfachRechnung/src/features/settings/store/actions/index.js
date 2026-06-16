@@ -1,18 +1,18 @@
 import {updateCompany} from "./updateCompany.js";
-import {findCompany} from "./findCompany.js";
-import {findEmail} from "./findEmail.js";
+import {getCompany} from "./getCompany.js";
+import {getEmail} from "./getEmail.js";
 import {updateEmail} from "./updateEmail.js";
-import {findInvoice} from "./findInvoice.js";
+import {getInvoice} from "./getInvoice.js";
 import {updateInvoice} from "./updateInvoice.js";
-import {findTax} from "./findTax.js";
+import {getTax} from "./getTax.js";
 import {updateTax} from "./updateTax.js";
 
 
-export default {
-	findCompany,
-	findEmail,
-	findInvoice,
-	findTax,
+export const actions = {
+	getCompany,
+	getEmail,
+	getInvoice,
+	getTax,
 	updateCompany,
 	updateEmail,
 	updateInvoice,

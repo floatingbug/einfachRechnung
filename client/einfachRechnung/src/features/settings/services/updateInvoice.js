@@ -1,4 +1,4 @@
-import settingsApi from "../api";
+import {settingsApi} from "../api";
 import {mapDtoToInvoiceEntity} from "../mappers";
 
 

@@ -1,10 +1,17 @@
-import appConfig from "@/shared/config/app.config.js";
+import http from "@/shared/api/http.client.js";
 
-import demo from "./demo.js";
-import http from "./settings.api.js";
 
-const api = appConfig.mode === "demo"
-	? demo
-	: http;
+async function getCompany(){
+	return {};
+}
 
-export default api;
+async function getEmail(){
+	return {};
+}
+
+
+export const settingsApi = {
+	getCompany,
+	getEmail,
+};
+

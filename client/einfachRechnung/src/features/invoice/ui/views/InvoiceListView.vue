@@ -13,7 +13,7 @@ const defaultLimit = 20;
 
 onMounted(async () => {
 	try{
-		await invoiceStore.findMany({limit: defaultLimit});
+		await invoiceStore.getInvoices({limit: defaultLimit});
 	}
 	catch(error){
 		console.log(error);
@@ -45,7 +45,7 @@ function onInvoiceListActions(event){
 			@action="onInvoiceListActions"
 		/>
 
-		<Paginator
+		<Paginator v-if="invoiceStore.pagination"
 			:rows="20"
 			:totalRecords="invoiceStore.pagination.total"
 			:rowsPerPageOptions="[10, 20, 50, 100]"

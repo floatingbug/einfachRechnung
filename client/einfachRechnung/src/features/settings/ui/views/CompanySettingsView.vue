@@ -10,7 +10,7 @@ const settingsStore = useSettingsStore();
 
 
 onMounted(async () => {
-	await settingsStore.findCompany();
+	await settingsStore.getCompany();
 });
 
 

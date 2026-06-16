@@ -1,8 +1,8 @@
-import {updateTax as updateTaxService} from "../../services";
+import {services} from "../../services";
 
 
 export async function updateTax({data}){
-	const updatedTax = await updateTaxService({data});
+	const updatedTax = await services.updateTax({data});
 
 	this.tax = updatedTax;
 };

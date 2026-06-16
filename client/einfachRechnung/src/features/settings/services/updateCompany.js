@@ -1,4 +1,4 @@
-import settingsApi from "../api";
+import {settingsApi} from "../api";
 
 
 export async function updateCompany({data}){

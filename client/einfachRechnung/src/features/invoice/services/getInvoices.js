@@ -20,10 +20,17 @@ export default async function findMany({
 		query.status = status;
 	}
 
-	const result = await invoiceApi.findMany({ query });
+	const result = await invoiceApi.getInvoices({ query });
+
+	if(!result.items){
+		return {
+			invoices: [],
+			pagination: null,
+		};
+	}
 
 	return {
-		invoices: mapInvoiceDtosToEntities(result.data.items),
-		pagination: result.data.pagination,
+		invoices: mapInvoiceDtosToEntities(result.items),
+		pagination: result.pagination,
 	};
 }
