@@ -12,5 +12,10 @@ router.post(
     controller.createCustomer,
 );
 
+router.patch(
+    "/",
+    controller.updateCustomer,
+);
+
 
 module.exports = router;

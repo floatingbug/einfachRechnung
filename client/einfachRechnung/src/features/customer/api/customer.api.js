@@ -18,8 +18,20 @@ async function createCustomer({customer}){
 	return data.customer;
 }
 
+async function updateCustomer({customer}){
+	const { data } = await http.patch(
+		"/customers",
+		{
+			customer,
+		}
+	);
+
+	return data.customer;
+}
+
 
 export const api = {
 	getCustomers,
 	createCustomer,
+	updateCustomer,
 };

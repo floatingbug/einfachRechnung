@@ -1,9 +1,9 @@
-import findById from "./findById.js";
-import findMany from "./findMany.js";
-import create from "./create.js";
+import {getInvoices} from "./getInvoices.js";
+import {getInvoiceById} from "./getInvoiceById.js";
+import {createInvoice} from "./createInvoice.js";
 
-export default {
-	findById,
-	findMany,
-	create,
+export const actions = {
+	getInvoices,
+	getInvoiceById,
+	createInvoice,
 };

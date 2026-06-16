@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, computed } from "vue";
-import services from "../../services";
+import {services} from "../../services";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 import Textarea from "primevue/textarea";

@@ -1,4 +1,4 @@
-import invoiceApi from "../api";
+import {invoiceApi} from "../api";
 
 
 export default async function findById({invoiceId}){

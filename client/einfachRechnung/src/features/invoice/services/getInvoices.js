@@ -1,4 +1,4 @@
-import invoiceApi from "../api";
+import {invoiceApi} from "../api";
 import { mapInvoiceDtosToEntities } from "../mappers";
 
 export default async function findMany({

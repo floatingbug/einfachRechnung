@@ -1,12 +1,12 @@
-import findMany from "./findMany.js"
-import findById from "./findById.js";
-import create from "./create.js";
+import getInvoices from "./getInvoices.js"
+import getInvoiceById from "./getInvoiceById.js";
+import createInvoice from "./createInvoice.js";
 import calculateInvoiceTotals from "./calculateInvoiceTotals.js";
 
 
-export default {
-	findById,
-	findMany,
-	create,
+export const services = {
+	getInvoices,
+	getInvoiceById,
+	createInvoice,
 	calculateInvoiceTotals,
 };

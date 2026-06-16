@@ -5,6 +5,8 @@ import actions from "./actions";
 const useCustomerStore = defineStore("customer", {
 	state: () => ({
 		customers: [],
+		selectedCustomer: {},
+		editCustomer: {},
 		draftCustomer: {},
 	}),
 
