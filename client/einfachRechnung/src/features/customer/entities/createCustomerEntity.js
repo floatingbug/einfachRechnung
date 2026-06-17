@@ -1,5 +1,6 @@
 export default function createCustomerEntity(customer = {}){
 	const DEFAULT_CUSTOMER = {
+		userId: "",
 		name: "",
 		street: "",
 		postalCode: "",

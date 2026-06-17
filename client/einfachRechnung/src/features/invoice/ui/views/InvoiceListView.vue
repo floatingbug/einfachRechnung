@@ -8,12 +8,12 @@ import {useRouter} from "vue-router";
 const router = useRouter();
 const invoiceStore = useInvoiceStore();
 const isInitializing = ref(true);
-const defaultLimit = 20;
+const PAGINATION_LIMIT = 10;
 
 
 onMounted(async () => {
 	try{
-		await invoiceStore.getInvoices({limit: defaultLimit});
+		await invoiceStore.getInvoices({limit: PAGINATION_LIMIT});
 	}
 	catch(error){
 		console.log(error);
@@ -24,7 +24,7 @@ onMounted(async () => {
 
 // --- event handler ---
 async function onPaginationAction(event){
-	const result = await invoiceStore.findMany({
+	const result = await invoiceStore.getInvoices({
 		limit: event.rows,
 		page: event.page +1,
 	});
@@ -46,11 +46,12 @@ function onInvoiceListActions(event){
 		/>
 
 		<Paginator v-if="invoiceStore.pagination"
-			:rows="20"
+			:rows="PAGINATION_LIMIT"
 			:totalRecords="invoiceStore.pagination.total"
 			:rowsPerPageOptions="[10, 20, 50, 100]"
 			@page="onPaginationAction"
 		/>
+
 	</div>
 </template>
 

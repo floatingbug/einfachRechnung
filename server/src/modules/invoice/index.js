@@ -4,7 +4,7 @@ const validator = require("./validator");
 
 
 router.post("/", validator.create, controller.create);
-router.get("/", validator.findMany, controller.findMany);
+router.get("/", controller.findMany);
 router.get("/:invoiceId", validator.findById, controller.findById);
 router.patch("/:invoiceId/send", validator.send, controller.send);
 router.patch("/:invoiceId/cancel", validator.cancel, controller.cancel);

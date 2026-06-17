@@ -42,6 +42,11 @@ const items = ref([
 		</template>
 
 			<template #end>
+				<Button
+					label="Registrieren"
+					as="router-link"
+					to="/auth/sign-up"
+				/>
 			</template>
 	</Toolbar>
 </template>

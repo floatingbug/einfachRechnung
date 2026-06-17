@@ -2,6 +2,7 @@ const validator = require("validator");
 
 module.exports = async (req, res, next) => {
 	const query = req.query;
+    console.log(query);
 	const allowedKeys = ["status", "customerName", "page", "limit"];
 	const keys = Object.keys(query);
 

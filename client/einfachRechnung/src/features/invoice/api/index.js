@@ -1,8 +1,13 @@
 import http from "@/shared/api/http.client.js";
 
 
-async function getInvoices(){
-	return {};
+async function getInvoices({query}){
+	const {data} = await http.get(`/invoices`);
+
+	return {
+		items: data.items,
+		pagination: data.pagination,
+	};
 }
 
 async function getInvoiceById({invoiceId}){

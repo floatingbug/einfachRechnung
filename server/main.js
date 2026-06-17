@@ -33,7 +33,7 @@ async function start() {
     app.use('/auth', authRoutes);
     app.use('/users', userRoutes);
     app.use('/account', accountRoutes);
-    app.use('/invoice', invoiceRoutes);
+    app.use('/invoices', invoiceRoutes);
     app.use("/customers", customersRoutes);
 
     app.use(errorMiddleware);

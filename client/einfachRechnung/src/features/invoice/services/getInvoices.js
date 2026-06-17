@@ -1,23 +1,19 @@
 import {invoiceApi} from "../api";
 import { mapInvoiceDtosToEntities } from "../mappers";
 
-export default async function findMany({
-	page = 1,
-	status = "",
-	customerName = "",
-	limit = 20,
-} = {}){
-	const query = {
-		page,
-		limit,
-	};
+export async function getInvoices(params){
 
-	if (customerName){
-		query.customerName = customerName;
+	const query = new URLSearchParams({
+		limit: params.limit || 10,
+		page: params.page || 1,
+	});
+
+	if (params.customerName){
+		query.append("customerName", params.customerName);
 	}
 
-	if (status){
-		query.status = status;
+	if (params.status){
+		query.append("status", params.status);
 	}
 
 	const result = await invoiceApi.getInvoices({ query });

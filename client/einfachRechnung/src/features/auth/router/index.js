@@ -1,5 +1,5 @@
 import {AuthLayout} from "@/app/layouts";
-import SignUpView from "../views/SignUpView.vue";
+import SignUpView from "../ui/views/SignUpView.vue";
 
 
 export default [
