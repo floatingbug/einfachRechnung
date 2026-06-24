@@ -7,8 +7,7 @@ const emit = defineEmits(["submit"]);
 
 
 const credentials = ref({
-	name: "",
-	email: "",
+	nameOrEmail: "",
 	password: "",
 });
 
@@ -25,16 +24,9 @@ function onSubmit(){
 <template>
 	<form @submit.prevent="onSubmit">
 		<div class="input">
-			<label for="name">Name</label>
-			<InputText id="name"
-				v-model="credentials.name"
-			/>
-		</div>
-
-		<div class="input">
-			<label for="email">E-Mail</label>
-			<InputText id="email"
-				v-model="credentials.email"
+			<label for="nameOrEmail">Name oder E-Mail</label>
+			<InputText id="nameOrEmail"
+				v-model="credentials.nameOrEmail"
 			/>
 		</div>
 
@@ -48,7 +40,7 @@ function onSubmit(){
 		<div class="form-actions">
 			<Button
 				type="submit"
-				label="Registrieren"
+				label="Anmelden"
 			/>
 		</div>
 	</form>

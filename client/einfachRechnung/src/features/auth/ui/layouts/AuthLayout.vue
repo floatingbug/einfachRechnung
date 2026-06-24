@@ -1,5 +1,6 @@
 <script setup>
 import Card from "primevue/card";
+import {Logo} from "@/shared/components";
 
 </script>
 
@@ -9,6 +10,7 @@ import Card from "primevue/card";
 		<div class="auth-content">
 			<Card>
 				<template #title>
+					<Logo />
 					<slot name="header" />
 				</template>
 

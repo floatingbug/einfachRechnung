@@ -6,9 +6,6 @@ import { Sidebar, Topbar } from "../../shared/components";
 
 <template>
 	<div class="auth-layout">
-		<Topbar class="topbar"
-		/>
-
 		<div class="main">
 			<RouterView />
 		</div>
@@ -22,22 +19,7 @@ import { Sidebar, Topbar } from "../../shared/components";
 
 .auth-layout {
 	height: 100dvh;
-
-	@include media.up(bp.$bp-lg) {
-		display: grid;
-		grid-template-columns: 1fr;
-		grid-template-rows: auto 1fr;
-		user-select: none;
-	}
 }
-
-.topbar {
-	width: 100%;
-	position: sticky;
-	top: 0;
-	z-index: 10;
-}
-
 .main {
 	width: 100%;
 	height: 100%;

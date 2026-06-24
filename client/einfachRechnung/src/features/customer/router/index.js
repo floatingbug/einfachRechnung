@@ -9,6 +9,7 @@ export default [
 		component: AppLayout,
 		meta: {
 			context: "customer",
+			requiresAuth: true,
 		},
 		children: [
 			{

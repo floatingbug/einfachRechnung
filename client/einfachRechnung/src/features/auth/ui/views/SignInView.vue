@@ -2,7 +2,7 @@
 import {useRouter} from "vue-router";
 import {useAuthStore} from "../../store";
 import {AuthLayout} from "../layouts";
-import {SignUpForm} from "../components";
+import {SignInForm} from "../components";
 
 
 const authStore = useAuthStore();
@@ -11,11 +11,11 @@ const router = useRouter();
 
 async function onSubmit(event){
 	try{
-		const result = await authStore.signUp({
+		const result = await authStore.signIn({
 			credentials: event,
 		});
 
-		router.push("/auth/verify-email");
+		router.push("/");
 	}
 	catch(error){
 		console.log("--->", error);
@@ -29,11 +29,11 @@ async function onSubmit(event){
 <template>
 	<AuthLayout>
 		<template #header>
-			Registrierung
+			Anmeldung
 		</template>
 
 		<template #form>
-			<SignUpForm
+			<SignInForm
 				@submit="onSubmit"
 			/>
 		</template>
