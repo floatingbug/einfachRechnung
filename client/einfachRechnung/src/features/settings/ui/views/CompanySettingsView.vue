@@ -17,10 +17,8 @@ onMounted(async () => {
 async function onCompanySettingsFormSubmit(event){
 	try{
 		const result = await settingsStore.updateCompany({
-			data: event.data,
+			company: event.data,
 		});
-
-
 	}
 	catch(error){
 	}

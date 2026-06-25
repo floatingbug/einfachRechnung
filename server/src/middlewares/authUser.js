@@ -4,8 +4,6 @@ const config = require('../config');
 module.exports = (req, res, next) => {
     const header = req.headers.authorization;
     
-    console.log("--->", header);
-
     if (!header) {
         return res.status(401).json({ message: 'Missing authorization header' });
     }

@@ -42,10 +42,7 @@ export function validateCompany({company} = {}){
 	}
 
 	// --- email ---
-	if(!normalizedCompany.email){
-		errors.email = "E-Mail ist erforderlich";
-	}
-	else if(!EMAIL_REGEX.test(normalizedCompany.email)){
+	else if(normalizedCompany.email && !EMAIL_REGEX.test(normalizedCompany.email)){
 		errors.email = "Ungültiges E-Mail-Format";
 	}
 
@@ -67,10 +64,7 @@ export function validateCompany({company} = {}){
 	}
 
 	// --- countryCode ---
-	if(!normalizedCompany.countryCode){
-		errors.countryCode = "Ländercode ist erforderlich";
-	}
-	else if(!VALID_COUNTRY_CODES.includes(normalizedCompany.countryCode)){
+	if(normalizedCompany.countryCode && !VALID_COUNTRY_CODES.includes(normalizedCompany.countryCode)){
 		errors.countryCode = "Ungültiger Ländercode";
 	}
 
@@ -96,29 +90,24 @@ export function validateCompany({company} = {}){
 	}
 
 	// --- street ---
-	if(!normalizedCompany.street){
-		errors.street = "Straße ist erforderlich";
-	}
-	else if(normalizedCompany.street.length < 3){
-		errors.street = "Straße muss mindestens 3 Zeichen enthalten";
-	}
-	else if(normalizedCompany.street.length > 120){
-		errors.street = "Straße darf maximal 120 Zeichen lang sein";
+	if(normalizedCompany.street){
+		if(normalizedCompany.street.length < 3){
+			errors.street = "Straße muss mindestens 3 Zeichen enthalten";
+		}
+		else if(normalizedCompany.street.length > 120){
+			errors.street = "Straße darf maximal 120 Zeichen lang sein";
+		}
 	}
 
 	// --- city ---
-	if(!normalizedCompany.city){
-		errors.city = "Stadt ist erforderlich";
-	}
-	else if(normalizedCompany.city.length > 120){
-		errors.city = "Stadt darf maximal 120 Zeichen lang sein";
+	if(normalizedCompany.city){
+		if(normalizedCompany.city.length > 120){
+			errors.city = "Stadt darf maximal 120 Zeichen lang sein";
+		}
 	}
 
 	// --- postalCode ---
-	if(!normalizedCompany.postalCode){
-		errors.postalCode = "Postleitzahl ist erforderlich";
-	}
-	else{
+	if(normalizedCompany.postalCode){
 		const postalCodeRegex =
 			POSTAL_CODE_REGEX[normalizedCompany.countryCode];
 

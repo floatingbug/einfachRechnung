@@ -1,8 +1,11 @@
 import {settingsApi} from "../api";
+import {createCompanyEntity} from "../entities";
 
 
-export async function updateCompany({data}){
-	const response = await settingsApi.updateCompany({data});
+export async function updateCompany({company}){
+	const companyDto = await settingsApi.updateCompany({company});
 
-	return response.data.company;
+	return createCompanyEntity({
+		company: companyDto,
+	});
 }
