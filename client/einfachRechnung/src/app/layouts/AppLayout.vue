@@ -1,6 +1,4 @@
 <script setup>
-import {computed} from "vue";
-import {useRoute} from "vue-router";
 import { Sidebar, Topbar } from "../../shared/components";
 
 </script>
@@ -24,7 +22,6 @@ import { Sidebar, Topbar } from "../../shared/components";
 @use "@/shared/styles/media" as media;
 
 .app-layout {
-
 	@include media.up(bp.$bp-lg) {
 		display: grid;
 		grid-template-columns: auto 1fr;
@@ -65,5 +62,7 @@ import { Sidebar, Topbar } from "../../shared/components";
 	min-width: 0;
 	display: flex;
 	justify-content: center;
+	margin-bottom: 12rem;
+	padding: var(--space-xl);
 }
 </style>

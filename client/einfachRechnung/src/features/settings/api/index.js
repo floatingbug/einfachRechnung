@@ -8,7 +8,27 @@ async function getCompany(){
 }
 
 async function getEmail(){
-	return {};
+	const {data} = await http.get("/settings/email");
+
+	return data;
+}
+
+async function getInvoice(){
+	const {data} = await http.get("/settings/invoice");
+
+	return data;
+}
+
+async function getTax(){
+	const {data} = await http.get("/settings/tax");
+
+	return data;
+}
+
+async function getOffer(){
+	const {data} = await http.get("settings/offer");
+
+	return data;
 }
 
 async function updateCompany({company}){
@@ -20,10 +40,52 @@ async function updateCompany({company}){
 	return data;
 }
 
+async function updateInvoice({invoiceSettings}){
+	const {data} = await http.put(
+		"/settings/invoice",
+		invoiceSettings,
+	);
+
+	return data;
+}
+
+async function updateTax({taxSettings}){
+	const {data} = await http.put(
+		"/settings/tax",
+		taxSettings,
+	);
+
+	return data;
+}
+
+async function updateEmail({emailSettings}){
+	const {data} = await http.put(
+		"/settings/email",
+		emailSettings,
+	);
+
+	return data;
+}
+
+async function updateOffer({offerSettings}){
+	const {data} = await http.put(
+		"/settings/offer",
+		offerSettings,
+	);
+
+}
+
 
 export const settingsApi = {
 	getCompany,
 	getEmail,
+	getInvoice,
+	getTax,
+	getOffer,
 	updateCompany,
+	updateInvoice,
+	updateTax,
+	updateEmail,
+	updateOffer,
 };
 

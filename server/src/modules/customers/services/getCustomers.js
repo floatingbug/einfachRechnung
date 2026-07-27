@@ -1,8 +1,8 @@
 const models = require("../models");
 
 
-module.exports = async () => {
-    const customers = await models.getCustomers();
+module.exports = async ({userId}) => {
+    const customers = await models.getCustomers({userId});
 
     return customers;
 };

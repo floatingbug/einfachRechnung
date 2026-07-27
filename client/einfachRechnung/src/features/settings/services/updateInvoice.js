@@ -2,10 +2,10 @@ import {settingsApi} from "../api";
 import {mapDtoToInvoiceEntity} from "../mappers";
 
 
-export async function updateInvoice({data}){
-	const response = await settingsApi.updateInvoice({data});
+export async function updateInvoice({invoiceSettings}){
+	const updatedInvoice = await settingsApi.updateInvoice({invoiceSettings});
 
 	return mapDtoToInvoiceEntity({
-		dto: response.data?.invoice ?? null,
+		dto: updatedInvoice,
 	});
 };

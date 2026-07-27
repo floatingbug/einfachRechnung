@@ -12,6 +12,7 @@ const accountRoutes = require("./src/modules/account");
 const invoiceRoutes = require("./src/modules/invoice");
 const customersRoutes = require("./src/modules/customers");
 const settingsRoutes = require("./src/modules/settings");
+const offerRoutes = require("./src/modules/offer");
 
 async function start() {
     await connect();
@@ -37,6 +38,7 @@ async function start() {
     app.use('/invoices', invoiceRoutes);
     app.use("/settings", settingsRoutes);
     app.use("/customers", customersRoutes);
+    app.use("/offers", offerRoutes);
 
     app.use(errorMiddleware);
 

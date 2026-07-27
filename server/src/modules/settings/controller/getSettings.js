@@ -9,6 +9,7 @@ module.exports = catchAsync(async (req, res) => {
         "email",
         "invoice",
         "tax",
+        "offer",
     ];
 
     if (!allowedTypes.includes(type)) {

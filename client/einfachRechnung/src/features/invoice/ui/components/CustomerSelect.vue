@@ -17,7 +17,7 @@ const emit = defineEmits([
 const customerStore = useCustomerStore();
 
 // --- state ---
-const selectedCustomer = ref(null);
+const draftOffer = ref(null);
 
 const results = ref([]);
 
@@ -64,7 +64,7 @@ async function createCustomer(){
 
 	emit("select", created);
 
-	selectedCustomer.value = created;
+	draftOffer.value = created;
 
 	// reset form
 	newCustomer.value = {
@@ -87,7 +87,7 @@ async function createCustomer(){
 
 			<AutoComplete
 				id="customer"
-				v-model="selectedCustomer"
+				v-model="draftOffer"
 				:suggestions="results"
 				optionLabel="name"
 				placeholder="Kunde suchen..."

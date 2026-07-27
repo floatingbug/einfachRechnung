@@ -2,439 +2,343 @@
 // Run with:
 // mongosh "mongodb://localhost:27017/einfachRechnung" seed.js
 
-const userId = new ObjectId();
+const bcrypt = require("bcrypt");
 
 // -----------------------------------------------------------------------------
-// Cleanup
+// Helpers
 // -----------------------------------------------------------------------------
 
-db.customers.deleteMany({});
-db.invoices.deleteMany({});
-db.settings.deleteMany({});
+function upsert(collection, filter, doc){
+    return db[collection].updateOne(
+        filter,
+        { $set: doc },
+        { upsert: true }
+    );
+}
+
+// -----------------------------------------------------------------------------
+// Constants
+// -----------------------------------------------------------------------------
+
+const userId = new ObjectId("64b7f0c2a1d3e4f567890123");
+const SALT_ROUNDS = 10;
+
+const customerIds = [
+    new ObjectId("64b7f0c2a1d3e4f567890201"),
+    new ObjectId("64b7f0c2a1d3e4f567890202"),
+    new ObjectId("64b7f0c2a1d3e4f567890203"),
+    new ObjectId("64b7f0c2a1d3e4f567890204"),
+    new ObjectId("64b7f0c2a1d3e4f567890205"),
+];
+
+// -----------------------------------------------------------------------------
+// Cleanup (idempotent reset for this user)
+// -----------------------------------------------------------------------------
+
+db.users.deleteOne({ _id: userId });
+db.settings.deleteOne({ userId });
+db.customers.deleteMany({ userId });
+db.invoices.deleteMany({ userId });
+
+// -----------------------------------------------------------------------------
+// User (PASSWORD HASH FIX)
+// -----------------------------------------------------------------------------
+
+const plainPassword = "123";
+
+const passwordHash = bcrypt.hashSync(plainPassword, SALT_ROUNDS);
+
+upsert("users", { _id: userId }, {
+    _id: userId,
+    name: "user1",
+    email: "user@user.com",
+    pendingEmail: null,
+    pendingEmailToken: null,
+    pendingEmailExpiresAt: null,
+
+    password: passwordHash,
+
+    emailVerified: true,
+    emailTokenHash: null,
+    emailTokenExpiresAt: null,
+    createdAt: new Date("2026-06-23T07:30:26.172Z")
+});
 
 // -----------------------------------------------------------------------------
 // Settings
 // -----------------------------------------------------------------------------
 
-db.settings.insertOne({
-	userId,
+upsert("settings", { userId }, {
+    userId,
 
-	company: {
-		companyName: "Einfach Rechnung GmbH",
-		ownerName: "Tom Mustermann",
-		email: "info@einfach-rechnung.de",
-		phone: "+492611234567",
-		website: "https://einfach-rechnung.de",
+    company: {
+        companyName: "Einfach Rechnung GmbH",
+        ownerName: "Tom Mustermann",
+        email: "info@einfach-rechnung.de",
+        phone: "+492611234567",
+        website: "https://einfach-rechnung.de",
 
-		street: "Musterstraße 1",
-		city: "Montabaur",
-		postalCode: "56410",
-		countryCode: "DE",
+        street: "Musterstraße 1",
+        city: "Montabaur",
+        postalCode: "56410",
+        countryCode: "DE",
 
-		vatId: "DE123456789",
-		taxNumber: "12/345/67890",
-	},
+        vatId: "DE123456789",
+        taxNumber: "12/345/67890",
+    },
 
-	email: {
-		smtpHost: "smtp.example.com",
-		smtpPort: 587,
+    email: {
+        smtpHost: "smtp.example.com",
+        smtpPort: 587,
+        username: "mailer@example.com",
+        password: "secret",
+        fromEmail: "rechnung@einfach-rechnung.de",
+        fromName: "Einfach Rechnung",
+        secure: false,
+        autoSendInvoices: false,
+        replyToEmail: "support@einfach-rechnung.de",
+    },
 
-		username: "mailer@example.com",
-		password: "secret",
+    invoice: {
+        invoicePrefix: "RE",
+        invoiceNumberStart: 1000,
+        invoiceNumberFormat: "RE-{YEAR}-{NUMBER}",
+        defaultPaymentTermsDays: 14,
+        defaultDueDays: 14,
+        currency: "EUR",
+        language: "de",
+        autoSendEnabled: false,
+        defaultTaxRate: 19,
+    },
 
-		fromEmail: "rechnung@einfach-rechnung.de",
-		fromName: "Einfach Rechnung",
-
-		secure: false,
-
-		autoSendInvoices: false,
-
-		replyToEmail: "support@einfach-rechnung.de",
-	},
-
-	invoice: {
-		invoicePrefix: "RE",
-		invoiceNumberStart: 1000,
-		invoiceNumberFormat: "RE-{YEAR}-{NUMBER}",
-
-		defaultPaymentTermsDays: 14,
-		defaultDueDays: 14,
-
-		currency: "EUR",
-		language: "de",
-
-		autoSendEnabled: false,
-
-		defaultTaxRate: 19,
-	},
-
-	tax: {
-		vatEnabled: true,
-		defaultVatRate: 19,
-		reducedVatRate: 7,
-		taxCountryCode: "DE",
-		reverseChargeEnabled: false,
-	},
+    tax: {
+        vatEnabled: true,
+        defaultVatRate: 19,
+        reducedVatRate: 7,
+        taxCountryCode: "DE",
+        reverseChargeEnabled: false,
+    },
 });
 
 // -----------------------------------------------------------------------------
 // Customers
 // -----------------------------------------------------------------------------
 
-const customer1Id = new ObjectId();
-const customer2Id = new ObjectId();
-const customer3Id = new ObjectId();
-const customer4Id = new ObjectId();
-const customer5Id = new ObjectId();
-
 const customers = [
-	{
-		_id: customer1Id,
-		userId,
-
-		name: "Muster GmbH",
-		street: "Hauptstraße 12",
-		postalCode: "10115",
-		city: "Berlin",
-		countryCode: "DE",
-		phone: "+49301234567",
-		email: "info@muster-gmbh.de",
-		vatId: "DE123456789",
-	},
-	{
-		_id: customer2Id,
-		userId,
-
-		name: "Schmidt Handwerk",
-		street: "Bahnhofstraße 8",
-		postalCode: "50667",
-		city: "Köln",
-		countryCode: "DE",
-		phone: "+49221123456",
-		email: "kontakt@schmidt-handwerk.de",
-		vatId: "DE234567890",
-	},
-	{
-		_id: customer3Id,
-		userId,
-
-		name: "Meyer Consulting",
-		street: "Am Markt 3",
-		postalCode: "20095",
-		city: "Hamburg",
-		countryCode: "DE",
-		phone: "+49401234567",
-		email: "mail@meyer-consulting.de",
-		vatId: "DE345678901",
-	},
-	{
-		_id: customer4Id,
-		userId,
-
-		name: "Elektro Wagner",
-		street: "Industriestraße 22",
-		postalCode: "90402",
-		city: "Nürnberg",
-		countryCode: "DE",
-		phone: "+49911234567",
-		email: "service@elektro-wagner.de",
-		vatId: "DE456789012",
-	},
-	{
-		_id: customer5Id,
-		userId,
-
-		name: "Bäckerei Hoffmann",
-		street: "Kirchplatz 5",
-		postalCode: "01067",
-		city: "Dresden",
-		countryCode: "DE",
-		phone: "+49351123456",
-		email: "info@baeckerei-hoffmann.de",
-		vatId: "DE567890123",
-	},
+    {
+        _id: customerIds[0],
+        userId,
+        customerNumber: "K-1",
+        companyName: "Muster GmbH",
+        contactPerson: "Bob Heinrich",
+        street: "Hauptstraße 12",
+        postalCode: "10115",
+        city: "Berlin",
+        countryCode: "DE",
+        phone: "+49301234567",
+        email: "info@muster-gmbh.de",
+        vatId: "DE123456789",
+        customerType: "company",
+    },
+    {
+        _id: customerIds[1],
+        userId,
+        customerNumber: "K-2",
+        firstName: "Andrey",
+        lastName: "Schmidt",
+        salutation: "male",
+        street: "Bahnhofstraße 8",
+        postalCode: "50667",
+        city: "Köln",
+        countryCode: "DE",
+        phone: "+49221123456",
+        email: "kontakt@schmidt-handwerk.de",
+        customerType: "private",
+    },
+    {
+        _id: customerIds[2],
+        userId,
+        customerNumber: "K-3",
+        companyName: "Meyer Consulting",
+        contactPerson: "Hanz Meyer",
+        street: "Am Markt 3",
+        postalCode: "20095",
+        city: "Hamburg",
+        countryCode: "DE",
+        phone: "+49401234567",
+        email: "mail@meyer-consulting.de",
+        vatId: "DE345678901",
+        customerType: "company",
+    },
+    {
+        _id: customerIds[3],
+        userId,
+        customerNumber: "K-4",
+        companyName: "Elektro Wagner",
+        contactPerson: "Dieter Balboa",
+        street: "Industriestraße 22",
+        postalCode: "90402",
+        city: "Nürnberg",
+        countryCode: "DE",
+        phone: "+49911234567",
+        email: "service@elektro-wagner.de",
+        vatId: "DE456789012",
+        customerType: "company",
+    },
+    {
+        _id: customerIds[4],
+        userId,
+        customerNumber: "K-5",
+        firstName: "Konrad",
+        lastName: "Hoffmann",
+        street: "Kirchplatz 5",
+        postalCode: "01067",
+        city: "Dresden",
+        countryCode: "DE",
+        phone: "+49351123456",
+        email: "info@baeckerei-hoffmann.de",
+        customerType: "private",
+    },
 ];
 
-db.customers.insertMany(customers);
+customers.forEach(c => {
+    upsert("customers", { _id: c._id }, c);
+});
 
 // -----------------------------------------------------------------------------
-// Invoice Helpers
+// Invoice Factory
 // -----------------------------------------------------------------------------
 
 function createInvoice({
-	number,
-	customer,
-	netTotal,
-	status,
-	paymentStatus,
-	invoiceDate,
+    _id,
+    number,
+    customer,
+    netTotal,
+    status,
+    paymentStatus,
+    invoiceDate,
 }){
-	const taxAmount = Number((netTotal * 0.19).toFixed(2));
-	const grossTotal = Number((netTotal + taxAmount).toFixed(2));
+    const taxAmount = Number((netTotal * 0.19).toFixed(2));
+    const grossTotal = Number((netTotal + taxAmount).toFixed(2));
 
-	let paidAmount = 0;
+    let paidAmount = 0;
 
-	if (paymentStatus === "paid"){
-		paidAmount = grossTotal;
-	}
+    if (paymentStatus === "paid"){
+        paidAmount = grossTotal;
+    }
+    else if (paymentStatus === "partially_paid"){
+        paidAmount = Number((grossTotal / 2).toFixed(2));
+    }
 
-	if (paymentStatus === "partially_paid"){
-		paidAmount = Number((grossTotal / 2).toFixed(2));
-	}
+    const openAmount = Number((grossTotal - paidAmount).toFixed(2));
 
-	const openAmount = Number(
-		(grossTotal - paidAmount).toFixed(2)
-	);
+    return {
+        _id,
 
-	return {
-		_id: new ObjectId(),
+        userId,
+        customerId: customer._id,
 
-		userId,
+        invoiceNumber: `RE-2026-${String(number).padStart(4, "0")}`,
 
-		customerId: customer._id,
+        seller: {
+            companyName: "Einfach Rechnung GmbH",
+            ownerName: "Tom Mustermann",
+            email: "info@einfach-rechnung.de",
+            phone: "+492611234567",
+            street: "Musterstraße 1",
+            city: "Montabaur",
+            postalCode: "56410",
+            countryCode: "DE",
+            vatId: "DE123456789",
+            taxNumber: "12/345/67890",
+        },
 
-		invoiceNumber: `RE-2026-${String(number).padStart(4, "0")}`,
+        customer: {
+            name: customer.name,
+            street: customer.street,
+            postalCode: customer.postalCode,
+            city: customer.city,
+            countryCode: customer.countryCode,
+            phone: customer.phone,
+            email: customer.email,
+            vatId: customer.vatId,
+        },
 
-		seller: {
-			companyName: "Einfach Rechnung GmbH",
-			ownerName: "Tom Mustermann",
-			email: "info@einfach-rechnung.de",
-			phone: "+492611234567",
+        invoiceDate,
+        dueDate: new Date(invoiceDate.getTime() + (14 * 24 * 60 * 60 * 1000)),
 
-			street: "Musterstraße 1",
-			city: "Montabaur",
-			postalCode: "56410",
-			countryCode: "DE",
+        currency: "EUR",
 
-			vatId: "DE123456789",
-			taxNumber: "12/345/67890",
-		},
+        items: [
+            {
+                description: "Dienstleistung",
+                quantity: 1,
+                unitPrice: netTotal,
+                total: netTotal,
+            },
+        ],
 
-		customer: {
-			name: customer.name,
-			street: customer.street,
-			postalCode: customer.postalCode,
-			city: customer.city,
-			countryCode: customer.countryCode,
-			phone: customer.phone,
-			email: customer.email,
-			vatId: customer.vatId,
-		},
+        note: "",
 
-		invoiceDate,
+        netTotal,
+        taxAmount,
+        grossTotal,
 
-		dueDate: new Date(
-			invoiceDate.getTime() + (14 * 24 * 60 * 60 * 1000)
-		),
+        paidAmount,
+        openAmount,
 
-		currency: "EUR",
+        paymentStatus,
+        status,
 
-		items: [
-			{
-				description: "Dienstleistung",
-				quantity: 1,
-				unitPrice: netTotal,
-				total: netTotal,
-			},
-		],
+        payments: paymentStatus === "paid"
+            ? [
+                {
+                    amount: grossTotal,
+                    paidAt: new Date(),
+                },
+            ]
+            : [],
 
-		note: "",
-
-		netTotal,
-		taxAmount,
-		grossTotal,
-
-		paidAmount,
-		openAmount,
-
-		paymentStatus,
-		status,
-
-		payments:
-			paymentStatus === "paid"
-				? [
-					{
-						amount: grossTotal,
-						paidAt: new Date(),
-					},
-				]
-				: [],
-
-		createdAt: invoiceDate,
-		updatedAt: invoiceDate,
-	};
+        createdAt: invoiceDate,
+        updatedAt: invoiceDate,
+    };
 }
 
 // -----------------------------------------------------------------------------
-// Invoices
+// Invoices (idempotent)
 // -----------------------------------------------------------------------------
 
-const invoices = [
-	createInvoice({
-		number: 1001,
-		customer: customers[0],
-		netTotal: 500,
-		status: "sent",
-		paymentStatus: "paid",
-		invoiceDate: new Date("2026-01-05"),
-	}),
-	createInvoice({
-		number: 1002,
-		customer: customers[1],
-		netTotal: 850,
-		status: "sent",
-		paymentStatus: "open",
-		invoiceDate: new Date("2026-01-07"),
-	}),
-	createInvoice({
-		number: 1003,
-		customer: customers[2],
-		netTotal: 1200,
-		status: "sent",
-		paymentStatus: "paid",
-		invoiceDate: new Date("2026-01-10"),
-	}),
-	createInvoice({
-		number: 1004,
-		customer: customers[3],
-		netTotal: 350,
-		status: "sent",
-		paymentStatus: "open",
-		invoiceDate: new Date("2026-01-12"),
-	}),
-	createInvoice({
-		number: 1005,
-		customer: customers[4],
-		netTotal: 650,
-		status: "sent",
-		paymentStatus: "partially_paid",
-		invoiceDate: new Date("2026-01-15"),
-	}),
-	createInvoice({
-		number: 1006,
-		customer: customers[0],
-		netTotal: 950,
-		status: "sent",
-		paymentStatus: "paid",
-		invoiceDate: new Date("2026-02-01"),
-	}),
-	createInvoice({
-		number: 1007,
-		customer: customers[1],
-		netTotal: 780,
-		status: "sent",
-		paymentStatus: "open",
-		invoiceDate: new Date("2026-02-04"),
-	}),
-	createInvoice({
-		number: 1008,
-		customer: customers[2],
-		netTotal: 430,
-		status: "sent",
-		paymentStatus: "paid",
-		invoiceDate: new Date("2026-02-08"),
-	}),
-	createInvoice({
-		number: 1009,
-		customer: customers[3],
-		netTotal: 1100,
-		status: "sent",
-		paymentStatus: "paid",
-		invoiceDate: new Date("2026-02-10"),
-	}),
-	createInvoice({
-		number: 1010,
-		customer: customers[4],
-		netTotal: 720,
-		status: "sent",
-		paymentStatus: "open",
-		invoiceDate: new Date("2026-02-14"),
-	}),
-	createInvoice({
-		number: 1011,
-		customer: customers[0],
-		netTotal: 890,
-		status: "sent",
-		paymentStatus: "paid",
-		invoiceDate: new Date("2026-03-01"),
-	}),
-	createInvoice({
-		number: 1012,
-		customer: customers[1],
-		netTotal: 300,
-		status: "draft",
-		paymentStatus: "open",
-		invoiceDate: new Date("2026-03-04"),
-	}),
-	createInvoice({
-		number: 1013,
-		customer: customers[2],
-		netTotal: 1450,
-		status: "sent",
-		paymentStatus: "paid",
-		invoiceDate: new Date("2026-03-08"),
-	}),
-	createInvoice({
-		number: 1014,
-		customer: customers[3],
-		netTotal: 600,
-		status: "sent",
-		paymentStatus: "partially_paid",
-		invoiceDate: new Date("2026-03-12"),
-	}),
-	createInvoice({
-		number: 1015,
-		customer: customers[4],
-		netTotal: 500,
-		status: "sent",
-		paymentStatus: "paid",
-		invoiceDate: new Date("2026-03-16"),
-	}),
-	createInvoice({
-		number: 1016,
-		customer: customers[0],
-		netTotal: 1300,
-		status: "sent",
-		paymentStatus: "open",
-		invoiceDate: new Date("2026-04-01"),
-	}),
-	createInvoice({
-		number: 1017,
-		customer: customers[1],
-		netTotal: 470,
-		status: "sent",
-		paymentStatus: "paid",
-		invoiceDate: new Date("2026-04-05"),
-	}),
-	createInvoice({
-		number: 1018,
-		customer: customers[2],
-		netTotal: 990,
-		status: "sent",
-		paymentStatus: "paid",
-		invoiceDate: new Date("2026-04-09"),
-	}),
-	createInvoice({
-		number: 1019,
-		customer: customers[3],
-		netTotal: 560,
-		status: "sent",
-		paymentStatus: "open",
-		invoiceDate: new Date("2026-04-12"),
-	}),
-	createInvoice({
-		number: 1020,
-		customer: customers[4],
-		netTotal: 820,
-		status: "sent",
-		paymentStatus: "paid",
-		invoiceDate: new Date("2026-04-18"),
-	}),
+const invoiceConfigs = [
+    { number: 1001, customer: customers[0], netTotal: 500, status: "sent", paymentStatus: "paid", invoiceDate: new Date("2026-01-05") },
+    { number: 1002, customer: customers[1], netTotal: 850, status: "sent", paymentStatus: "open", invoiceDate: new Date("2026-01-07") },
+    { number: 1003, customer: customers[2], netTotal: 1200, status: "sent", paymentStatus: "paid", invoiceDate: new Date("2026-01-10") },
+    { number: 1004, customer: customers[3], netTotal: 350, status: "sent", paymentStatus: "open", invoiceDate: new Date("2026-01-12") },
+    { number: 1005, customer: customers[4], netTotal: 650, status: "sent", paymentStatus: "partially_paid", invoiceDate: new Date("2026-01-15") },
+    { number: 1006, customer: customers[0], netTotal: 950, status: "sent", paymentStatus: "paid", invoiceDate: new Date("2026-02-01") },
+    { number: 1007, customer: customers[1], netTotal: 780, status: "sent", paymentStatus: "open", invoiceDate: new Date("2026-02-04") },
+    { number: 1008, customer: customers[2], netTotal: 430, status: "sent", paymentStatus: "paid", invoiceDate: new Date("2026-02-08") },
+    { number: 1009, customer: customers[3], netTotal: 1100, status: "sent", paymentStatus: "paid", invoiceDate: new Date("2026-02-10") },
+    { number: 1010, customer: customers[4], netTotal: 720, status: "sent", paymentStatus: "open", invoiceDate: new Date("2026-02-14") },
 ];
 
-db.invoices.insertMany(invoices);
+invoiceConfigs.forEach(cfg => {
+    const invoiceId = new ObjectId(
+        String(cfg.number).padStart(24, "0")
+    );
 
-print("Seed completed.");
+    const invoice = createInvoice({
+        _id: invoiceId,
+        ...cfg,
+    });
+
+    upsert("invoices", { _id: invoice._id }, invoice);
+});
+
+// -----------------------------------------------------------------------------
+// Done
+// -----------------------------------------------------------------------------
+
+print("Seed completed (idempotent mode).");
 print(`User ID: ${userId}`);
 print(`Customers: ${customers.length}`);
-print(`Invoices: ${invoices.length}`);
+print(`Invoices: ${invoiceConfigs.length}`);

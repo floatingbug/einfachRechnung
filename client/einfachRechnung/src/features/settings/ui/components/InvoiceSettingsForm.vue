@@ -99,7 +99,7 @@ function onSubmit(){
 
 
 			<div class="field">
-				<label>Startnummer</label>
+				<label>Rechnungsnummer beginnt mit</label>
 
 				<InputNumber
 					v-model="form.invoiceNumberStart"

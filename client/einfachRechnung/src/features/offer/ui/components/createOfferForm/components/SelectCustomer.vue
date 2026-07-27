@@ -1,48 +1,44 @@
 <script setup>
-import {ref, onMounted, computed} from "vue";
-import Select from "primevue/select";
-import {useCustomerStore} from "@/features/customer/store/useCustomerStore.js";
+import { ref, onMounted, watch, computed } from 'vue'
+import Select from 'primevue/select'
+import { useCustomerStore } from '@/features/customer/store/useCustomerStore.js'
 
+const customerStore = useCustomerStore()
+const customers = ref([])
+const customerId = ref()
 
-const props = defineProps({
-	modelValue: {
-		type: String,
-		default: "",
-	},
+const customerOptions = computed(() => {
+	return customers.value.map((customer) => ({
+		...customer,
+		label:
+			customer.customerType === "private"
+				? `${customer.firstName} ${customer.lastName}`.trim()
+				: customer.companyName,
+	}));
 });
 
-const emit = defineEmits([
-	"update:modelValue",
-]);
-
-
-const customerStore = useCustomerStore();
-const customers = ref([]);
-
-const selectedCustomerId = computed({
-	get(){
-		return props.modelValue;
-	},
-
-	set(customerId){
-		emit("update:modelValue", customerId);
-	},
-});
+const emit = defineEmits(['customerSelected'])
 
 onMounted(async () => {
-	customers.value = await customerStore.findCustomers();
-});
+	customers.value = await customerStore.getCustomers()
+})
 
+watch(customerId, () => {
+	const selectedCustomer = customers.value.find(
+		(customer) => customer.id === customerId.value,
+	)
 
+	emit('customerSelected', selectedCustomer)
+})
 </script>
 
 <template>
 	<Select
-		v-model="selectedCustomerId"
-		:options="customers"
-		optionLabel="name"
+		v-model="customerId"
+		:options="customerOptions"
+		optionLabel="label"
 		optionValue="id"
-		placeholder="Select customer"
+		placeholder="Kunde Auswählen"
 		filter
 		showClear
 		fluid

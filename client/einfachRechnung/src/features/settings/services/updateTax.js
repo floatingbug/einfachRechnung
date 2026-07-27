@@ -2,10 +2,10 @@ import {settingsApi} from "../api";
 import {mapDtoToTaxEntity} from "../mappers";
 
 
-export async function updateTax({data}){
-	const response = await settingsApi.updateTax({data});
+export async function updateTax({taxSettings}){
+	const updatedTax = await settingsApi.updateTax({taxSettings});
 
 	return mapDtoToTaxEntity({
-		dto: response.data?.tax ?? null,
+		dto: updatedTax,
 	});
 };

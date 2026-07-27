@@ -1,35 +1,22 @@
-const DEFAULT_OFFER = {
-	id: "",
+export function createOfferEntity() {
+	const date = new Date();
+	const dateIn7Days = new Date(date);
+	dateIn7Days.setDate(dateIn7Days.getDate() + 7);
 
-	offerNumber: "",
-
-	title: "",
-	description: "",
-
-	customerId: "",
-
-	status: "draft",
-
-	createdAt: "",
-	updatedAt: "",
-
-	currency: "EUR",
-	taxRate: 19,
-
-	pricingMode: "net",
-	taxIncluded: false,
-
-	validUntil: null,
-
-	notes: "",
-
-	items: [],
-};
-
-
-export function createOfferEntity({offer} = {}){
 	return {
-		...DEFAULT_OFFER,
-		...offer,
+		customerId: null,
+
+		offerDate: date.toISOString(),
+		validUntil: dateIn7Days.toISOString(),
+
+		project: "",
+
+		discountType: "none",
+		discountValue: null,
+
+		introduction: "Vielen Dank für Ihre Anfrage.\nGerne unterbreiten wir Ihnen folgendes Angebot.",
+		closing: "Wir freuen uns auf Ihren Auftrag.\nFür Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung.",
+
+		items: [],
 	};
 }

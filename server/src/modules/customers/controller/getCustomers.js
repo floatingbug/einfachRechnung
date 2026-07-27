@@ -3,7 +3,9 @@ const services = require("../services");
 
 
 module.exports = catchAsync(async (req, res, next) => {
-    const customers = await services.getCustomers();
+    const customers = await services.getCustomers({
+        userId: req.user.id,
+    });
 
 
     res.json({

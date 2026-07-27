@@ -1,4 +1,7 @@
-*,
+@use "@/shared/styles/breakpoints" as bp;
+@use "@/shared/styles/media" as media;
+
+
 *::before,
 *::after {
 	box-sizing: border-box;
@@ -16,4 +19,37 @@ body {
 		sans-serif;
 	padding: 0;
 	margin: 0;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	margin-top: var(--space-xl);
+}
+
+.input {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+}
+
+.input-checkbox {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+}
+
+.input-group {
+	display: grid;
+	gap: var(--space-xl);
+
+
+	@include media.up(bp.$bp-md) {
+		grid-template-columns: 1fr 1fr;
+
+		> :first-child {
+			grid-column: 1 / -1;
+		}
+	}
 }

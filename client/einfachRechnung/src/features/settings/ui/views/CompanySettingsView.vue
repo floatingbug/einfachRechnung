@@ -19,8 +19,10 @@ async function onCompanySettingsFormSubmit(event){
 		const result = await settingsStore.updateCompany({
 			company: event.data,
 		});
+		console.log(result);
 	}
 	catch(error){
+		console.log(error);
 	}
 	finally{
 		toast.add({

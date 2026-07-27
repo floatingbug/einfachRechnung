@@ -8,13 +8,13 @@ const settingsStore = useSettingsStore();
 
 
 onMounted(async () => {
-	await settingsStore.findTax();
+	await settingsStore.getTax();
 });
 
 async function onTaxSettingsFormSubmit(event){
 	try{
 		settingsStore.updateTax({
-			data: event.data,
+			taxSettings: event.data,
 		});
 	}
 	catch(error){

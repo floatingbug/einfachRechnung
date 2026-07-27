@@ -6,6 +6,8 @@ import {getInvoice} from "./getInvoice.js";
 import {updateInvoice} from "./updateInvoice.js";
 import {getTax} from "./getTax.js";
 import {updateTax} from "./updateTax.js";
+import {getOffer} from "./getOffer.js";
+import {updateOffer} from "./updateOffer.js";
 
 
 export const actions = {
@@ -13,8 +15,10 @@ export const actions = {
 	getEmail,
 	getInvoice,
 	getTax,
+	getOffer,
 	updateCompany,
 	updateEmail,
 	updateInvoice,
 	updateTax,
+	updateOffer,
 };

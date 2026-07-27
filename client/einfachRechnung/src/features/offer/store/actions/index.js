@@ -1,6 +1,5 @@
-import {draft} from "./draft";
-console.log(draft);
+import {useCases} from "./useCases";
 
 export default {
-	...draft,
+	...useCases,
 };

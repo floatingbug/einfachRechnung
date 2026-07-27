@@ -10,14 +10,15 @@ const settingsStore = useSettingsStore();
 
 
 onMounted(async () => {
-	await settingsStore.findEmail();
+	await settingsStore.getEmail();
 });
 
 async function onEmailSettingsFormSubmit(event){
 	try{
-		await settingsStore.updateEmail({data: event.data});
+		await settingsStore.updateEmail({emailSettings: event.data});
 	}
 	catch(error){
+		console.log(error);
 	}
 	finally{
 		toast.add({

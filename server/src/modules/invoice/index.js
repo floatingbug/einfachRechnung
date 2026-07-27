@@ -1,10 +1,11 @@
 const router = require("express").Router();
 const controller = require("./controller");
 const validator = require("./validator");
+const {authUser} = require("../../middlewares");
 
 
 router.post("/", validator.create, controller.create);
-router.get("/", controller.findMany);
+router.get("/", authUser, controller.findMany);
 router.get("/:invoiceId", validator.findById, controller.findById);
 router.patch("/:invoiceId/send", validator.send, controller.send);
 router.patch("/:invoiceId/cancel", validator.cancel, controller.cancel);

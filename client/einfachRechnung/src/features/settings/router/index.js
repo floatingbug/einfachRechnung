@@ -1,8 +1,10 @@
 import {AppLayout} from "@/app/layouts";
-import {CompanySettingsView,
+import {
+	CompanySettingsView,
 	InvoiceSettingsView,
 	EmailSettingsView,
 	TaxSettingsView,
+	OfferSettingsView,
 } from "../ui/views";
 
 
@@ -26,6 +28,10 @@ export default [
 			{
 				path: "email",
 				component: EmailSettingsView,
+			},
+			{
+				path: "offer",
+				component: OfferSettingsView,
 			},
 		],
 	},

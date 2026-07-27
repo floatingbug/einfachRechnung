@@ -1,17 +1,22 @@
 const DEFAULT_INVOICE = {
 	invoicePrefix: "",
-	invoiceNumberStart: 0,
-	invoiceNumberFormat: "",
+	nextInvoiceNumber: 1,
+	invoiceNumberFormat: "{prefix}{year}-{number}",
 
-	defaultPaymentTermsDays: 0,
-	defaultDueDays: 0,
+	defaultPaymentTermsDays: 14,
 
-	currency: "",
-	language: "",
+	currency: "EUR",
+	language: "de",
+
+	defaultTaxRate: 19,
 
 	autoSendEnabled: false,
 
-	defaultTaxRate: 0,
+	defaultIntroduction:
+		"Vielen Dank für Ihren Auftrag.",
+
+	defaultClosing:
+		"Vielen Dank für Ihr Vertrauen.\nFür Rückfragen stehen wir Ihnen gerne zur Verfügung.",
 };
 
 

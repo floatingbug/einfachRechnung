@@ -9,6 +9,12 @@ export default function getSettingsItems({router}){
 				command: () => router.push("/settings/company"),
 			},
 			{
+				id: "offerSettings",
+				label: "Angebots Einstellungen",
+				icon: "pi pi-file",
+				command: () => router.push("/settings/offer"),
+			},
+			{
 				id: "invoiceSettings",
 				label: "Rechnungs Einstellungen",
 				icon: "pi pi-file",

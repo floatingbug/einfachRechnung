@@ -10,13 +10,13 @@ const settingsStore = useSettingsStore();
 
 
 onMounted(async () => {
-	await settingsStore.findInvoice();
+	await settingsStore.getInvoice();
 });
 
 async function onInvoiceSettingsFormSubmit(event){
 	try{
-		await settingsStore.updateInvoice({
-			data: event.data,
+		const result = await settingsStore.updateInvoice({
+			invoiceSettings: event.data,invoiceSettings: event.data,
 		});
 	}
 	catch(error){

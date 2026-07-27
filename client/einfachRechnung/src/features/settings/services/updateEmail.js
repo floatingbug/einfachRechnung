@@ -2,10 +2,10 @@ import {settingsApi} from "../api";
 import {mapDtoToEmailEntity} from "../mappers";
 
 
-export async function updateEmail({data}){
-	const response = await settingsApi.updateEmail({data});
+export async function updateEmail({emailSettings} = {}){
+	const updatedEmail = await settingsApi.updateEmail({emailSettings});
 
 	return mapDtoToEmailEntity({
-		dto: response.data.email ?? null,
+		dto: updatedEmail,
 	});
 }
