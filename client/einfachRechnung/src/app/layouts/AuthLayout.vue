@@ -1,6 +1,4 @@
 <script setup>
-import { Sidebar, Topbar } from "../../shared/components";
-
 </script>
 
 

@@ -3,23 +3,24 @@ import {useRouter} from "vue-router";
 import {useAuthStore} from "../../store";
 import {AuthLayout} from "../layouts";
 import {SignUpForm} from "../components";
+import {useToast} from "primevue/usetoast";
 
 
 const authStore = useAuthStore();
 const router = useRouter();
+const toast = useToast();
 
 
 async function onSubmit(event){
 	try{
-		const result = await authStore.signUp({
+		await authStore.signUp({
 			credentials: event,
 		});
 
 		router.push("/auth/verify-email");
 	}
-	catch(error){
-		console.log("--->", error);
-		console.log(error.response.data);
+	catch {
+		toast.add({severity: "error", summary: "Registrierung fehlgeschlagen", detail: "Bitte versuchen Sie es erneut.", life: 5000});
 	}
 }
 

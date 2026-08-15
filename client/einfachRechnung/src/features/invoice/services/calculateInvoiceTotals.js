@@ -1,10 +1,11 @@
 export default function calculateInvoiceTotals(items){
+	const roundCurrency = value => Math.round((value + Number.EPSILON) * 100) / 100;
 	let netTotal = 0;
 	const taxMap = {};
 
 	for(const item of items){
 		const net = item.quantity * item.unitPrice;
-		const tax = net * (item.taxRate / 100);
+		const tax = roundCurrency(net * (item.taxRate / 100));
 
 		netTotal += net;
 
@@ -12,15 +13,15 @@ export default function calculateInvoiceTotals(items){
 			taxMap[item.taxRate] = 0;
 		}
 
-		taxMap[item.taxRate] += tax;
+		taxMap[item.taxRate] = roundCurrency(taxMap[item.taxRate] + tax);
 	}
 
-	const taxTotal = Object.values(taxMap).reduce((a, b) => a + b, 0);
+	const taxTotal = roundCurrency(Object.values(taxMap).reduce((a, b) => a + b, 0));
 
 	return {
 		netTotal,
 		taxBreakdown: taxMap,
 		taxTotal,
-		grossTotal: netTotal + taxTotal,
+		grossTotal: roundCurrency(netTotal + taxTotal),
 	};
 }

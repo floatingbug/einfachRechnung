@@ -2,8 +2,7 @@ import {services} from "../../services";
 
 
 export async function updateEmail({emailSettings}){
-	services.updateEmail({emailSettings})
-	const updatedEmail = await services.updatedEmail({emailSettings});
+	const updatedEmail = await services.updateEmail({emailSettings});
 
 	this.email = updatedEmail;
 }

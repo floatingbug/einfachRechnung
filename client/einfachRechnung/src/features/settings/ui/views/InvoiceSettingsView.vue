@@ -15,12 +15,13 @@ onMounted(async () => {
 
 async function onInvoiceSettingsFormSubmit(event){
 	try{
-		const result = await settingsStore.updateInvoice({
-			invoiceSettings: event.data,invoiceSettings: event.data,
+		await settingsStore.updateInvoice({
+			invoiceSettings: event.data,
 		});
 	}
-	catch(error){
-		console.log(error);
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "Rechnungseinstellungen konnten nicht gespeichert werden.", life: 5000});
+		return;
 	}
 	finally{
 		toast.add({

@@ -26,7 +26,7 @@ async function getTax(){
 }
 
 async function getOffer(){
-	const {data} = await http.get("settings/offer");
+	const {data} = await http.get("/settings/offer");
 
 	return data;
 }
@@ -72,7 +72,7 @@ async function updateOffer({offerSettings}){
 		"/settings/offer",
 		offerSettings,
 	);
-
+	return data;
 }
 
 
@@ -88,4 +88,3 @@ export const settingsApi = {
 	updateEmail,
 	updateOffer,
 };
-

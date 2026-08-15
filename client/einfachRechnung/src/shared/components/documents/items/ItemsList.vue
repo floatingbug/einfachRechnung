@@ -5,7 +5,7 @@ import {
 } from "./components";
 
 
-const props = defineProps({
+defineProps({
 	items: {
 		type: Array,
 		default: () => [],

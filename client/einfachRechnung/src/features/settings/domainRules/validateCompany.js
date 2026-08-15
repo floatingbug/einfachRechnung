@@ -1,10 +1,8 @@
-const COUNTRY_CODE_REGEX = /^[A-Z]{2}$/;
-
 const VALID_COUNTRY_CODES = ["DE", "AT", "CH"];
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const PHONE_REGEX = /^[0-9+\-()\/\s]+$/;
+const PHONE_REGEX = /^[0-9+\-()/\s]+$/;
 
 const VAT_ID_REGEX = {
 	DE: /^DE[0-9]{9}$/,

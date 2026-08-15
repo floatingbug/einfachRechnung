@@ -1,4 +1,4 @@
-import customerApi from "../api";
+import {getCustomers} from "./getCustomers.js";
 
 export async function findCustomerService({
 	email = "",
@@ -7,11 +7,6 @@ export async function findCustomerService({
 		return null;
 	}
 
-	const result = await customerApi.findMany({
-		query: { email },
-	});
-
-	const items = result?.data?.items || [];
-
-	return items.length ? items[0] : null;
+	const customers = await getCustomers({query: {email}});
+	return customers.find(customer => customer.email.toLocaleLowerCase() === email.toLocaleLowerCase()) ?? null;
 }

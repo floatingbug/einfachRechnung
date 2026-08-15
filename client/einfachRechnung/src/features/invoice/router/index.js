@@ -1,7 +1,4 @@
 import {AppLayout} from "@/app/layouts";
-import InvoiceView from "../ui/views/InvoiceView.vue";
-import InvoiceListView from "../ui/views/InvoiceListView.vue";
-import CreateInvoiceView from "../ui/views/CreateInvoiceView.vue";
 
 
 export default [
@@ -16,16 +13,24 @@ export default [
 		children: [
 			{
 				path: "",
-				component: InvoiceListView,
+				component: () => import("../ui/views/InvoiceListView.vue"),
 				meta: {
 					breadcrumb: "Liste"
 				},
 			},
 			{
 				path: "create",
-				component: CreateInvoiceView,
+				component: () => import("../ui/views/CreateInvoiceView.vue"),
 				meta: {
 					breadcrumb: "Erstellen"
+				},
+			},
+			{
+				path: ":invoiceId",
+				name: "invoice-details",
+				component: () => import("../ui/views/InvoiceView.vue"),
+				meta: {
+					breadcrumb: "Details",
 				},
 			},
 		],

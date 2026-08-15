@@ -55,14 +55,39 @@ function onOfferDetailsAction(event){
 		break;
 
 		case "sendMail" :
+			sendOffer();
 		break;
 
 		case "convert" :
+			convertToInvoice();
 		break;
 
 		case "delete" :
 			deleteOffer();
 		break;
+	}
+}
+
+async function sendOffer(){
+	try {
+		await offerStore.sendOffer({offerNumber: offer.value.offerNumber});
+		toast.add({severity: "success", summary: "Angebot versendet", life: 5000});
+		await loadOffer();
+	}
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "Angebot konnte nicht versendet werden.", life: 5000});
+	}
+}
+
+async function convertToInvoice(){
+	try {
+		const result = await offerStore.convertToInvoice({offerNumber: offer.value.offerNumber});
+		const invoice = result.invoice ?? result;
+		toast.add({severity: "success", summary: "Rechnung erstellt", life: 5000});
+		await router.push({name: "invoice-details", params: {invoiceId: invoice.id ?? invoice.invoiceNumber}});
+	}
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "Angebot konnte nicht umgewandelt werden.", life: 5000});
 	}
 }
 
@@ -76,8 +101,8 @@ async function showPdf() {
 
 		window.open(url, "_blank");
 	}
-	catch (error) {
-		console.error(error);
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "PDF konnte nicht geöffnet werden.", life: 5000});
 	}
 }
 
@@ -96,8 +121,8 @@ async function downloadPdf() {
 
 		URL.revokeObjectURL(url);
 	}
-	catch (error) {
-		console.error(error);
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "PDF konnte nicht heruntergeladen werden.", life: 5000});
 	}
 }
 
@@ -128,8 +153,8 @@ async function deleteOffer(){
 
 		router.push("/offer/list");
 	}
-	catch (error) {
-		console.log(error);
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "Angebot konnte nicht gelöscht werden.", life: 5000});
 	}
 }
 
@@ -143,8 +168,8 @@ async function loadOffer() {
 			offerNumber,
 		});
 	}
-	catch (error) {
-		console.error(error);
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "Angebot konnte nicht geladen werden.", life: 5000});
 	}
 }
 

@@ -1,5 +1,3 @@
-const OFFER_PREFIX_REGEX = /^[A-Z0-9\-_]+$/;
-
 // --------------------
 // main validator
 // --------------------

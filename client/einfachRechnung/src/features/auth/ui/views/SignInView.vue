@@ -3,23 +3,24 @@ import {useRouter} from "vue-router";
 import {useAuthStore} from "../../store";
 import {AuthLayout} from "../layouts";
 import {SignInForm} from "../components";
+import {useToast} from "primevue/usetoast";
 
 
 const authStore = useAuthStore();
 const router = useRouter();
+const toast = useToast();
 
 
 async function onSubmit(event){
 	try{
-		const result = await authStore.signIn({
+		await authStore.signIn({
 			credentials: event,
 		});
 
 		router.push("/");
 	}
-	catch(error){
-		console.log("--->", error);
-		console.log(error.response.data);
+	catch {
+		toast.add({severity: "error", summary: "Anmeldung fehlgeschlagen", detail: "Bitte prüfen Sie Ihre Zugangsdaten.", life: 5000});
 	}
 }
 

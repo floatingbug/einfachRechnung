@@ -5,7 +5,6 @@ import router from './app/router'
 import customPreset from './shared/config/primevue/customPreset.js'
 import Button from 'primevue/button'
 import ToastService from 'primevue/toastservice'
-import { useAuthStore } from './features/auth/store'
 import { createPinia } from 'pinia'
 import Divider from 'primevue/divider'
 
@@ -14,7 +13,6 @@ import 'primeicons/primeicons.css'
 
 const app = createApp(App)
 const pinia = createPinia()
-const authStore = useAuthStore(pinia)
 
 app.use(pinia)
 app.use(router)

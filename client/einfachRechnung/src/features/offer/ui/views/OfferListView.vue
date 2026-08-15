@@ -23,8 +23,8 @@ onMounted(async () => {
 		tableItems.value = getOffersResult.items;
 		totalRecords.value = getOffersResult.pagination.total;
 	}
-	catch(error){
-		console.log(error);
+	catch {
+		tableItems.value = [];
 	}
 
 	isInitializing.value = false;
@@ -32,7 +32,6 @@ onMounted(async () => {
 
 // --- event handler ---
 async function onPaginationAction(event){
-console.log(event);
 	const getOffersResult = await offerStore.getOffers({
 		limit: event.rows,
 		page: event.page +1,

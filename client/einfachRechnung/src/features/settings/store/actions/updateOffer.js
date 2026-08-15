@@ -6,5 +6,6 @@ export async function updateOffer({offerSettings}){
 		offerSettings,
 	});
 
+	this.offer = updatedSettings;
 	return updatedSettings;
 }

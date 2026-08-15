@@ -1,7 +1,7 @@
 <script setup>
 import ItemCard from "./ItemCard.vue";
 
-const props = defineProps({
+defineProps({
 	items: {
 		type: Array,
 		default: () => [],

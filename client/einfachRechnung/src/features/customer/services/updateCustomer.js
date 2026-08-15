@@ -1,4 +1,5 @@
 import {customerApi} from "../api";
+import {mapCustomerDtoToEntity} from "../mappers";
 
 
 export async function updateCustomer({customer}){
@@ -9,7 +10,7 @@ export async function updateCustomer({customer}){
 
 		return {
 			success: true,
-			customer: updateCustomer,
+			customer: mapCustomerDtoToEntity(updatedCustomer),
 		};
 	}
 	catch(error){

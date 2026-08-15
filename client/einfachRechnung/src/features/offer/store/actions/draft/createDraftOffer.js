@@ -1,6 +1,3 @@
-import {createOfferEntity} from "../../../entities";
-
-
 export function createDraftOffer({customerId}){
 	this.draftOffer = {
 		customerId,
@@ -21,5 +18,4 @@ export function createDraftOffer({customerId}){
 		items: [],
 	};
 
-	console.log(this.draftOffer);
 }

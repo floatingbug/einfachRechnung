@@ -9,19 +9,24 @@ const emit = defineEmits(["action"]);
 const menu = ref(null);
 const items = [
 	{
-		label: "PDF anzeigen"
+		label: "PDF anzeigen",
+		command: () => emit("action", {action: "showPdf"}),
 	},
 	{
-		label: "PDF herunterladen"
+		label: "PDF herunterladen",
+		command: () => emit("action", {action: "downloadPdf"}),
 	},
 	{
-		label: "Per E-Mail senden"
+		label: "Per E-Mail senden",
+		command: () => emit("action", {action: "sendMail"}),
 	},
 	{
-		label: "In Rechnung umwandeln"
+		label: "In Rechnung umwandeln",
+		command: () => emit("action", {action: "convert"}),
 	},
 	{
-		label: "Löschen"
+		label: "Löschen",
+		command: () => emit("action", {action: "delete"}),
 	},
 ];
 

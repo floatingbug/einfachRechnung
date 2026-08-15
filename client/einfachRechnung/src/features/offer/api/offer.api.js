@@ -63,6 +63,16 @@ async function deleteOffer({offerNumber}){
 	return data;
 }
 
+async function sendOffer({offerNumber}){
+	const {data} = await http.post(`/offers/${offerNumber}/send`);
+	return data;
+}
+
+async function convertToInvoice({offerNumber}){
+	const {data} = await http.post(`/offers/${offerNumber}/convert`);
+	return data;
+}
+
 
 export default {
 	getOffers,
@@ -71,6 +81,8 @@ export default {
 	getOfferByOfferNumber,
 	updateOffer,
 	deleteOffer,
+	sendOffer,
+	convertToInvoice,
 
 	getPdf,
 };

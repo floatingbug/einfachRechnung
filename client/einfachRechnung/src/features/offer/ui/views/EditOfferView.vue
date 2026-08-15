@@ -57,8 +57,8 @@ async function updateOffer(){
 
 		router.push(`/offer/details/${offerToEdit.value.offerNumber}`)
 	}
-	catch (error) {
-		console.log(error);
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "Angebot konnte nicht geändert werden.", life: 5000});
 	}
 }
 

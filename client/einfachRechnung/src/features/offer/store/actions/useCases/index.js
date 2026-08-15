@@ -6,6 +6,8 @@ import {updateOffer} from "./updateOffer.js";
 import {deleteOffer} from "./deleteOffer.js";
 
 import {getPdf} from "./getPdf.js";
+import {sendOffer} from "./sendOffer.js";
+import {convertToInvoice} from "./convertToInvoice.js";
 
 
 export const useCases = {
@@ -17,4 +19,6 @@ export const useCases = {
 	deleteOffer,
 
 	getPdf,
+	sendOffer,
+	convertToInvoice,
 };

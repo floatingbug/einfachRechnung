@@ -31,8 +31,8 @@ async function resendVerificationEmail({email}){
 	return data;
 }
 
-async function refreshToken({token}){
-	const {data} = await http.post("/auth/refresh");
+async function refreshToken(){
+	const {data} = await http.post("/auth/refresh", undefined, {skipAuthRefresh: true});
 
 	return data.accessToken;
 }

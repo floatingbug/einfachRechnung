@@ -42,8 +42,8 @@ onMounted(async () => {
 	try{
 		customerStore.customers = await customerStore.getCustomers();
 	}
-	catch(error){
-		console.log("--->", error);
+	catch {
+		customerStore.customers = [];
 	}
 });
 

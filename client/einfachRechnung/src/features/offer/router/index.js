@@ -1,8 +1,4 @@
 import {AppLayout} from "@/app/layouts";
-import CreateOfferView from "../ui/views/CreateOfferView.vue";
-import OfferDetailsView from "../ui/views/OfferDetailsView.vue";
-import OfferListView from "../ui/views/OfferListView.vue";
-import EditOfferView from "../ui/views/EditOfferView.vue";
 
 
 export default [
@@ -10,21 +6,20 @@ export default [
 		path: "/offer",
 		component: AppLayout,
 		meta: {
-			requiresAuth: true,
 			breadcrumb: "Angebote",
 			requiresAuth: true,
 		},
 		children: [
 			{
 				path: "create",
-				component: CreateOfferView,
+				component: () => import("../ui/views/CreateOfferView.vue"),
 				meta: {
 					breadcrumb: "Erstellen",
 				},
 			},
 			{
 				path: "list",
-				component: OfferListView,
+				component: () => import("../ui/views/OfferListView.vue"),
 				meta: {
 					breadcrumb: "Liste",
 				},
@@ -32,14 +27,14 @@ export default [
 			{
 				path: "details/:offerNumber",
 				name: "offer-details",
-				component: OfferDetailsView,
+				component: () => import("../ui/views/OfferDetailsView.vue"),
 				meta: {
 					breadcrumb: "Details",
 				},
 			},
 			{
 				path: "edit/:offerNumber",
-				component: EditOfferView,
+				component: () => import("../ui/views/EditOfferView.vue"),
 				meta: {
 					breadcrumb: "Bearbeiten",
 				},

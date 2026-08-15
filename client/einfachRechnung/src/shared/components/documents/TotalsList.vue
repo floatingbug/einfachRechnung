@@ -2,7 +2,7 @@
 import {formatCurrency} from "../../helpers";
 
 
-const props = defineProps({
+defineProps({
 	totals: {
 		type: Object,
 		required: true,

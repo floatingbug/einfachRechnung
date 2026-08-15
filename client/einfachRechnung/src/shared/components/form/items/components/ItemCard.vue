@@ -3,7 +3,7 @@ import Card from "primevue/card";
 import {formatCurrency} from "@/shared/helpers";
 
 
-const props = defineProps({
+defineProps({
 	item: {
 		type: Object,
 		required: true,

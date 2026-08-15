@@ -2,10 +2,10 @@
 import {ItemCard} from "@/shared/components";
 
 
-const props = defineProps({
+defineProps({
 	items: {
 		type: Array,
-		default: [],
+		default: () => [],
 	},
 });
 

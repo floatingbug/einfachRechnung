@@ -15,8 +15,8 @@ onMounted(async () => {
 	try{
 		await invoiceStore.getInvoices({limit: PAGINATION_LIMIT});
 	}
-	catch(error){
-		console.log(error);
+	catch {
+		invoiceStore.invoices = [];
 	}
 
 	isInitializing.value = false;
@@ -24,7 +24,7 @@ onMounted(async () => {
 
 // --- event handler ---
 async function onPaginationAction(event){
-	const result = await invoiceStore.getInvoices({
+	await invoiceStore.getInvoices({
 		limit: event.rows,
 		page: event.page +1,
 	});
@@ -32,7 +32,7 @@ async function onPaginationAction(event){
 
 function onInvoiceListActions(event){
 	if(event.action === "openInvoice"){
-		router.push(`/${event.invoiceNumber}`);
+		router.push({name: "invoice-details", params: {invoiceId: event.invoiceId}});
 	}
 }
 </script>

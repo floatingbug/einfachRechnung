@@ -17,8 +17,9 @@ async function onEmailSettingsFormSubmit(event){
 	try{
 		await settingsStore.updateEmail({emailSettings: event.data});
 	}
-	catch(error){
-		console.log(error);
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "E-Mail-Daten konnten nicht gespeichert werden.", life: 5000});
+		return;
 	}
 	finally{
 		toast.add({

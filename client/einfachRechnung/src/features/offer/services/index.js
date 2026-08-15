@@ -7,6 +7,8 @@ import {updateOffer} from "./useCases/updateOffer.js";
 import {deleteOffer} from "./useCases/deleteOffer.js";
 
 import {getPdf} from "./useCases/getPdf.js";
+import {sendOffer} from "./useCases/sendOffer.js";
+import {convertToInvoice} from "./useCases/convertToInvoice.js";
 
 
 export const services = {
@@ -19,4 +21,6 @@ export const services = {
 	deleteOffer,
 
 	getPdf,
+	sendOffer,
+	convertToInvoice,
 };

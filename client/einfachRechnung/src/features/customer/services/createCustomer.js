@@ -13,6 +13,11 @@ export async function createCustomer({draftCustomer = {}, existingCustomers = []
 		};
 	}
 
+	const normalizedEmail = draftCustomer.email?.trim().toLocaleLowerCase();
+	if(normalizedEmail && existingCustomers.some(customer => customer.email?.trim().toLocaleLowerCase() === normalizedEmail)){
+		return {success: false, errors: {email: ["ALREADY_EXISTS"]}};
+	}
+
 	// --- persist ---
 	const customer = await customerApi.createCustomer({
 		customer: draftCustomer,

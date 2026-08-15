@@ -4,6 +4,7 @@ const DEFAULT_INVOICE = {
 	seller: null,
 	customer: null,
 	invoiceDate: null,
+	serviceDate: null,
 	dueDate: null,
 	currency: "",
 	items: [],
@@ -16,6 +17,7 @@ const DEFAULT_INVOICE = {
 	paymentStatus: "",
 	status: "",
 	payments: [],
+	reminders: [],
 	createdAt: null,
 	updatedAt: null,
 };

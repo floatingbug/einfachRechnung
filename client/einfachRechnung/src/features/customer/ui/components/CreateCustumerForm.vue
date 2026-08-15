@@ -1,7 +1,6 @@
 <script setup>
 import { useCustomerStore } from "../../store/useCustomerStore.js";
 import InputText from "primevue/inputtext";
-import InputNumber from "primevue/inputnumber";
 import Card from "primevue/card";
 import Button from "primevue/button";
 import Message from "primevue/message";
@@ -61,7 +60,7 @@ function getError(field){
 				<!-- POSTAL CODE -->
 				<div class="input">
 					<label for="postalCode">Postleitzahl</label>
-					<InputNumber
+					<InputText
 						id="postalCode"
 						v-model="customerStore.draftCustomer.postalCode"
 					/>
@@ -106,7 +105,7 @@ function getError(field){
 				<!-- PHONE -->
 				<div class="input">
 					<label for="phone">Tel.</label>
-					<InputNumber
+					<InputText
 						id="phone"
 						v-model="customerStore.draftCustomer.phone"
 					/>
@@ -136,7 +135,7 @@ function getError(field){
 				<!-- VAT ID -->
 				<div class="input">
 					<label for="vatId">USt-IdNr.</label>
-					<InputNumber
+					<InputText
 						id="vatId"
 						v-model="customerStore.draftCustomer.vatId"
 					/>

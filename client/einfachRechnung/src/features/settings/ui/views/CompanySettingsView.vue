@@ -16,13 +16,13 @@ onMounted(async () => {
 
 async function onCompanySettingsFormSubmit(event){
 	try{
-		const result = await settingsStore.updateCompany({
+		await settingsStore.updateCompany({
 			company: event.data,
 		});
-		console.log(result);
 	}
-	catch(error){
-		console.log(error);
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "Firmendaten konnten nicht gespeichert werden.", life: 5000});
+		return;
 	}
 	finally{
 		toast.add({

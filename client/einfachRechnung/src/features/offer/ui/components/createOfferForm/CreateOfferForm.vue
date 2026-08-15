@@ -7,6 +7,7 @@ import DatePicker from "primevue/datepicker";
 import {LineItems, SelectCustomer} from "@/shared/components";
 import Textarea from "primevue/textarea";
 import {useSettingsStore} from "@/features/settings/store/useSettingsStore.js";
+import {useToast} from "primevue/usetoast";
 
 
 const offerStore = useOfferStore();
@@ -15,6 +16,7 @@ const router = useRouter();
 const customer = ref();
 const offer = ref();
 const itemSettings = ref();
+const toast = useToast();
 
 
 onMounted(async () => {
@@ -37,8 +39,8 @@ onMounted(async () => {
 		offer.value.project = "";
 		offer.value.items = [];
 	}
-	catch (error) {
-		console.log(error);
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "Angebotsvorgaben konnten nicht geladen werden.", life: 5000});
 	}
 });
 
@@ -56,8 +58,8 @@ async function saveOffer(){
 
 		router.push(`/offer/details/${offerNumber}`);
 	}
-	catch(error){
-		console.log(error);
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "Angebot konnte nicht gespeichert werden.", life: 5000});
 	}
 }
 

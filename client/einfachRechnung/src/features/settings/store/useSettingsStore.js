@@ -8,6 +8,7 @@ const useSettingsStore = defineStore("settings", {
 		email: {},
 		invoice: {},
 		tax: {},
+		offer: {},
 	}),
 
 	actions,

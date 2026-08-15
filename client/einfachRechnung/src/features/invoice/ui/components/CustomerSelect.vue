@@ -56,9 +56,11 @@ function selectCustomer(event){
 
 // --- create new ---
 async function createCustomer(){
-	const created = await customerStore.createCustomer({
-		data: newCustomer.value,
-	});
+	Object.assign(customerStore.draftCustomer, newCustomer.value);
+	const result = await customerStore.createCustomer();
+	if(!result.success) return;
+
+	const created = result.customer;
 
 	showCreateModal.value = false;
 

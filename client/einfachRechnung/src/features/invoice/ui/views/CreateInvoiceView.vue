@@ -1,6 +1,9 @@
 <script setup>
-import { reactive, computed } from "vue";
+import { reactive, computed, ref, onMounted } from "vue";
 import {services} from "../../services";
+import useInvoiceStore from "../../store/useInvoiceStore.js";
+import {useRouter} from "vue-router";
+import {useSettingsStore} from "@/features/settings/store/useSettingsStore.js";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 import Textarea from "primevue/textarea";
@@ -41,6 +44,34 @@ const form = reactive({
 	serviceDate: "",
 	note: ""
 });
+const invoiceStore = useInvoiceStore();
+const router = useRouter();
+const settingsStore = useSettingsStore();
+const isSaving = ref(false);
+const error = ref("");
+
+onMounted(async () => {
+	try {
+		await settingsStore.getCompany();
+		await settingsStore.getInvoice();
+		Object.assign(form.seller, {
+			name: settingsStore.company.companyName,
+			street: settingsStore.company.street,
+			postalCode: settingsStore.company.postalCode,
+			city: settingsStore.company.city,
+			vatId: settingsStore.company.vatId,
+			taxNumber: settingsStore.company.taxNumber,
+		});
+		const invoiceDate = new Date();
+		const dueDate = new Date(invoiceDate);
+		dueDate.setDate(dueDate.getDate() + (settingsStore.invoice.defaultPaymentTermsDays || 14));
+		form.invoiceDate = invoiceDate.toISOString().slice(0, 10);
+		form.dueDate = dueDate.toISOString().slice(0, 10);
+	}
+	catch {
+		error.value = "Standarddaten für die Rechnung konnten nicht geladen werden.";
+	}
+});
 
 function onCustomerSelect(customer){
 	form.customer = { ...customer };
@@ -60,6 +91,22 @@ function removeItem(index){
 	form.items.splice(index, 1);
 }
 
+async function submit(){
+	if(isSaving.value) return;
+	isSaving.value = true;
+	error.value = "";
+	try {
+		const invoice = await invoiceStore.createInvoice(form);
+		await router.push({name: "invoice-details", params: {invoiceId: invoice.id || invoice.invoiceNumber}});
+	}
+	catch {
+		error.value = "Die Rechnung konnte nicht gespeichert werden.";
+	}
+	finally {
+		isSaving.value = false;
+	}
+}
+
 // --- Calculations ---
 const totals = computed(() => {
 	return services.calculateInvoiceTotals(form.items);
@@ -76,7 +123,7 @@ const totals = computed(() => {
 			@select="onCustomerSelect"
 		/>
 
-		<form class="invoice-form">
+		<form class="invoice-form" @submit.prevent="submit">
 
 			<!-- Customer -->
 			<fieldset class="customer-section">
@@ -284,9 +331,10 @@ const totals = computed(() => {
 
 			<section class="actions">
 				<div class="section-btns-container">
-					<Button label="Abbrechen" severity="secondary" />
-					<Button label="Rechnung erstellen" />
+					<Button label="Abbrechen" severity="secondary" type="button" @click="router.push('/invoice')" />
+					<Button label="Rechnung erstellen" type="submit" :loading="isSaving" />
 				</div>
+				<p v-if="error" class="error">{{ error }}</p>
 			</section>
 
 		</form>

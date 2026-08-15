@@ -1,8 +1,8 @@
 import {authApi} from "../api";
 
 
-export async function refreshToken({token}){
-	const accessToken = await authApi.refreshToken({token});
+export async function refreshToken(){
+	const accessToken = await authApi.refreshToken();
 
 	return accessToken;
 }

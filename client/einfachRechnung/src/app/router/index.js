@@ -35,7 +35,7 @@ router.beforeEach(async (to) => {
 
         return true;
     }
-    catch (error) {
+    catch {
         authStore.signOut();
 
         return {

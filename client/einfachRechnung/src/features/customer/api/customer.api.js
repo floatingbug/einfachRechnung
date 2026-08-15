@@ -2,7 +2,7 @@ import http from "@/shared/api/http.client.js";
 
 
 async function getCustomers({query} = {}){
-	const {data} = await http.get("/customers");
+	const {data} = await http.get("/customers", {params: query});
 
 	return data.customers;
 }

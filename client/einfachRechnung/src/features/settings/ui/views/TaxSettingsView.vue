@@ -12,15 +12,7 @@ onMounted(async () => {
 });
 
 async function onTaxSettingsFormSubmit(event){
-	try{
-		settingsStore.updateTax({
-			taxSettings: event.data,
-		});
-	}
-	catch(error){
-	}
-	finally{
-	}
+	await settingsStore.updateTax({taxSettings: event.data});
 }
 
 </script>

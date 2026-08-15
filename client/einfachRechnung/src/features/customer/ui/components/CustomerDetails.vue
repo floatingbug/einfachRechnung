@@ -9,12 +9,12 @@ const customerStore = useCustomerStore();
 
 async function updateCustomer(){
 	try{
-		const result = await customerStore.updateCustomer();
+		await customerStore.updateCustomer();
 
 
 	}
-	catch(error){
-		console.log("--->", error);
+	catch {
+		return;
 	}
 
 }

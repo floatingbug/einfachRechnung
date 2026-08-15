@@ -82,7 +82,7 @@ const filters = ref({
 function onRowClick(event){
 	emit("action", {
 		action: "openInvoice",
-		invoiceNumber: event.data.invoiceNumber,
+		invoiceId: event.data.id,
 	});
 }
 </script>

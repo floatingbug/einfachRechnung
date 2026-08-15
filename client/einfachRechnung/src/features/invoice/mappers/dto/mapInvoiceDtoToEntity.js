@@ -31,6 +31,7 @@ export default function mapInvoiceDtoToEntity(dto = {}){
 			: null,
 
 		invoiceDate: dto.invoiceDate ?? null,
+		serviceDate: dto.serviceDate ?? null,
 
 		dueDate: dto.dueDate ?? null,
 
@@ -70,6 +71,8 @@ export default function mapInvoiceDtoToEntity(dto = {}){
 		payments: Array.isArray(dto.payments)
 			? dto.payments
 			: [],
+
+		reminders: Array.isArray(dto.reminders) ? dto.reminders : [],
 
 		createdAt: dto.createdAt ?? null,
 

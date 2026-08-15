@@ -5,9 +5,9 @@ import {
 } from "../mappers";
 
 
-export default async function create(form){
+export default async function createInvoice(form){
 	const payload = mapInvoiceFormToCreatePayload(form);
-	const result = await invoiceApi.create(payload);
+	const result = await invoiceApi.createInvoice({invoice: payload});
 
-	return mapInvoiceDtoToEntity(result.data)
+	return mapInvoiceDtoToEntity(result.invoice ?? result.data ?? result);
 }
