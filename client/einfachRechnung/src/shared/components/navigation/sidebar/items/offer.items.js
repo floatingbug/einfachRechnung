@@ -6,7 +6,7 @@ export default function getOfferItems({router}){
 				id: "offerList",
 				label: "Angebots Liste",
 				icon: "pi pi-list",
-				command: () => router.push("/offer"),
+				command: () => router.push("/offer/list"),
 			},
 			{
 				id: "createOffer",

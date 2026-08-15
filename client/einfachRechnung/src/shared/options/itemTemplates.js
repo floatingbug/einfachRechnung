@@ -2,71 +2,71 @@ export const itemTemplates = [
 	{
 		label: "Leere Position",
 		value: "empty",
-		create: () => ({
+		template :{
 			title: "",
 			description: "",
 			unit: "piece",
 			type: "service",
-		}),
+		},
 	},
 	{
 		label: "Anfahrt",
 		value: "travel",
-		create: () => ({
+		template: {
 			title: "Anfahrt",
 			description: "",
 			unit: "kilometer",
 			type: "service",
-		}),
+		},
 	},
 	{
 		label: "Lieferung",
 		value: "delivery",
-		create: () => ({
+		template: {
 			title: "Lieferung",
 			description: "",
 			unit: "flat",
 			type: "service",
-		}),
+		},
 	},
 	{
 		label: "Transport",
 		value: "transport",
-		create: () => ({
+		template: {
 			title: "Transport",
 			description: "",
 			unit: "hour",
 			type: "service",
-		}),
+		},
 	},
 	{
 		label: "Entsorgung",
 		value: "disposal",
-		create: () => ({
+		template: {
 			title: "Entsorgung",
 			description: "",
 			unit: "cubicMeter",
 			type: "service",
-		}),
+		},
 	},
 	{
 		label: "Kran / Hubgerät",
 		value: "equipment",
-		create: () => ({
+		template: {
 			title: "Kran / Hubgerät",
 			description: "",
 			unit: "hour",
 			type: "equipment",
-		}),
+		},
 	},
 	{
 		label: "Baustelleneinrichtung",
 		value: "constructionSite",
-		create: () => ({
+		template: {
 			title: "Baustelleneinrichtung",
 			description: "",
 			unit: "flat",
 			type: "service",
-		}),
+		},
 	},
 ];

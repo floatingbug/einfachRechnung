@@ -1,6 +1,6 @@
 <script setup>
-import {useRouter} from "vue-router";
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import {useRoute, useRouter} from "vue-router";
 import Toolbar from 'primevue/toolbar';
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
@@ -8,9 +8,12 @@ import InputText from "primevue/inputtext";
 import SplitButton from "primevue/splitbutton";
 import {UserMenu} from "./components";
 import {useAuthStore} from "@/features/auth/store";
+import { OfferDetailsActions } from "@/features/offer/ui/components";
+import {BreadCrumb} from "../../index.js";
 
 
 const authStore = useAuthStore();
+const route = useRoute();
 const router = useRouter();
 
 
@@ -44,6 +47,7 @@ async function onUserMenuActions(event){
 		}"
 	>
 		<template #start>
+			<BreadCrumb />
 		</template>
 
 		<template #center>

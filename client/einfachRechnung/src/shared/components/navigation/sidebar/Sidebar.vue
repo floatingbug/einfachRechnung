@@ -1,5 +1,4 @@
 <script setup>
-import {computed} from "vue";
 import {useRouter} from "vue-router";
 import getItems from "./getItems";
 import PanelMenu from 'primevue/panelmenu';

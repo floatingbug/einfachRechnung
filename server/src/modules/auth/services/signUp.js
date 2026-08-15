@@ -1,11 +1,12 @@
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const config = require("../../../config");
-const model = require("../models");
+const signUpModels = require("../models");
+const settingsServices = require("../../settings/services");
 const {sendVerificationEmail} = require("../utils");
 
 module.exports = async ({ name, email, password }) => {
-    const existing = await model.findByNameOrEmail({ name, email });
+    const existing = await signUpModels.findByNameOrEmail({ name, email });
 
     if (existing) {
         throw {
@@ -43,7 +44,7 @@ module.exports = async ({ name, email, password }) => {
         createdAt: new Date(),
     };
 
-    const result = await model.create({ user });
+    const result = await signUpModels.create({ user });
 
     if (!result.acknowledged) {
         throw {
@@ -51,6 +52,10 @@ module.exports = async ({ name, email, password }) => {
             message: "Failed to create user",
         };
     }
+
+    await settingsServices.createDefaultSettings({
+        userId: result.insertedId,
+    })
 
     // Send verification email
     await sendVerificationEmail({

@@ -10,15 +10,22 @@ export default [
 		meta: {
 			context: "customer",
 			requiresAuth: true,
+			breadcrumb: "Kunden",
 		},
 		children: [
 			{
 				path: "",
 				component: CustomersListView,
+				meta: {
+					breadcrumb: "Liste"
+				},
 			},
 			{
 				path: "create",
 				component: CreateCustomerView,
+				meta: {
+					breadcrumb: "Erstellen"
+				},
 			},
 		],
 	},

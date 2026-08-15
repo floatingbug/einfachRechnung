@@ -4,6 +4,7 @@ const updateInvoice = require("./updateInvoice");
 const updateTax = require("./updateTax");
 const updateEmail = require("./updateEmail");
 const updateOffer = require("./updateOffer");
+const createDefaultSettings = require("./createDefaultSettings");
 
 
 module.exports = {
@@ -13,4 +14,5 @@ module.exports = {
     updateTax,
     updateEmail,
     updateOffer,
+    createDefaultSettings,
 };

@@ -1,30 +1,41 @@
 <script setup>
 import {ref, onMounted} from "vue";
+import {useRouter} from "vue-router";
 import {useOfferStore} from "../../../store";
-import SelectCustomer from './components/SelectCustomer.vue';
 import InputText from 'primevue/inputtext';
 import DatePicker from "primevue/datepicker";
-import {LineItems} from "@/shared/components";
+import {LineItems, SelectCustomer} from "@/shared/components";
 import Textarea from "primevue/textarea";
+import {useSettingsStore} from "@/features/settings/store/useSettingsStore.js";
 
 
 const offerStore = useOfferStore();
+const settingsStore = useSettingsStore();
+const router = useRouter();
 const customer = ref();
 const offer = ref();
-const offerSettings = ref();
+const itemSettings = ref();
 
 
 onMounted(async () => {
 	try {
+		const offerSettings = await settingsStore.getOffer();
+		itemSettings.value = {
+			showItemNumbers: offerSettings.showItemNumber,
+			showTaxRatePerItem: offerSettings.showTaxRatePerItem,
+			taxRate: 19,
+		};
+
 		offer.value = await offerStore.getOfferTemplate();
 
 		const date = new Date();
 		const validUntil = new Date(date);
 		validUntil.setDate(date.getDate() + offer.value.defaultValidityDays);
+
 		offer.value.offerDate = date;
 		offer.value.validUntil = validUntil;
-
-		console.log(offer.value);
+		offer.value.project = "";
+		offer.value.items = [];
 	}
 	catch (error) {
 		console.log(error);
@@ -37,196 +48,193 @@ function onCustomerSelected(event){
 	offer.value.customerId = customer.value.id;
 }
 
-function onNewItems(event){
-	offer.value.items = event;
-}
-
 async function saveOffer(){
 	try{
-		const savedOffer = await offerStore.saveOffer({
+		const offerNumber = await offerStore.saveOffer({
 			offer: offer.value,
 		});
 
-		console.log(savedOffer);
+		router.push(`/offer/details/${offerNumber}`);
 	}
 	catch(error){
 		console.log(error);
 	}
 }
 
-function previewOffer(){
-
-}
-
-function saveAndSendOffer(){
-
-}
-
 </script>
 
 <template>
 	<div class="create-offer-form">
-		<div class="actions-top">
-			<h2>Kunde auswählen</h2>
+		<section class="first-section">
+			<div class="first-section-content">
+				<h2>Kunde auswählen</h2>
 
-			<SelectCustomer class="customer-select"
-				@customerSelected="onCustomerSelected"
-			/>
+				<div class="actions-top">
+					<SelectCustomer class="customer-select"
+						@customerSelected="onCustomerSelected"
+					/>
 
-			<Button class="add-customer"
-				label="Kunde hinzufügen"
-			/>
-		</div>
-
-		<Divider />
-
-		<div class="customer-preview" v-if="customer?.customerType === 'private'">
-			<h2>Kunde</h2>
-
-			<div class="customer-items-group">
-				<p>Vorname: {{customer.firstName}}</p>
-				<p>Nachname: {{customer.lastName}}</p>
-				<p>E-mail: {{customer.email}}</p>
-			</div>
-
-			<div class="customer-items-group">
-				<p>Straße: {{customer.street}}</p>
-				<p>Postleitzahl: {{customer.postalCode}}</p>
-				<p>Stadt: {{customer.city}}</p>
-			</div>
-		</div> <div class="customer-preview" v-if="customer?.customerType === 'company'">
-			<h2>Kunde</h2>
-
-			<div class="customer-items-group">
-				<p>Firmenname: {{customer.companyName}}</p>
-				<p>Kontaktperson: {{customer.contactPerson}}</p>
-				<p>E-mail: {{customer.email}}</p>
-			</div>
-
-			<div class="customer-items-group">
-				<p>Straße: {{customer.street}}</p>
-				<p>Postleitzahl: {{customer.postalCode}}</p>
-				<p>Stadt: {{customer.city}}</p>
-			</div>
-		</div>
-
-		<Divider />
-
-		<form v-if="customer"
-			@submit.prevent="onSubmit"
-		>
-			<div class="input-group">
-				<h2>Angebotsdaten</h2>
-
-				<div class="input">
-					<label for="offerDate">Angebotsdatum</label>
-					<DatePicker
-						v-model="offer.offerDate"
-						inline
+					<Button class="add-customer"
+						label="Kunde hinzufügen"
 					/>
 				</div>
 
-				<div class="input">
-					<label for="validUntil">Gültig bis</label>
-					<DatePicker
-						v-model="offer.validUntil"
-						inline
-					/>
+
+				<div class="customer-preview" v-if="customer?.customerType === 'private'">
+					<h2>Kunde</h2>
+
+					<div class="customer-items-group">
+						<p>Vorname: {{customer.firstName}}</p>
+						<p>Nachname: {{customer.lastName}}</p>
+						<p>E-mail: {{customer.email}}</p>
+					</div>
+
+					<div class="customer-items-group">
+						<p>Straße: {{customer.street}}</p>
+						<p>Postleitzahl: {{customer.postalCode}}</p>
+						<p>Stadt: {{customer.city}}</p>
+					</div>
+				</div> <div class="customer-preview" v-if="customer?.customerType === 'company'">
+					<h2>Kunde</h2>
+
+					<div class="customer-items-group">
+						<p>Firmenname: {{customer.companyName}}</p>
+						<p>Kontaktperson: {{customer.contactPerson}}</p>
+						<p>E-mail: {{customer.email}}</p>
+					</div>
+
+					<div class="customer-items-group">
+						<p>Straße: {{customer.street}}</p>
+						<p>Postleitzahl: {{customer.postalCode}}</p>
+						<p>Stadt: {{customer.city}}</p>
+					</div>
 				</div>
+
+				<Divider />
 			</div>
+		</section>
 
-			<Divider />
 
-			<div class="input-group">
-				<h2>Projekt (optional)</h2>
+		<div class="form-container">
+			<form v-if="customer"
+				@submit.prevent="onSubmit"
+			>
+				<section>
+					<h2>Angebotsdaten</h2>
 
-				<InputText
-					v-model="offer.project"
-					placeholder="z. B. Badsanierung Musterstraße"
-				/>
-			</div>
+					<div class="input-group">
+						<div class="input">
+							<label for="offerDate">Angebotsdatum</label>
 
-			<Divider />
+							<DatePicker
+								v-model="offer.offerDate"
+								inline
+							/>
+						</div>
 
-			<div class="input-group">
-				<h2>Einleitung</h2>
+						<div class="input">
+							<label for="validUntil">Gültig bis</label>
+							<DatePicker
+								v-model="offer.validUntil"
+								inline
+							/>
+						</div>
+					</div>
+				</section>
 
-				<Textarea
-					v-model="offer.introduction"
-					rows="3"
-					autoResize
-				/>
-			</div>
+				<Divider />
 
-			<Divider />
+				<section>
+					<h2>Projekt (optional)</h2>
 
-			<div>
-				<h2>Positionen</h2>
+					<InputText
+						v-model="offer.project"
+						placeholder="z. B. Badsanierung Musterstraße"
+					/>
+				</section>
 
-				<LineItems
-					:items="offer.items"
-					:offerSettings="offerSettings"
-					@newItems="onNewItems($event)"
-				/>
-			</div>
+					<Divider />
 
-			<Divider />
+				<section>
+					<h2>Einleitung</h2>
 
-			<div class="input-group">
-				<h2>Schluss</h2>
+					<Textarea
+						v-model="offer.introduction"
+						rows="3"
+						autoResize
+					/>
+				</section>
 
-				<Textarea
-					v-model="offer.closing"
-					rows="3"
-					autoResize
-				/>
-			</div>
+				<Divider />
 
-			<Divider />
+				<section>
+					<h2>Positionen</h2>
 
-			<div class="action-buttons">
-				<Button
-					label="Vorschau"
-					@click="previewOffer"
-				/>
+					<LineItems
+						v-model="offer.items"
+						:itemSettings="itemSettings"
+						@newItems="onNewItems($event)"
+					/>
+				</section>
 
-				<Button
-					label="Angebot speichern"
-					@click="saveOffer"
-				/>
+				<Divider />
 
-				<Button
-					label="Speichern und Senden"
-					@click="saveAndSendOffer"
-				/>
-			</div>
-		</form>
+				<section>
+					<h2>Schluss</h2>
+
+					<Textarea
+						v-model="offer.closing"
+						rows="3"
+						autoResize
+					/>
+				</section>
+
+				<Divider />
+
+				<section>
+					<div class="action-buttons">
+						<Button
+							label="Angebot speichern"
+							@click="saveOffer"
+						/>
+					</div>
+				</section>
+			</form>
+		</div>
 	</div>
 </template>
 
 <style scoped lang="scss">
 @use "@/shared/styles/breakpoints" as bp;
 @use "@/shared/styles/media" as media;
+.first-section {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.first-section-content {
+	width: 100%;
+	max-width: 1024px;
+}
 
 .create-offer-form {
 	width: 100%;
-	min-width: 0;
-	max-width: 1400px;
+}
+
+.form-container {
+	width: 100%;
+	display: flex;
+	justify-content: center;
 }
 
 .actions-top {
 	max-width: 600px;
 	display: grid;
-	grid-template-columns: 1fr auto;
 	gap: var(--space-md);
-	margin: var(--space-xl2) 0 var(--space-xl2) 0;
 
-	h2 {
-		grid-column: 1 / -1;
-	}
-
-	.add-customer {
-		flex-shrink: 0;
+	@include media.up(bp.$bp_md) {
+		grid-template-columns: 1fr auto;
 	}
 }
 

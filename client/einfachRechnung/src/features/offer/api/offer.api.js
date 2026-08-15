@@ -1,15 +1,26 @@
 import http from "@/shared/api/http.client.js";
 
 
-async function createOffer({data}){
+async function getOffers({limit, page}){
+	const {data} = await http.get(
+		`/offers?limit=${limit}&page=${page}`
+	);
+
+	return data;
 }
 
-async function findOffers(){
-}
 
 async function getOfferTemplate(){
 	const {data} = await http.get(
 		"/offers/offer-template"
+	);
+
+	return data;
+}
+
+async function getOfferByOfferNumber({offerNumber}){
+	const {data} = await http.get(
+		`/offers/${offerNumber}`
 	);
 
 	return data;
@@ -21,13 +32,45 @@ async function saveOffer({offer}){
 		offer
 	);
 
+	return data.offerNumber;
+}
+
+async function updateOffer({offer}){
+	const {data} = await http.patch(
+		"/offers",
+		offer
+	);
+
+	return data;
+}
+
+async function getPdf({ offerNumber }) {
+	const { data } = await http.get(
+		`/offers/${offerNumber}/pdf`,
+		{
+			responseType: "blob",
+		}
+	);
+
+	return data;
+}
+
+async function deleteOffer({offerNumber}){
+	const {data} = await http.delete(
+		`/offers/${offerNumber}`
+	);
+
 	return data;
 }
 
 
 export default {
-	createOffer,
-	findOffers,
+	getOffers,
 	saveOffer,
 	getOfferTemplate,
+	getOfferByOfferNumber,
+	updateOffer,
+	deleteOffer,
+
+	getPdf,
 };

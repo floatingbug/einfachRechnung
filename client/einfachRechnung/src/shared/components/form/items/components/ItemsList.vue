@@ -1,32 +1,33 @@
 <script setup>
-import { ref, reactive } from "vue";
-
+import {  reactive } from "vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 import Message from "primevue/message";
-import {unitOptions} from "../../../options";;
+import {unitOptions} from "../../../../options";;
 import Select from "primevue/select";
-import { itemTemplates } from "../../../options";
+import {createItemEntity} from "@/features/offer/entities";
+import SelectTemplate from "./SelectTemplate.vue";
+
 
 const props = defineProps({
 	items: {
 		type: Array,
 		default: () => [],
 	},
+	itemSettings: {
+		type: Object,
+		default: () => {},
+	}
 });
 
 
-const emit = defineEmits([
-	"deleteItem",
-	"addItem",
-	"openItem",
-]);
+const emit = defineEmits(["action"]);
 
 
-const newItem = reactive(createEmptyItem());
+const newItem = reactive(createItemEntity({...props.itemSettings}));
 const errors = reactive({
 	title: "",
 	description: "",
@@ -36,7 +37,6 @@ const errors = reactive({
 	taxrate: "",
 
 });
-const selectedTemplate = ref(null);
 
 
 function addItem(){
@@ -44,49 +44,32 @@ function addItem(){
 		return errors.title = "Position ist erforderlich"
 	}
 
-	emit("addItem", {...newItem});
+	emit("action",
+		{
+			action: "addItem",
+			item: {...newItem}
+		}
+	);
 
 
-	Object.assign(newItem, createEmptyItem());
-
-	selectedTemplate.value = null;
+	Object.assign(newItem, createItemEntity({...props.itemSettings}));
 };
 
-function applyTemplate(value){
 
-	const template = itemTemplates.find(
-		item => item.value === value
-	);
-
-	if(!template){
-		return;
+//--- handler ---
+function onSelectTemplate(event){
+	switch(event.action){
+		case "templateSelected" :
+			Object.assign(
+				newItem,
+				event.template
+			);
+		break;
 	}
-
-
-	Object.assign(
-		newItem,
-		template.create()
-	);
-
 }
+
 
 // --- helpers ---
-function createEmptyItem(){
-	return {
-		id: crypto.randomUUID(),
-		title: "",
-		description: "",
-		type: "service",
-		quantity: null,
-		unit: "",
-		unitPrice: null,
-		taxRate: 19,
-		discountType: "none",
-		discountValue: null,
-	};
-}
-
-
 const formatCurrency = (value) => {
 	return new Intl.NumberFormat("de-DE", {
 		style: "currency",
@@ -126,7 +109,12 @@ function getUnitLabel(value) {
 		:value="items"
 		class="items-table"
 		selectionMode="single"
-		@row-select="emit('openItem', $event.data.id)"
+		@row-select="emit('action',
+			{
+				action: 'openItem',
+				id: $event.data.id,
+			}
+		)"
 		scrollable
 		tableStyle="min-width: 800px"
 	>
@@ -180,7 +168,12 @@ function getUnitLabel(value) {
 					icon="pi pi-trash"
 					severity="danger"
 					text
-					@click="emit('deleteItem', data.id)"
+					@click="emit('action',
+						{
+							action: 'deleteItem',
+							id: data.id
+						}
+					)"
 				/>
 
 			</template>
@@ -229,14 +222,8 @@ function getUnitLabel(value) {
 					placeholder="Preis"
 				/>
 
-
-				<Select
-					v-model="selectedTemplate"
-					:options="itemTemplates"
-					optionLabel="label"
-					optionValue="value"
-					placeholder="Vorlage"
-					@update:modelValue="applyTemplate"
+				<SelectTemplate
+					@action="onSelectTemplate"
 				/>
 
 				<Button

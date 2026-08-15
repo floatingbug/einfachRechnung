@@ -10,15 +10,23 @@ export default [
 		component: AppLayout,
 		meta: {
 			context: "invoice",
+			breadcrumb: "Rechnung",
+			requiresAuth: true,
 		},
 		children: [
 			{
 				path: "",
 				component: InvoiceListView,
+				meta: {
+					breadcrumb: "Liste"
+				},
 			},
 			{
 				path: "create",
 				component: CreateInvoiceView,
+				meta: {
+					breadcrumb: "Erstellen"
+				},
 			},
 		],
 	}

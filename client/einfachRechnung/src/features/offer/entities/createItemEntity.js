@@ -1,7 +1,7 @@
 const DEFAULT_ITEM = {
 	id: "",
 
-	type: "material",
+	type: "service",
 
 	title: "",
 	description: "",
@@ -18,7 +18,7 @@ const DEFAULT_ITEM = {
 };
 
 
-export function createItemEntity({item} = {}){
+export function createItemEntity(item = {}){
 	return {
 		...DEFAULT_ITEM,
 		...item,

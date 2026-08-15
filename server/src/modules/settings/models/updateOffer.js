@@ -11,8 +11,8 @@ module.exports = async ({userId, offerSettings}) => {
             "offer.offerPrefix": offerSettings.offerPrefix,
             "offer.offerNumberFormat": offerSettings.offerNumberFormat,
             "offer.defaultValidityDays": offerSettings.defaultValidityDays,
-            "offer.introduction": offerSettings.defaultIntroduction,
-            "offer.closing": offerSettings.defaultClosing,
+            "offer.introduction": offerSettings.introduction,
+            "offer.closing": offerSettings.closing,
             "offer.showTaxRatePerItem": offerSettings.showTaxRatePerItem,
             "offer.showItemNumbers": offerSettings.showItemNumbers,
         }

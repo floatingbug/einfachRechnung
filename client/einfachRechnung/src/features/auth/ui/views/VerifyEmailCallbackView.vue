@@ -17,6 +17,7 @@ const resendLoading = ref(false)
 const resendSuccess = ref(false)
 const email = ref('')
 
+
 onMounted(async () => {
 	const token = route.query.token
 

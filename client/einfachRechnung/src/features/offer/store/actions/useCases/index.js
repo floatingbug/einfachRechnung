@@ -1,8 +1,20 @@
 import {saveOffer} from "./saveOffer.js";
 import {getOfferTemplate} from "./getOfferTemplate.js";
+import {getOffers} from "./getOffers.js";
+import {getOfferByOfferNumber} from "./getOfferByOfferNumber.js";
+import {updateOffer} from "./updateOffer.js";
+import {deleteOffer} from "./deleteOffer.js";
+
+import {getPdf} from "./getPdf.js";
 
 
 export const useCases = {
 	saveOffer,
 	getOfferTemplate,
+	getOffers,
+	getOfferByOfferNumber,
+	updateOffer,
+	deleteOffer,
+
+	getPdf,
 };

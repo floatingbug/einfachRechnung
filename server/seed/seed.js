@@ -139,6 +139,11 @@ const customers = [
         email: "info@muster-gmbh.de",
         vatId: "DE123456789",
         customerType: "company",
+        bank: {
+            iban: "DE02120300000000202051",
+            bic: "BYLADEM1001",
+            bankName: "Deutsche Kreditbank"
+        }
     },
     {
         _id: customerIds[1],
@@ -154,6 +159,11 @@ const customers = [
         phone: "+49221123456",
         email: "kontakt@schmidt-handwerk.de",
         customerType: "private",
+        bank: {
+            iban: "DE75512108001245126199",
+            bic: "GENODEF1S01",
+            bankName: "Volksbank Köln Bonn"
+        }
     },
     {
         _id: customerIds[2],
@@ -169,6 +179,11 @@ const customers = [
         email: "mail@meyer-consulting.de",
         vatId: "DE345678901",
         customerType: "company",
+        bank: {
+            iban: "DE89370400440532013000",
+            bic: "COBADEFFXXX",
+            bankName: "Commerzbank"
+        }
     },
     {
         _id: customerIds[3],
@@ -184,6 +199,11 @@ const customers = [
         email: "service@elektro-wagner.de",
         vatId: "DE456789012",
         customerType: "company",
+        bank: {
+            iban: "DE12500105170648489890",
+            bic: "INGDDEFFXXX",
+            bankName: "ING"
+        }
     },
     {
         _id: customerIds[4],
@@ -198,6 +218,11 @@ const customers = [
         phone: "+49351123456",
         email: "info@baeckerei-hoffmann.de",
         customerType: "private",
+        bank: {
+            iban: "DE44500105175407324931",
+            bic: "INGDDEFFXXX",
+            bankName: "ING"
+        }
     },
 ];
 

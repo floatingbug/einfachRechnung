@@ -30,10 +30,5 @@ app.use(ToastService)
 app.component('Button', Button)
 app.component('Divider', Divider)
 
-try {
-	await authStore.refresh()
-} catch (error) {
-	await router.push('/auth/sign-in')
-}
 
 app.mount('#app')

@@ -8,6 +8,7 @@ export default [
 		component: AppLayout,
 		meta: {
 			context: "dashboard",
+			requiresAuth: true,
 		},
 		children: [
 			{

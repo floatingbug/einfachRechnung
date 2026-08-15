@@ -10,7 +10,7 @@ import {
 	discountTypeOptions,
 	taxRateOptions,
 	unitOptions,
-} from "../../../options";;
+} from "../../../../options";;
 
 
 const props = defineProps({
@@ -26,7 +26,7 @@ const props = defineProps({
 });
 
 
-const emit = defineEmits([ "update", "close" ]);
+const emit = defineEmits([ "action", "close" ]);
 
 
 const item = ref();
@@ -41,7 +41,10 @@ watch(
 
 
 function onSubmit(){
-	emit("update", item.value);
+	emit("action", {
+		action: "updateItem",
+		item: item.value,
+	});
 }
 
 function onUpdateVisible(){
@@ -53,7 +56,7 @@ function onUpdateVisible(){
 
 <template>
 	<Dialog
-		header="Neue Position"
+		header="Position Ändern"
 		:visible="isDialogVisible"
 		@update:visible="onUpdateVisible"
 		modal
@@ -158,10 +161,12 @@ function onUpdateVisible(){
 				</div>
 			</div>
 
-			<Button
-				type="submit"
-				label="Position ändern"
-			/>
+			<div class="action-buttons">
+				<Button
+					type="submit"
+					label="Position ändern"
+				/>
+			</div>
 		</form>
 	</Dialog>
 </template>
@@ -194,5 +199,11 @@ function onUpdateVisible(){
 
 .description {
 	grid-column: 1 / -1;
+}
+
+.action-buttons {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: var(--space-xl2);
 }
 </style>

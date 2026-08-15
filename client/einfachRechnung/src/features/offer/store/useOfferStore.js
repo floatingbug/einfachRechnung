@@ -5,7 +5,7 @@ import actions from "./actions";
 const useOfferStore = defineStore("offer", {
 	state: () => ({
 		offers: [],
-		selectedOffer: {},
+		selectedOffer: null,
 		draftOffer: {},
 	}),
 
