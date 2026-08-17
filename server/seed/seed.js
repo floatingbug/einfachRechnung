@@ -16,6 +16,27 @@ function upsert(collection, filter, doc){
     );
 }
 
+function createInvoiceCustomer(customer){
+    return {
+        customerType: customer.customerType ?? "",
+
+        companyName: customer.companyName ?? "",
+        contactPerson: customer.contactPerson ?? "",
+
+        firstName: customer.firstName ?? "",
+        lastName: customer.lastName ?? "",
+
+        street: customer.street ?? "",
+        postalCode: customer.postalCode ?? "",
+        city: customer.city ?? "",
+        countryCode: customer.countryCode ?? "",
+
+        phone: customer.phone ?? "",
+        email: customer.email ?? "",
+        vatId: customer.vatId ?? "",
+    };
+}
+
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
@@ -41,7 +62,7 @@ db.customers.deleteMany({ userId });
 db.invoices.deleteMany({ userId });
 
 // -----------------------------------------------------------------------------
-// User (PASSWORD HASH FIX)
+// User
 // -----------------------------------------------------------------------------
 
 const plainPassword = "123";
@@ -278,19 +299,13 @@ function createInvoice({
             taxNumber: "12/345/67890",
         },
 
-        customer: {
-            name: customer.name,
-            street: customer.street,
-            postalCode: customer.postalCode,
-            city: customer.city,
-            countryCode: customer.countryCode,
-            phone: customer.phone,
-            email: customer.email,
-            vatId: customer.vatId,
-        },
+        customer: createInvoiceCustomer(customer),
 
         invoiceDate,
-        dueDate: new Date(invoiceDate.getTime() + (14 * 24 * 60 * 60 * 1000)),
+
+        dueDate: new Date(
+            invoiceDate.getTime() + (14 * 24 * 60 * 60 * 1000)
+        ),
 
         currency: "EUR",
 
@@ -334,16 +349,86 @@ function createInvoice({
 // -----------------------------------------------------------------------------
 
 const invoiceConfigs = [
-    { number: 1001, customer: customers[0], netTotal: 500, status: "sent", paymentStatus: "paid", invoiceDate: new Date("2026-01-05") },
-    { number: 1002, customer: customers[1], netTotal: 850, status: "sent", paymentStatus: "open", invoiceDate: new Date("2026-01-07") },
-    { number: 1003, customer: customers[2], netTotal: 1200, status: "sent", paymentStatus: "paid", invoiceDate: new Date("2026-01-10") },
-    { number: 1004, customer: customers[3], netTotal: 350, status: "sent", paymentStatus: "open", invoiceDate: new Date("2026-01-12") },
-    { number: 1005, customer: customers[4], netTotal: 650, status: "sent", paymentStatus: "partially_paid", invoiceDate: new Date("2026-01-15") },
-    { number: 1006, customer: customers[0], netTotal: 950, status: "sent", paymentStatus: "paid", invoiceDate: new Date("2026-02-01") },
-    { number: 1007, customer: customers[1], netTotal: 780, status: "sent", paymentStatus: "open", invoiceDate: new Date("2026-02-04") },
-    { number: 1008, customer: customers[2], netTotal: 430, status: "sent", paymentStatus: "paid", invoiceDate: new Date("2026-02-08") },
-    { number: 1009, customer: customers[3], netTotal: 1100, status: "sent", paymentStatus: "paid", invoiceDate: new Date("2026-02-10") },
-    { number: 1010, customer: customers[4], netTotal: 720, status: "sent", paymentStatus: "open", invoiceDate: new Date("2026-02-14") },
+    {
+        number: 1001,
+        customer: customers[0],
+        netTotal: 500,
+        status: "sent",
+        paymentStatus: "paid",
+        invoiceDate: new Date("2026-01-05")
+    },
+    {
+        number: 1002,
+        customer: customers[1],
+        netTotal: 850,
+        status: "sent",
+        paymentStatus: "open",
+        invoiceDate: new Date("2026-01-07")
+    },
+    {
+        number: 1003,
+        customer: customers[2],
+        netTotal: 1200,
+        status: "sent",
+        paymentStatus: "paid",
+        invoiceDate: new Date("2026-01-10")
+    },
+    {
+        number: 1004,
+        customer: customers[3],
+        netTotal: 350,
+        status: "sent",
+        paymentStatus: "open",
+        invoiceDate: new Date("2026-01-12")
+    },
+    {
+        number: 1005,
+        customer: customers[4],
+        netTotal: 650,
+        status: "sent",
+        paymentStatus: "partially_paid",
+        invoiceDate: new Date("2026-01-15")
+    },
+    {
+        number: 1006,
+        customer: customers[0],
+        netTotal: 950,
+        status: "sent",
+        paymentStatus: "paid",
+        invoiceDate: new Date("2026-02-01")
+    },
+    {
+        number: 1007,
+        customer: customers[1],
+        netTotal: 780,
+        status: "sent",
+        paymentStatus: "open",
+        invoiceDate: new Date("2026-02-04")
+    },
+    {
+        number: 1008,
+        customer: customers[2],
+        netTotal: 430,
+        status: "sent",
+        paymentStatus: "paid",
+        invoiceDate: new Date("2026-02-08")
+    },
+    {
+        number: 1009,
+        customer: customers[3],
+        netTotal: 1100,
+        status: "sent",
+        paymentStatus: "paid",
+        invoiceDate: new Date("2026-02-10")
+    },
+    {
+        number: 1010,
+        customer: customers[4],
+        netTotal: 720,
+        status: "sent",
+        paymentStatus: "open",
+        invoiceDate: new Date("2026-02-14")
+    },
 ];
 
 invoiceConfigs.forEach(cfg => {

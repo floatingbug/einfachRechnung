@@ -3,6 +3,7 @@ import {onMounted} from "vue";
 import {EmailSettingsForm} from "../components";
 import {useSettingsStore} from "../../store/useSettingsStore.js";
 import { useToast } from "primevue/usetoast";
+import { PageContainer } from "@/shared/components";
 
 
 const toast = useToast();
@@ -16,12 +17,7 @@ onMounted(async () => {
 async function onEmailSettingsFormSubmit(event){
 	try{
 		await settingsStore.updateEmail({emailSettings: event.data});
-	}
-	catch {
-		toast.add({severity: "error", summary: "Fehler", detail: "E-Mail-Daten konnten nicht gespeichert werden.", life: 5000});
-		return;
-	}
-	finally{
+
 		toast.add({
 			severity: "success",
 			summary: "Gespeichert",
@@ -29,16 +25,26 @@ async function onEmailSettingsFormSubmit(event){
 			life: 5000,
 		});
 	}
+	catch {
+		toast.add({severity: "error", summary: "Fehler", detail: "E-Mail-Daten konnten nicht gespeichert werden.", life: 5000});
+		return;
+	}
 }
 
 </script>
 
 
 <template>
-	<EmailSettingsForm
-		:data="settingsStore.email"
-		@submit="onEmailSettingsFormSubmit"
-	/>
+	<PageContainer>
+		<template #header>
+			E-Mail Einstellungen
+		</template>
+
+		<EmailSettingsForm
+			:data="settingsStore.email"
+			@submit="onEmailSettingsFormSubmit"
+		/>
+	</PageContainer>
 </template>
 
 

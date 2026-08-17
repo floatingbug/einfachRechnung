@@ -4,6 +4,8 @@ import {useOfferStore} from "../../store";
 import {OfferList} from "../components";
 import Paginator from 'primevue/paginator';
 import {useRouter} from "vue-router";
+import {PageContainer} from "@/shared/components";
+
 
 const router = useRouter();
 const offerStore = useOfferStore();
@@ -50,19 +52,21 @@ function onOfferListActions(event){
 
 
 <template>
-	<div class="offer-list" v-if="!isInitializing">
-		<OfferList
-			:items="tableItems"
-			@action="onOfferListActions"
-		/>
+	<PageContainer>
+		<div class="offer-list" v-if="!isInitializing">
+			<OfferList
+				:items="tableItems"
+				@action="onOfferListActions"
+			/>
 
-		<Paginator
-			:rows="PAGINATION_LIMIT"
-			:totalRecords="totalRecords"
-			:rowsPerPageOptions="[10, 20, 50, 100]"
-			@page="onPaginationAction"
-		/>
-	</div>
+			<Paginator
+				:rows="PAGINATION_LIMIT"
+				:totalRecords="totalRecords"
+				:rowsPerPageOptions="[10, 20, 50, 100]"
+				@page="onPaginationAction"
+			/>
+		</div>
+	</PageContainer>
 </template>
 
 

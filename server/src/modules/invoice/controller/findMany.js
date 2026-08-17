@@ -9,8 +9,8 @@ module.exports = catchAsync(async (req, res) => {
     };
 
     if(query){
-        if(query.page) params.page = query.page;
-        if(query.limit) params.limit = query.limit;
+        if(query.page) params.page = Number(query.page);
+        if(query.limit) params.limit = Number(query.limit);
     }
 
 	const result = await findMany(params);

@@ -10,6 +10,9 @@ import Textarea from "primevue/textarea";
 import Checkbox from "primevue/checkbox";
 
 
+const emit = defineEmits([ "action" ]);
+
+
 const settingsStore = useSettingsStore();
 const settings = ref();
 
@@ -32,19 +35,19 @@ const offerNumberPreview = computed(() => {
 });
 
 function saveSettings(){
-	settingsStore.updateOffer({
-		offerSettings: settings.value,
-	});
+	emit("action", {
+		action: "update",
+		settings: settings.value,
+	})
 }
-
 </script>
 
 
 <template>
-	<div class="offer-settings-form" v-if="settings">
-		<div class="input-group">
-			<h2>Angebotsnummer</h2>
+	<form v-if="settings">
+		<h2>Angebotsnummer</h2>
 
+		<div class="input-group">
 			<div class="input">
 				<label for="offerPrefix">Präfix (optional)</label>
 				<InputText
@@ -73,9 +76,11 @@ function saveSettings(){
 			</div>
 		</div>
 
-		<div class="input-group">
-			<h2>Standardgültigkeit (Tage)</h2>
+		<Divider />
 
+		<h2>Standardgültigkeit (Tage)</h2>
+
+		<div class="input-group">
 			<div class="input">
 				<label for="validUntil">Gültig bis</label>
 				<InputNumber
@@ -84,9 +89,11 @@ function saveSettings(){
 			</div>
 		</div>
 
-		<div class="input-group">
-			<h2>Texte</h2>
+		<Divider />
 
+		<h2>Texte</h2>
+
+		<div class="input-group">
 			<div class="input">
 				<label for="introduction">Standard-Einleitung</label>
 				<Textarea
@@ -104,9 +111,11 @@ function saveSettings(){
 			</div>
 		</div>
 
-		<div class="input-group">
-			<h2>PDF</h2>
+		<Divider />
 
+		<h2>PDF</h2>
+
+		<div class="input-group">
 			<div class="input-checkbox">
 				<Checkbox
 					v-model="settings.showItemNumbers"
@@ -133,26 +142,13 @@ function saveSettings(){
 				@click="saveSettings"
 			/>
 		</div>
-	</div>
+	</form>
 </template>
 
 
 <style lang="scss" scoped>
 @use "@/shared/styles/media" as media;
 @use "@/shared/styles/breakpoints" as bp;
-
-.offer-settings-form {
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-	gap: calc(var(--space-xl) * 3);
-
-
-	@include media.up(bp.$bp-md){
-		width: 90%;
-		max-width: 800px;
-	}
-}
 
 .form-actions {
 	display: flex;

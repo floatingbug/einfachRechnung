@@ -3,6 +3,7 @@ import {onMounted} from "vue";
 import {InvoiceSettingsForm} from "../components";
 import {useSettingsStore} from "../../store/useSettingsStore.js";
 import { useToast } from "primevue/usetoast";
+import { PageContainer } from "@/shared/components";
 
 
 const toast = useToast();
@@ -18,18 +19,17 @@ async function onInvoiceSettingsFormSubmit(event){
 		await settingsStore.updateInvoice({
 			invoiceSettings: event.data,
 		});
+
+		toast.add({
+			severity: "success",
+			summary: "Gespeichert",
+			detail: "Emaildaten gespeichert",
+			life: 5000,
+		});
 	}
 	catch {
 		toast.add({severity: "error", summary: "Fehler", detail: "Rechnungseinstellungen konnten nicht gespeichert werden.", life: 5000});
 		return;
-	}
-	finally{
-		toast.add({
-			severity: "success",
-			summary: "Gespeichert",
-			detail: "Rechnungseinstellungen gespeichert",
-			life: 5000,
-		});
 	}
 }
 
@@ -37,10 +37,16 @@ async function onInvoiceSettingsFormSubmit(event){
 
 
 <template>
-	<InvoiceSettingsForm
-		:data="settingsStore.invoice"
-		@submit="onInvoiceSettingsFormSubmit"
-	/>
+	<PageContainer>
+		<template #header>
+			Rechnungseinstellungen
+		</template>
+
+		<InvoiceSettingsForm
+			:data="settingsStore.invoice"
+			@submit="onInvoiceSettingsFormSubmit"
+		/>
+	</PageContainer>
 </template>
 
 

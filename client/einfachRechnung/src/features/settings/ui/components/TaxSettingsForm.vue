@@ -7,7 +7,7 @@ import {
 
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
-import InputSwitch from "primevue/inputswitch";
+import ToggleSwitch from "primevue/toggleswitch";
 import Button from "primevue/button";
 import Divider from "primevue/divider";
 import Message from "primevue/message";
@@ -23,7 +23,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits([
-	"submit",
+	"action",
 ]);
 
 
@@ -64,8 +64,9 @@ function onSubmit(){
 		return;
 	}
 
-	emit("submit", {
-		data: result.data,
+	emit("action", {
+		action: "update",
+		taxSettings: result.data,
 	});
 }
 
@@ -73,16 +74,14 @@ function onSubmit(){
 
 
 <template>
-	<div class="tax-settings-form">
-
+	<form>
 		<h2>Mehrwertsteuer</h2>
 
-		<div class="grid">
-
+		<div class="input-group">
 			<div class="field switch-field">
 				<label>Mehrwertsteuer aktiviert</label>
 
-				<InputSwitch
+				<ToggleSwitch
 					v-model="form.vatEnabled"
 				/>
 
@@ -97,7 +96,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Standard-Mehrwertsteuersatz</label>
 
 				<InputNumber
@@ -118,7 +117,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Reduzierter Mehrwertsteuersatz</label>
 
 				<InputNumber
@@ -144,9 +143,9 @@ function onSubmit(){
 
 		<h2>Steuerland</h2>
 
-		<div class="grid">
+		<div class="input-group">
 
-			<div class="field">
+			<div class="input">
 				<label>Steuer-Ländercode</label>
 
 				<InputText
@@ -167,14 +166,14 @@ function onSubmit(){
 
 		<Divider />
 
-		<h2>Reverse Charge</h2>
+		<h2>Steuerschuldnerschaft</h2>
 
-		<div class="grid">
+		<div class="input-group">
 
-			<div class="field switch-field">
-				<label>Reverse-Charge aktiviert</label>
+			<div class="input switch-field">
+				<label>Steuerschuldnerschaft des Leistungsempfängers</label>
 
-				<InputSwitch
+				<ToggleSwitch
 					v-model="form.reverseChargeEnabled"
 				/>
 
@@ -198,7 +197,7 @@ function onSubmit(){
 			/>
 		</div>
 
-	</div>
+	</form>
 </template>
 
 

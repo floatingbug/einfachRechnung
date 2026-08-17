@@ -21,6 +21,9 @@ module.exports = async (params) => {
         .limit(limit)
         .toArray();
 
+    console.log(items[0]);
+    console.log("CUSTOMER:", items[0]?.customer);
+
     const total = await db.collection("invoices")
         .countDocuments(filter);
 

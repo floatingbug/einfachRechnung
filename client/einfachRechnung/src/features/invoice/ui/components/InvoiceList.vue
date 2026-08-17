@@ -4,6 +4,7 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import InputText from "primevue/inputtext";
 import Select from "primevue/select";
+import Card from "primevue/card";
 import { FilterMatchMode } from "@primevue/core/api";
 
 defineProps({
@@ -13,7 +14,9 @@ defineProps({
 	},
 });
 
+
 const emit = defineEmits(["action"]);
+
 
 // --- status mapping (UI labels) ---
 const paymentStatusMap = {
@@ -85,6 +88,7 @@ function onRowClick(event){
 		invoiceId: event.data.id,
 	});
 }
+
 </script>
 
 <template>
@@ -97,6 +101,11 @@ function onRowClick(event){
 		dataKey="id"
 		rowHover
 		:pt="{
+			tableContainer: {
+				style: {
+					width: '100%',
+				}
+			},
 			bodyRow: {
 				style: {
 					cursor: 'pointer',
@@ -195,12 +204,103 @@ function onRowClick(event){
 			</template>
 		</Column>
 	</DataTable>
+
+	<div class="invoice-list-cards">
+		<Card v-for="item in items" class="list-card"
+			:key="item.id ?? item.invoiceNumber"
+			@click="onRowClick({ data: item })"
+			@keydown.enter="onRowClick({ data: item })"
+			@keydown.space.prevent="onRowClick({ data: item })"
+		> <template #title>{{ item.invoiceNumber }}</template>
+			<template #subtitle>
+				asdf
+			</template>
+			<template #content>
+				<div class="card-content">
+					<div class="card-content__item">
+						<span>Kunde</span>
+
+						<div class="card-content__item-value">
+							{{item.customer}}
+						</div>
+					</div>
+
+					<div class="card-content__item">
+						<span>Rechnungsdatum</span>
+
+						<div class="card-content__item-value">
+							{{item.invoiceDate}}
+						</div>
+					</div>
+
+					<div class="card-content__item">
+						<span>Gesamtsumme</span>
+
+						<div class="card-content__item-value">
+							{{item.grossTotal}}
+						</div>
+					</div>
+
+					<Divider
+						type="dashed"
+					/>
+
+					<div class="card-content__item">
+						<span>Zahlungsstatus</span>
+
+						<div class="card-content__item-value">
+							{{item.paymentStatus}}
+						</div>
+					</div>
+
+					<div class="card-content__item">
+						<span>Status</span>
+
+						<div class="card-content__item-value">
+							{{item.status}}
+						</div>
+					</div>
+				</div>
+			</template>
+		</Card>
+	</div>
 </template>
 
 <style scoped lang="scss">
 .invoice-list-data-table {
 	width: 100%;
 	min-width: 0;
+	display: none;
 	border: 1px solid var(--table-border-color);
+}
+
+.invoice-list-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+	grid-template-rows: repeat(auto-fit, minmax(200px, auto));
+	gap: var(--space-md);
+}
+
+.card-content {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+}
+
+.card-content__item {
+	display: flex;
+	justify-content: space-between;
+}
+
+@media (min-width: 2005px) {
+	.invoice-list-data-table {
+		display: flex;
+	}
+
+	.invoice-list-cards {
+		display: none;
+	}
 }
 </style>

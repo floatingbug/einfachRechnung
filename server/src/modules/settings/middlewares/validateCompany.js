@@ -24,6 +24,8 @@ module.exports = (req, res, next) => {
         "city",
         "postalCode",
         "countryCode",
+        "greeting",
+        "signatory",
     ];
 
     // Reject unknown fields
@@ -56,6 +58,8 @@ module.exports = (req, res, next) => {
         city: payload.city ?? null,
         postalCode: payload.postalCode ?? null,
         countryCode: payload.countryCode ?? null,
+        greeting: payload.greeting ?? null,
+        signatory: payload.signatory ?? null,
     };
 
     // companyName
@@ -294,6 +298,42 @@ module.exports = (req, res, next) => {
                     "Ungültiger Ländercode."
                 );
             }
+        }
+    }
+
+    // greeting
+    if (company.greeting !== null) {
+        if (typeof company.greeting !== "string") {
+            addError(
+                errors,
+                "greeting",
+                "Anrede muss eine Zeichenkette sein."
+            );
+        }
+        else if (!validator.isLength(company.greeting, { max: 100 })) {
+            addError(
+                errors,
+                "greeting",
+                "Anrede darf nicht länger als 100 Zeichen sein."
+            );
+        }
+    }
+
+    // signatory
+    if (company.signatory !== null) {
+        if (typeof company.signatory !== "string") {
+            addError(
+                errors,
+                "signatory",
+                "Unterzeichner muss eine Zeichenkette sein."
+            );
+        }
+        else if (!validator.isLength(company.signatory, { max: 100 })) {
+            addError(
+                errors,
+                "signatory",
+                "Unterzeichner darf nicht länger als 100 Zeichen sein."
+            );
         }
     }
 

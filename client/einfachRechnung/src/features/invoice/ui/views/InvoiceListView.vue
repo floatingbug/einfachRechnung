@@ -4,6 +4,7 @@ import useInvoiceStore from "../../store/useInvoiceStore.js";
 import {InvoiceList} from "../components";
 import Paginator from 'primevue/paginator';
 import {useRouter} from "vue-router";
+import {PageContainer} from "@/shared/components";
 
 const router = useRouter();
 const invoiceStore = useInvoiceStore();
@@ -39,20 +40,22 @@ function onInvoiceListActions(event){
 
 
 <template>
-	<div class="invoice-list" v-if="!isInitializing">
-		<InvoiceList
-			:items="invoiceStore.invoiceTableItems"
-			@action="onInvoiceListActions"
-		/>
+	<PageContainer>
+		<div class="invoice-list" v-if="!isInitializing">
+			<InvoiceList
+				:items="invoiceStore.invoiceTableItems"
+				@action="onInvoiceListActions"
+			/>
 
-		<Paginator v-if="invoiceStore.pagination"
-			:rows="PAGINATION_LIMIT"
-			:totalRecords="invoiceStore.pagination.total"
-			:rowsPerPageOptions="[10, 20, 50, 100]"
-			@page="onPaginationAction"
-		/>
+			<Paginator v-if="invoiceStore.pagination"
+				:rows="PAGINATION_LIMIT"
+				:totalRecords="invoiceStore.pagination.total"
+				:rowsPerPageOptions="[10, 20, 50, 100]"
+				@page="onPaginationAction"
+			/>
 
-	</div>
+		</div>
+	</PageContainer>
 </template>
 
 
@@ -60,7 +63,8 @@ function onInvoiceListActions(event){
 .invoice-list {
 	width: 100%;
 	min-width: 0;
+	height: 100dvh;
 	display: grid;
-	grid-template-rows: 1fr auto;
+	grid-template-rows: auto 1fr;
 }
 </style>

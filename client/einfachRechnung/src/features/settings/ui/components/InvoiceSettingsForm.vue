@@ -3,6 +3,7 @@ import {
 	ref,
 	watch,
 	toRaw,
+	computed,
 } from "vue";
 
 import InputText from "primevue/inputtext";
@@ -10,15 +11,19 @@ import InputNumber from "primevue/inputnumber";
 import Divider from "primevue/divider";
 import Button from "primevue/button";
 import Message from "primevue/message";
+import Select from "primevue/select";
+
 import {validateInvoice} from "@/features/settings/domainRules";
+import {invoiceNumberFormatOptions} from "../options";
 
 
 const props = defineProps({
 	data: {
 		type: Object,
-		required: Boolean,
+		required: true,
 	},
 });
+
 
 const emit = defineEmits([
 	"submit",
@@ -44,8 +49,27 @@ watch(
 	},
 	{
 		immediate: true,
-	}
+	},
 );
+
+
+// --------------------
+// invoice number preview
+// --------------------
+const invoiceNumberPreview = computed(() => {
+	if (!form.value) {
+		return "";
+	}
+
+	const prefix = form.value.invoicePrefix ?? "";
+
+	const format = form.value.invoiceNumberFormat ?? "";
+
+	return format
+		.replace("{prefix}", prefix)
+		.replace("{year}", "2026")
+		.replace("{number}", "00015");
+});
 
 
 // --------------------
@@ -69,22 +93,24 @@ function onSubmit(){
 		}
 	);
 }
-
 </script>
 
 
 <template>
-	<div class="settings-form">
+	<form>
+		<h2>Rechnungsnummer</h2>
 
-		<h2>Rechnungseinstellungen</h2>
+		<div class="input-group">
 
-		<div class="grid">
-
-			<div class="field">
-				<label>Rechnungspräfix</label>
+			<div class="input">
+				<label for="invoicePrefix">
+					Präfix (optional)
+				</label>
 
 				<InputText
+					id="invoicePrefix"
 					v-model="form.invoicePrefix"
+					:placeholder="form.invoicePrefix"
 				/>
 
 				<Message
@@ -95,32 +121,22 @@ function onSubmit(){
 				>
 					{{ errors.invoicePrefix }}
 				</Message>
+
+				<p>Beispiel: R oder RE</p>
 			</div>
 
 
-			<div class="field">
-				<label>Rechnungsnummer beginnt mit</label>
+			<div class="input">
+				<label for="invoiceNumberFormat">
+					Nummernformat
+				</label>
 
-				<InputNumber
-					v-model="form.invoiceNumberStart"
-				/>
-
-				<Message
-					v-if="errors.invoiceNumberStart"
-					severity="error"
-					size="small"
-					variant="simple"
-				>
-					{{ errors.invoiceNumberStart }}
-				</Message>
-			</div>
-
-
-			<div class="field">
-				<label>Nummernformat</label>
-
-				<InputText
+				<Select
+					id="invoiceNumberFormat"
 					v-model="form.invoiceNumberFormat"
+					:options="invoiceNumberFormatOptions"
+					optionLabel="label"
+					optionValue="value"
 				/>
 
 				<Message
@@ -134,10 +150,31 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
-				<label>Zahlungsziel (Tage)</label>
+			<div class="invoice-number-preview">
+				<p>Vorschau</p>
+
+				<Message severity="secondary">
+					{{ invoiceNumberPreview }}
+				</Message>
+			</div>
+
+		</div>
+
+
+		<Divider />
+
+
+		<h2>Zahlung</h2>
+
+		<div class="input-group">
+
+			<div class="input">
+				<label for="defaultPaymentTermsDays">
+					Zahlungsziel (Tage)
+				</label>
 
 				<InputNumber
+					id="defaultPaymentTermsDays"
 					v-model="form.defaultPaymentTermsDays"
 				/>
 
@@ -152,10 +189,13 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
-				<label>Fälligkeit (Tage)</label>
+			<div class="input">
+				<label for="defaultDueDays">
+					Fälligkeit (Tage)
+				</label>
 
 				<InputNumber
+					id="defaultDueDays"
 					v-model="form.defaultDueDays"
 				/>
 
@@ -169,11 +209,21 @@ function onSubmit(){
 				</Message>
 			</div>
 
+		</div>
 
-			<div class="field">
-				<label>Standard-Währung</label>
+
+		<Divider />
+
+
+		<div class="input-group">
+
+			<div class="input">
+				<label for="currency">
+					Standard-Währung
+				</label>
 
 				<InputText
+					id="currency"
 					v-model="form.currency"
 				/>
 
@@ -188,10 +238,13 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
-				<label>Sprache</label>
+			<div class="input">
+				<label for="language">
+					Sprache
+				</label>
 
 				<InputText
+					id="language"
 					v-model="form.language"
 				/>
 
@@ -206,10 +259,13 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
-				<label>Standard-Steuersatz (%)</label>
+			<div class="input">
+				<label for="defaultTaxRate">
+					Standard-Steuersatz (%)
+				</label>
 
 				<InputNumber
+					id="defaultTaxRate"
 					v-model="form.defaultTaxRate"
 				/>
 
@@ -225,7 +281,6 @@ function onSubmit(){
 
 		</div>
 
-		<Divider />
 
 		<div class="actions">
 			<Button
@@ -235,7 +290,7 @@ function onSubmit(){
 			/>
 		</div>
 
-	</div>
+	</form>
 </template>
 
 
@@ -253,6 +308,12 @@ function onSubmit(){
 }
 
 .field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+}
+
+.invoice-number-preview {
 	display: flex;
 	flex-direction: column;
 	gap: 0.4rem;

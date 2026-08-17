@@ -8,6 +8,10 @@ import {BreadCrumb} from "../../index.js";
 
 const authStore = useAuthStore();
 const router = useRouter();
+const props = defineProps({
+	sidebarOpen: Boolean,
+});
+const emit = defineEmits(["sidebar-toggle"]);
 
 
 async function onUserMenuActions(event){
@@ -40,6 +44,14 @@ async function onUserMenuActions(event){
 		}"
 	>
 		<template #start>
+			<Button
+				class="sidebar-toggle"
+				:icon="props.sidebarOpen ? 'pi pi-times' : 'pi pi-bars'"
+				:text="true"
+				rounded
+				:aria-label="props.sidebarOpen ? 'Navigation schließen' : 'Navigation öffnen'"
+				@click="emit('sidebar-toggle')"
+			/>
 			<BreadCrumb />
 		</template>
 
@@ -73,6 +85,16 @@ async function onUserMenuActions(event){
 
 
 <style scoped lang="scss">
+.sidebar-toggle {
+	margin-right: var(--space-xs);
+}
+
+@media (min-width: 1024px) {
+	.sidebar-toggle {
+		display: none;
+	}
+}
+
 .auth-buttons-container {
 	display: flex;
 	gap: var(--space-md);

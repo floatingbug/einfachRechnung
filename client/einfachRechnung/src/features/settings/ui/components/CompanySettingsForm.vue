@@ -58,13 +58,11 @@ function onSubmit(){
 
 
 <template>
-	<div class="company-settings-form">
-
+	<form>
 		<h2>Firmendaten</h2>
 
-		<div class="grid">
-
-			<div class="field">
+		<div class="input-group">
+			<div class="input">
 				<label>Firmenname</label>
 
 				<InputText v-model="form.companyName" />
@@ -80,7 +78,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Inhaber</label>
 
 				<InputText v-model="form.ownerName" />
@@ -96,7 +94,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>E-Mail</label>
 
 				<InputText v-model="form.email" />
@@ -112,7 +110,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Telefon</label>
 
 				<InputText v-model="form.phone" />
@@ -128,7 +126,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Website</label>
 
 				<InputText v-model="form.website" />
@@ -142,16 +140,14 @@ function onSubmit(){
 					{{ errors.website }}
 				</Message>
 			</div>
-
 		</div>
 
 		<Divider />
 
 		<h2>Adresse</h2>
 
-		<div class="grid">
-
-			<div class="field">
+		<div class="input-group">
+			<div class="input">
 				<label>Straße</label>
 
 				<InputText v-model="form.street" />
@@ -167,7 +163,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Stadt</label>
 
 				<InputText v-model="form.city" />
@@ -183,7 +179,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Postleitzahl</label>
 
 				<InputText v-model="form.postalCode" />
@@ -199,7 +195,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Ländercode</label>
 
 				<InputText v-model="form.countryCode" />
@@ -220,9 +216,8 @@ function onSubmit(){
 
 		<h2>Steuerdaten</h2>
 
-		<div class="grid">
-
-			<div class="field">
+		<div class="input-group">
+			<div class="input">
 				<label>USt-ID</label>
 
 				<InputText v-model="form.vatId" />
@@ -238,7 +233,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Steuernummer</label>
 
 				<InputText v-model="form.taxNumber" />
@@ -262,30 +257,11 @@ function onSubmit(){
 				@click="onSubmit"
 			/>
 		</div>
-
-	</div>
+	</form>
 </template>
 
 
 <style scoped lang="scss">
-.company-settings-form {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-xl);
-}
-
-.grid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: var(--space-md);
-}
-
-.field {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-xs);
-}
-
 .actions {
 	display: flex;
 	justify-content: flex-end;

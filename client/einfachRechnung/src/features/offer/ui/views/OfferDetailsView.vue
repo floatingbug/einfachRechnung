@@ -9,7 +9,8 @@ import {
 import {
 	CustomerCard,
 	TotalsList,
-	ItemsList
+	ItemsList,
+	PageContainer,
 } from "../../../../shared/components";
 import { useToast } from 'primevue/usetoast';
 
@@ -192,100 +193,102 @@ function createCustomerFromOffer(offer){
 
 
 <template>
-	<div class="offer-details document" v-if="offer">
-		<section class="top-section">
-			<OfferDetailsActions class="offer-details-actions"
-				@action="onOfferDetailsAction"
-			/>
+	<PageContainer>
+		<div class="offer-details document" v-if="offer">
+			<section class="top-section">
+				<OfferDetailsActions class="offer-details-actions"
+					@action="onOfferDetailsAction"
+				/>
 
-			<CustomerCard class="customer-card" v-if="customer"
-				:customer="customer"
-			/>
-		</section>
+				<CustomerCard class="customer-card" v-if="customer"
+					:customer="customer"
+				/>
+			</section>
 
-		<Divider />
+			<Divider />
 
-		<section>
-			<h2>Angebotsdaten</h2>
+			<section>
+				<h2>Angebotsdaten</h2>
 
-			<OfferDetailsSummary class="offer-summary"
-				:offer="offer"
-			/>
-		</section>
+				<OfferDetailsSummary class="offer-summary"
+					:offer="offer"
+				/>
+			</section>
 
-		<Divider />
+			<Divider />
 
-		<section>
-			<div class="introduction">
-				<h2>Einleitung</h2>
+			<section>
+				<div class="introduction">
+					<h2>Einleitung</h2>
 
-				<div class="value">
-					{{offer.introduction}}
-				</div>
-			</div>
-		</section>
-
-		<Divider />
-
-		<section>
-			<h2>Positionen</h2>
-
-			<ItemsList
-				:items="offer.items"
-				:showTaxRatePerItem="offer.showTaxRatePerItem"
-			/>
-		</section>
-
-		<Divider />
-
-		<section>
-			<h2>Preisübersicht</h2>
-
-			<TotalsList
-				:totals="offer.totals"
-			/>
-		</section>
-
-		<Divider />
-
-		<section>
-			<h2>Schlussbemerkung</h2>
-
-			<div class="closing">
-				{{offer.closing}}
-			</div>
-		</section>
-
-		<Divider />
-
-		<section>
-			<h2>Historie</h2>
-
-			<div class="grid-2-columns">
-				<div class="history">
-					<div class="history-item">
-						<div class="history-label">
-							Erstellt
-						</div>
-
-						<div class="history-value">
-							{{offer.createdAt.toLocaleDateString()}}
-						</div>
-					</div>
-
-					<div class="history-item">
-						<div class="history-label">
-							Geändert
-						</div>
-
-						<div class="history-value">
-							{{offer.updatedAt.toLocaleDateString()}}
-						</div>
+					<div class="value">
+						{{offer.introduction}}
 					</div>
 				</div>
-			</div>
-		</section>
-	</div>
+			</section>
+
+			<Divider />
+
+			<section>
+				<h2>Positionen</h2>
+
+				<ItemsList
+					:items="offer.items"
+					:showTaxRatePerItem="offer.showTaxRatePerItem"
+				/>
+			</section>
+
+			<Divider />
+
+			<section>
+				<h2>Preisübersicht</h2>
+
+				<TotalsList
+					:totals="offer.totals"
+				/>
+			</section>
+
+			<Divider />
+
+			<section>
+				<h2>Schlussbemerkung</h2>
+
+				<div class="closing">
+					{{offer.closing}}
+				</div>
+			</section>
+
+			<Divider />
+
+			<section>
+				<h2>Historie</h2>
+
+				<div class="grid-2-columns">
+					<div class="history">
+						<div class="history-item">
+							<div class="history-label">
+								Erstellt
+							</div>
+
+							<div class="history-value">
+								{{offer.createdAt.toLocaleDateString()}}
+							</div>
+						</div>
+
+						<div class="history-item">
+							<div class="history-label">
+								Geändert
+							</div>
+
+							<div class="history-value">
+								{{offer.updatedAt.toLocaleDateString()}}
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</PageContainer>
 </template>
 
 

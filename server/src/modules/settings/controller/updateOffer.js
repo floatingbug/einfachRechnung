@@ -8,7 +8,5 @@ module.exports = catchAsync(async (req, res, next) => {
         offerSettings: req.body,
     });
 
-    res.json({
-        ...updatedOfferSettings,
-    });
+    res.json(updatedOfferSettings);
 });

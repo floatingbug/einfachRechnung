@@ -9,11 +9,15 @@ export default [
 		meta: {
 			context: "dashboard",
 			requiresAuth: true,
+			breadcrumb: "Dashboard",
 		},
 		children: [
 			{
 				path: "",
 				component: OverviewView,
+				meta: {
+					breadcrumb: "Übersicht",
+				}
 			},
 		],
 	},

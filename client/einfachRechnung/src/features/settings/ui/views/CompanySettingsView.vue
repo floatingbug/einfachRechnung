@@ -3,6 +3,7 @@ import {onMounted} from "vue";
 import {useSettingsStore} from "../../store/useSettingsStore.js";
 import {CompanySettingsForm} from "../components";
 import { useToast } from "primevue/usetoast";
+import {PageContainer} from "@/shared/components";
 
 
 const toast = useToast();
@@ -19,12 +20,7 @@ async function onCompanySettingsFormSubmit(event){
 		await settingsStore.updateCompany({
 			company: event.data,
 		});
-	}
-	catch {
-		toast.add({severity: "error", summary: "Fehler", detail: "Firmendaten konnten nicht gespeichert werden.", life: 5000});
-		return;
-	}
-	finally{
+
 		toast.add({
 			severity: "success",
 			summary: "Gespeichert",
@@ -32,19 +28,34 @@ async function onCompanySettingsFormSubmit(event){
 			life: 5000,
 		});
 	}
+	catch{
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "Firmendaten konnten nicht gespeichert werden.",
+			life: 5000
+		});
+
+		return;
+	}
 }
 
 </script>
 
 
 <template>
-	<CompanySettingsForm
-		:data="settingsStore.company"
-		@submit="onCompanySettingsFormSubmit"
-	/>
+	<PageContainer>
+		<template #header>
+			Firmeneinstellungen
+		</template>
+
+		<CompanySettingsForm
+			:data="settingsStore.company"
+			@submit="onCompanySettingsFormSubmit"
+		/>
+	</PageContainer>
 </template>
 
 
 <style scoped lang="scss">
-
 </style>

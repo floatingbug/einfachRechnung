@@ -1,19 +1,66 @@
 <script setup>
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import { Sidebar, Topbar } from "../../shared/components";
 
+const isDesktop = ref(false);
+const sidebarCollapsed = ref(false);
+const mobileSidebarOpen = ref(false);
+let desktopMediaQuery;
+
+function updateViewport({ matches }) {
+	isDesktop.value = matches;
+	if (matches) {
+		mobileSidebarOpen.value = false;
+	}
+}
+
+function toggleSidebar() {
+	if (isDesktop.value) {
+		sidebarCollapsed.value = !sidebarCollapsed.value;
+		return;
+	}
+
+	mobileSidebarOpen.value = !mobileSidebarOpen.value;
+}
+
+function closeMobileSidebar() {
+	mobileSidebarOpen.value = false;
+}
+
+onMounted(() => {
+	desktopMediaQuery = window.matchMedia("(min-width: 1024px)");
+	updateViewport(desktopMediaQuery);
+	desktopMediaQuery.addEventListener("change", updateViewport);
+});
+
+onBeforeUnmount(() => {
+	desktopMediaQuery?.removeEventListener("change", updateViewport);
+});
 </script>
 
 <template>
-	<div class="app-layout">
-		<Topbar class="topbar"
+	<div
+		class="app-layout"
+		:class="{ 'is-sidebar-collapsed': sidebarCollapsed }"
+	>
+		<Topbar
+			class="topbar"
+			:sidebar-open="isDesktop ? !sidebarCollapsed : mobileSidebarOpen"
+			@sidebar-toggle="toggleSidebar"
 		/>
 
-		<Sidebar class="sidebar"
+		<Sidebar
+			class="sidebar"
+			:desktop="isDesktop"
+			:collapsed="sidebarCollapsed"
+			:mobile-open="mobileSidebarOpen"
+			@close="closeMobileSidebar"
+			@toggle-collapse="toggleSidebar"
 		/>
 
-		<div class="main">
+		<main class="main">
 			<RouterView />
-		</div>
+		</main>
 	</div>
 </template>
 
@@ -22,14 +69,22 @@ import { Sidebar, Topbar } from "../../shared/components";
 @use "@/shared/styles/media" as media;
 
 .app-layout {
+	min-height: 100dvh;
+
 	@include media.up(bp.$bp-lg) {
 		display: grid;
-		grid-template-columns: auto 1fr;
+		grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
 		grid-template-rows: auto 1fr;
 		grid-template-areas:
 			"sidebar topbar"
 			"sidebar main";
-		user-select: none;
+		transition: grid-template-columns 220ms ease;
+	}
+
+	&.is-sidebar-collapsed {
+		@include media.up(bp.$bp-lg) {
+			grid-template-columns: var(--sidebar-collapsed-width) minmax(0, 1fr);
+		}
 	}
 }
 
@@ -38,31 +93,17 @@ import { Sidebar, Topbar } from "../../shared/components";
 	width: 100%;
 	position: sticky;
 	top: 0;
-	z-index: 10;
+	z-index: 20;
 }
 
 .sidebar {
 	grid-area: sidebar;
-	width: var(--sidebar-width);
-	height: 100dvh;
-	position: sticky;
-	top: 0;
-	display: none;
-	background-color: var(--sidebar-bg);
-	border-right: 1px solid var(--sidebar-border);
-
-	@include media.up(bp.$bp-lg){
-		display: block;
-	}
 }
 
 .main {
 	grid-area: main;
 	width: 100%;
 	min-width: 0;
-	display: flex;
-	justify-content: center;
 	margin-bottom: 12rem;
-	padding: var(--space-xl);
 }
 </style>

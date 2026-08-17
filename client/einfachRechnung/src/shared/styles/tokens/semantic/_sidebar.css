@@ -1,28 +1,33 @@
 :root {
 	/* Sidebar Base */
-	--sidebar-bg: var(--p-primary-700);
+	--sidebar-bg: var(--p-surface-0);
+	--sidebar-shadow: var(--p-overlay-modal-shadow);
+	--sidebar-mark-bg: var(--p-primary-color);
+	--sidebar-mark-text: var(--p-primary-contrast-color);
+	--sidebar-accent: var(--p-primary-color);
 
 	/* Borders & Dividers */
-	--sidebar-border: var(--p-primary-600);
-	--sidebar-divider: var(--p-primary-800);
+	--sidebar-border: var(--p-content-border-color);
+	--sidebar-divider: var(--p-content-border-color);
 
 	/* Text */
-	--sidebar-text: #ffffff;
-	--sidebar-text-muted: var(--p-primary-200);
+	--sidebar-text: var(--p-text-color);
+	--sidebar-text-muted: var(--p-text-muted-color);
 
 	/* Icons */
-	--sidebar-icon: var(--p-primary-100);
-	--sidebar-icon-muted: var(--p-primary-300);
+	--sidebar-icon: var(--p-text-color);
+	--sidebar-icon-muted: var(--p-text-muted-color);
 
 	/* States */
-	--sidebar-hover: var(--p-primary-600);
-	--sidebar-active: var(--p-primary-200);
+	--sidebar-hover: var(--p-content-hover-background);
+	--sidebar-active: var(--p-highlight-background);
 
 	/* Accessibility */
-	--sidebar-focus-ring: var(--p-primary-400);
+	--sidebar-focus-ring: var(--p-focus-ring-color);
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
+		--sidebar-bg: var(--p-surface-900);
 	}
 }

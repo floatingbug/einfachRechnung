@@ -1,6 +1,7 @@
 <script setup>
 import {computed, onMounted, ref} from "vue";
 import useInvoiceStore from "@/features/invoice/store/useInvoiceStore.js";
+import {PageContainer} from "@/shared/components";
 
 const invoiceStore = useInvoiceStore();
 const loading = ref(true);
@@ -27,22 +28,24 @@ onMounted(async () => {
 
 
 <template>
-	<section class="dashboard-overview">
-		<h1>Übersicht</h1>
-		<p v-if="loading">Lade Dashboard …</p>
-		<p v-else-if="error">{{ error }}</p>
-		<template v-else>
-			<div class="metrics">
-				<div><strong>{{ openInvoices.length }}</strong><span>offene Rechnungen</span></div>
-				<div><strong>{{ overdueInvoices.length }}</strong><span>überfällige Rechnungen</span></div>
-				<div><strong>{{ openAmount.toFixed(2) }} €</strong><span>offener Betrag</span></div>
-			</div>
-			<h2>Letzte Aktivitäten</h2>
-			<ul>
-				<li v-for="invoice in recentInvoices" :key="invoice.id">{{ invoice.invoiceNumber }} · {{ invoice.status }} · {{ invoice.paymentStatus }}</li>
-			</ul>
-		</template>
-	</section>
+	<PageContainer>
+		<section class="dashboard-overview">
+			<h1>Übersicht</h1>
+			<p v-if="loading">Lade Dashboard …</p>
+			<p v-else-if="error">{{ error }}</p>
+			<template v-else>
+				<div class="metrics">
+					<div><strong>{{ openInvoices.length }}</strong><span>offene Rechnungen</span></div>
+					<div><strong>{{ overdueInvoices.length }}</strong><span>überfällige Rechnungen</span></div>
+					<div><strong>{{ openAmount.toFixed(2) }} €</strong><span>offener Betrag</span></div>
+				</div>
+				<h2>Letzte Aktivitäten</h2>
+				<ul>
+					<li v-for="invoice in recentInvoices" :key="invoice.id">{{ invoice.invoiceNumber }} · {{ invoice.status }} · {{ invoice.paymentStatus }}</li>
+				</ul>
+			</template>
+		</section>
+	</PageContainer>
 </template>
 
 

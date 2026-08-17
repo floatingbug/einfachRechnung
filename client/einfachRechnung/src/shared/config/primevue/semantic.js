@@ -1,62 +1,30 @@
 export default {
-	colorScheme: {
-		light: {
-			primary: {
-				50:  '#f4f5fb',
-				100: '#d9dcf2',
-				200: '#b9bee8',
-				300: '#999fdd',
-				400: '#7f86d4',
-				500: '#6366f1', // MAIN PRIMARY (abgeleitet, heller & UI-tauglich)
-				600: '#5558d8',
-				700: '#41408a', // deine Sidebar-Farbe
-				800: '#2f2e67',
-				900: '#1d1c44',
-				950: '#121129'
-			},
-			surface: {
-				0: '#ffffff',
-				50: '{zinc.50}',
-				100: '{zinc.100}',
-				200: '{zinc.200}',
-				300: '{zinc.300}',
-				400: '{zinc.400}',
-				500: '{zinc.500}',
-				600: '{zinc.600}',
-				700: '{zinc.700}',
-				800: '{zinc.800}',
-				900: '{zinc.900}',
-				950: '{zinc.950}'
-			}
-		},
-		dark: {
-			primary: {
-				50:  '#f4f5fb',
-				100: '#d9dcf2',
-				200: '#b9bee8',
-				300: '#999fdd',
-				400: '#7f86d4',
-				500: '#6366f1',
-				600: '#5558d8',
-				700: '#41408a',
-				800: '#2f2e67',
-				900: '#1d1c44',
-				950: '#121129'
-			},
-			surface: {
-				0: '#ffffff',
-				50: '{zinc.50}',
-				100: '{zinc.100}',
-				200: '{zinc.200}',
-				300: '{zinc.300}',
-				400: '{zinc.400}',
-				500: '{zinc.500}',
-				600: '{zinc.600}',
-				700: '{zinc.700}',
-				800: '{zinc.800}',
-				900: '{zinc.900}',
-				950: '{zinc.950}'
-			}
-		}
-	}
+	primary: {
+		color: '{indigo.500}',
+		contrastColor: '#ffffff',
+		hoverColor: '{indigo.600}',
+		activeColor: '{indigo.700}',
+	},
+
+	surface: {
+		0: '#ffffff',
+		50: 'light-dark({zinc.50}, {zinc.950})',
+		100: 'light-dark({zinc.100}, {zinc.900})',
+		200: 'light-dark({zinc.200}, {zinc.800})',
+		300: 'light-dark({zinc.300}, {zinc.700})',
+		400: 'light-dark({zinc.400}, {zinc.600})',
+		500: 'light-dark({zinc.500}, {zinc.500})',
+		600: 'light-dark({zinc.600}, {zinc.400})',
+		700: 'light-dark({zinc.700}, {zinc.300})',
+		800: 'light-dark({zinc.800}, {zinc.200})',
+		900: 'light-dark({zinc.900}, {zinc.100})',
+		950: 'light-dark({zinc.950}, {zinc.50})',
+	},
+
+	highlight: {
+		background: '{primary.color}',
+		focusBackground: '{primary.hoverColor}',
+		color: '{primary.contrastColor}',
+		focusColor: '{primary.contrastColor}',
+	},
 }

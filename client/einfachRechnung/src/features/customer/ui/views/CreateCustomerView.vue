@@ -15,7 +15,6 @@ onMounted(async () => {
 async function handleSubmit(){
 	await customerStore.createCustomer();
 }
-
 </script>
 
 

@@ -1,5 +1,6 @@
 :root {
 	--topbar-height: 56px;
 	--footer-height: 56px;
-	--sidebar-width: 200px;
+	--sidebar-width: 248px;
+	--sidebar-collapsed-width: 72px;
 }

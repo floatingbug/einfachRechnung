@@ -5,7 +5,7 @@ import { ref, watch, toRaw } from "vue";
 
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
-import InputSwitch from "primevue/inputswitch";
+import ToggleSwitch from "primevue/toggleswitch";
 import Button from "primevue/button";
 import Divider from "primevue/divider";
 import Message from "primevue/message";
@@ -65,13 +65,9 @@ function onSubmit(){
 
 
 <template>
-	<div class="email-settings-form">
-
-		<h2>E-Mail Einstellungen</h2>
-
-		<div class="grid">
-
-			<div class="field">
+	<form>
+		<div class="input-group">
+			<div class="input">
 				<label>SMTP Host</label>
 
 				<InputText v-model="form.smtpHost" />
@@ -87,7 +83,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>SMTP Port</label>
 
 				<InputNumber v-model="form.smtpPort" />
@@ -103,7 +99,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Benutzername</label>
 
 				<InputText v-model="form.username" />
@@ -119,7 +115,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Passwort</label>
 
 				<InputText
@@ -138,7 +134,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Absender E-Mail</label>
 
 				<InputText v-model="form.fromEmail" />
@@ -154,7 +150,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Absender Name</label>
 
 				<InputText v-model="form.fromName" />
@@ -170,10 +166,10 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field switch-field">
+			<div class="input switch-field">
 				<label>Sichere Verbindung (SSL)</label>
 
-				<InputSwitch v-model="form.secure" />
+				<ToggleSwitch v-model="form.secure" />
 
 				<Message
 					v-if="errors.secure"
@@ -186,10 +182,10 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field switch-field">
+			<div class="input switch-field">
 				<label>Automatischer Rechnungsversand</label>
 
-				<InputSwitch
+				<ToggleSwitch
 					v-model="form.autoSendInvoices"
 				/>
 
@@ -204,7 +200,7 @@ function onSubmit(){
 			</div>
 
 
-			<div class="field">
+			<div class="input">
 				<label>Reply-To E-Mail</label>
 
 				<InputText
@@ -233,30 +229,12 @@ function onSubmit(){
 			/>
 		</div>
 
-	</div>
+	</form>
 </template>
 
 
 <style scoped lang="scss">
-.email-settings-form {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-xl);
-}
-
-.grid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: var(--space-md);
-}
-
-.field {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-xs);
-}
-
-.switch-field {
+.switch-input {
 	justify-content: flex-end;
 }
 
