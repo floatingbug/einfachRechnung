@@ -1,10 +1,13 @@
 <script setup>
+import { PageContainer } from '@/shared/components';
 import CreateOfferForm from '../components/createOfferForm/CreateOfferForm.vue'
 
 </script>
 
 <template>
-	<CreateOfferForm />
+	<PageContainer>
+		<CreateOfferForm />
+	</PageContainer>
 </template>
 
 <style scoped lang="scss"></style>

@@ -93,51 +93,88 @@ upsert("settings", { userId }, {
     userId,
 
     company: {
-        companyName: "Einfach Rechnung GmbH",
-        ownerName: "Tom Mustermann",
-        email: "info@einfach-rechnung.de",
-        phone: "+492611234567",
-        website: "https://einfach-rechnung.de",
+        companyName: "",
+        ownerName: "",
 
-        street: "Musterstraße 1",
-        city: "Montabaur",
-        postalCode: "56410",
-        countryCode: "DE",
+        email: "",
+        phone: "",
+        website: "",
 
-        vatId: "DE123456789",
-        taxNumber: "12/345/67890",
+        street: "",
+        postalCode: "",
+        city: "",
+        countryCode: "",
+
+        logo: null,
+
+        greeting: "Mit freundlichen Grüßen",
+
+        bank: {
+            bankName: "",
+            iban: "",
+            bic: "",
+        },
     },
-
     email: {
-        smtpHost: "smtp.example.com",
-        smtpPort: 587,
-        username: "mailer@example.com",
-        password: "secret",
-        fromEmail: "rechnung@einfach-rechnung.de",
-        fromName: "Einfach Rechnung",
-        secure: false,
-        autoSendInvoices: false,
-        replyToEmail: "support@einfach-rechnung.de",
-    },
+        senderName: "",
+        replyTo: "",
 
+        offerSubject: "Ihr Angebot",
+        offerMessage: "",
+
+        invoiceSubject: "Ihre Rechnung",
+        invoiceMessage: "",
+
+        autoSendEnabled: false,
+    },
     invoice: {
-        invoicePrefix: "RE",
-        invoiceNumberStart: 1000,
-        invoiceNumberFormat: "RE-{YEAR}-{NUMBER}",
-        defaultPaymentTermsDays: 14,
-        defaultDueDays: 14,
+        invoicePrefix: "",
+        invoiceNumberFormat: "{prefix}{year}-{number}",
+
+        nextInvoiceNumber: 1,
+
+        paymentTermsDays: 14,
+
         currency: "EUR",
         language: "de",
-        autoSendEnabled: false,
-        defaultTaxRate: 19,
-    },
 
+        introduction:
+            "Vielen Dank für Ihren Auftrag.",
+
+        closing:
+            "Vielen Dank für Ihr Vertrauen.\nFür Rückfragen stehen wir Ihnen gerne zur Verfügung.",
+
+        showItemNumbers: true,
+        showTaxRatePerItem: false,
+        
+        taxRate: 19,
+    },
     tax: {
-        vatEnabled: true,
-        defaultVatRate: 19,
-        reducedVatRate: 7,
-        taxCountryCode: "DE",
-        reverseChargeEnabled: false,
+        vatId: "",
+        taxNumber: "",
+
+        taxRate: 19,
+
+        isSmallBusiness: false,
+    },
+    offer: {
+        offerPrefix: "",
+        offerNumberFormat: "{prefix}{year}-{number}",
+
+        nextOfferNumber: 1,
+
+        validityDays: 14,
+
+        introduction:
+            "Vielen Dank für Ihre Anfrage.\nGerne unterbreiten wir Ihnen folgendes Angebot.",
+
+        closing:
+            "Wir freuen uns auf Ihren Auftrag.\nFür Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung.",
+
+        showItemNumbers: true,
+        showTaxRatePerItem: false,
+
+        taxRate: 19,
     },
 });
 

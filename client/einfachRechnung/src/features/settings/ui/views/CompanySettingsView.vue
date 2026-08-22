@@ -15,28 +15,30 @@ onMounted(async () => {
 });
 
 
-async function onCompanySettingsFormSubmit(event){
-	try{
-		await settingsStore.updateCompany({
-			company: event.data,
-		});
+async function onCompanySettingsFormAction(event){
+	if(event.action === "updateCompany"){
+		try{
+			await settingsStore.updateCompany({
+				company: settingsStore.company,
+			});
 
-		toast.add({
-			severity: "success",
-			summary: "Gespeichert",
-			detail: "Firmendaten gespeichert",
-			life: 5000,
-		});
-	}
-	catch{
-		toast.add({
-			severity: "error",
-			summary: "Fehler",
-			detail: "Firmendaten konnten nicht gespeichert werden.",
-			life: 5000
-		});
+			toast.add({
+				severity: "success",
+				summary: "Gespeichert",
+				detail: "Firmendaten gespeichert",
+				life: 5000,
+			});
+		}
+		catch{
+			toast.add({
+				severity: "error",
+				summary: "Fehler",
+				detail: "Firmendaten konnten nicht gespeichert werden.",
+				life: 5000
+			});
 
-		return;
+			return;
+		}
 	}
 }
 
@@ -50,8 +52,8 @@ async function onCompanySettingsFormSubmit(event){
 		</template>
 
 		<CompanySettingsForm
-			:data="settingsStore.company"
-			@submit="onCompanySettingsFormSubmit"
+			v-model="settingsStore.company"
+			@action="onCompanySettingsFormAction"
 		/>
 	</PageContainer>
 </template>

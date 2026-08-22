@@ -21,6 +21,12 @@ module.exports = async ({userId}) => {
             logo: null,
 
             greeting: "Mit freundlichen Grüßen",
+
+            bank: {
+                bankName: "",
+                iban: "",
+                bic: "",
+            },
         },
         email: {
             senderName: "",
@@ -40,25 +46,27 @@ module.exports = async ({userId}) => {
 
             nextInvoiceNumber: 1,
 
-            defaultPaymentTermsDays: 14,
+            paymentTermsDays: 14,
 
             currency: "EUR",
             language: "de",
 
-            defaultIntroduction:
+            introduction:
                 "Vielen Dank für Ihren Auftrag.",
 
-            defaultClosing:
+            closing:
                 "Vielen Dank für Ihr Vertrauen.\nFür Rückfragen stehen wir Ihnen gerne zur Verfügung.",
 
             showItemNumbers: true,
             showTaxRatePerItem: false,
+            
+            taxRate: 19,
         },
         tax: {
             vatId: "",
             taxNumber: "",
 
-            defaultTaxRate: 19,
+            taxRate: 19,
 
             isSmallBusiness: false,
         },
@@ -68,12 +76,12 @@ module.exports = async ({userId}) => {
 
             nextOfferNumber: 1,
 
-            defaultValidityDays: 14,
+            validityDays: 14,
 
-            defaultIntroduction:
+            introduction:
                 "Vielen Dank für Ihre Anfrage.\nGerne unterbreiten wir Ihnen folgendes Angebot.",
 
-            defaultClosing:
+            closing:
                 "Wir freuen uns auf Ihren Auftrag.\nFür Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung.",
 
             showItemNumbers: true,

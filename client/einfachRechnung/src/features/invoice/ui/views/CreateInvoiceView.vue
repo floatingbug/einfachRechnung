@@ -1,419 +1,239 @@
 <script setup>
-import { reactive, computed, ref, onMounted } from "vue";
-import {services} from "../../services";
-import useInvoiceStore from "../../store/useInvoiceStore.js";
+import {ref, onMounted} from "vue";
 import {useRouter} from "vue-router";
+import { LineItems, PageContainer, SelectCustomer } from '@/shared/components';
 import {useSettingsStore} from "@/features/settings/store/useSettingsStore.js";
-import InputText from "primevue/inputtext";
-import InputNumber from "primevue/inputnumber";
-import Textarea from "primevue/textarea";
-import Button from "primevue/button";
-import Card from "primevue/card";
-import Divider from "primevue/divider";
-import { PageHeader } from "@/shared/layouts";
-import CustomerSelect from "../components/CustomerSelect.vue";
+import { DatePicker, Select, useToast } from "primevue";
+import {createInvoiceEntity} from "@/features/invoice/entities";
+import {paymentMethodOptions} from "@/shared/options";
+import {useInvoiceStore} from "../../store";
 
-const form = reactive({
-	customer: {
-		name: "",
-		street: "",
-		postalCode: "",
-		city: "",
-		email: "",
-		vatId: ""
-	},
-	seller: {
-		name: "",
-		street: "",
-		postalCode: "",
-		city: "",
-		vatId: "",
-		taxNumber: ""
-	},
-	items: [
-		{
-			name: "",
-			description: "",
-			quantity: 1,
-			unitPrice: 0,
-			taxRate: 19
-		}
-	],
-	invoiceDate: "",
-	dueDate: "",
-	serviceDate: "",
-	note: ""
-});
+
 const invoiceStore = useInvoiceStore();
-const router = useRouter();
+const toast = useToast();
 const settingsStore = useSettingsStore();
-const isSaving = ref(false);
-const error = ref("");
+const router = useRouter();
+const invoice = ref();
+const itemSettings = ref();
+const selectedCustomer = ref();
+
 
 onMounted(async () => {
+	const invoiceSettings = await settingsStore.getInvoice();
+
+	// itemSettings for LineItems.vue
+	itemSettings.value = {
+		taxRate: invoiceSettings.taxRate,
+	};
+
+	// --- set invoice defaults ---
+
+	// set dates
+	const date = new Date();
+	const dueDate = new Date();
+	dueDate.setDate(date.getDate() + invoiceSettings.dueDays);
+
+	const invoiceDate = date;
+
+	invoice.value = createInvoiceEntity(
+		{
+			invoiceDate,
+			dueDate,
+			paymentMethod: invoiceSettings.paymentMethod,
+		}
+	);
+});
+
+async function createInvoice(){
 	try {
-		await settingsStore.getCompany();
-		await settingsStore.getInvoice();
-		Object.assign(form.seller, {
-			name: settingsStore.company.companyName,
-			street: settingsStore.company.street,
-			postalCode: settingsStore.company.postalCode,
-			city: settingsStore.company.city,
-			vatId: settingsStore.company.vatId,
-			taxNumber: settingsStore.company.taxNumber,
+		const invoiceNumber = await invoiceStore.createInvoice({
+			invoice: invoice.value,
+			customerId: selectedCustomer.value.id,
 		});
-		const invoiceDate = new Date();
-		const dueDate = new Date(invoiceDate);
-		dueDate.setDate(dueDate.getDate() + (settingsStore.invoice.defaultPaymentTermsDays || 14));
-		form.invoiceDate = invoiceDate.toISOString().slice(0, 10);
-		form.dueDate = dueDate.toISOString().slice(0, 10);
+
+		router.push(`/invoice/${invoiceNumber}`)
+
+		toast.add({
+			severity: "success",
+			summary: "Gespeichert",
+			detail: "Die Rechnung wurde gespeichert.",
+			life: 5000,
+		});
 	}
 	catch {
-		error.value = "Standarddaten für die Rechnung konnten nicht geladen werden.";
-	}
-});
-
-function onCustomerSelect(customer){
-	form.customer = { ...customer };
-}
-
-function addItem(){
-	form.items.push({
-		name: "",
-		description: "",
-		quantity: 1,
-		unitPrice: 0,
-		taxRate: 19
-	});
-}
-
-function removeItem(index){
-	form.items.splice(index, 1);
-}
-
-async function submit(){
-	if(isSaving.value) return;
-	isSaving.value = true;
-	error.value = "";
-	try {
-		const invoice = await invoiceStore.createInvoice(form);
-		await router.push({name: "invoice-details", params: {invoiceId: invoice.id || invoice.invoiceNumber}});
-	}
-	catch {
-		error.value = "Die Rechnung konnte nicht gespeichert werden.";
-	}
-	finally {
-		isSaving.value = false;
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "Die Rechnung konnten nicht gespeichert werden.",
+			life: 5000
+		});
 	}
 }
 
-// --- Calculations ---
-const totals = computed(() => {
-	return services.calculateInvoiceTotals(form.items);
-});
 </script>
 
+
 <template>
-	<div class="create-invoice">
-		<PageHeader>
-			Rechnung erstellen
-		</PageHeader>
+	<PageContainer>
+		<template #header>
+			Schnelle Rechnung
+		</template>
 
-		<CustomerSelect
-			@select="onCustomerSelect"
-		/>
+		<form>
+			<section>
+				<h2>Kunde Auswählen</h2>
 
-		<form class="invoice-form" @submit.prevent="submit">
-
-			<!-- Customer -->
-			<fieldset class="customer-section">
-				<legend class="customer-header"><h2>Kunde</h2></legend>
-
-				<div class="customer-group">
-					<div class="customer-group-item">
-
-						<div class="input">
-							<label>Name</label>
-							<InputText v-model="form.customer.name" />
-						</div>
-
-						<div class="input">
-							<label>Straße</label>
-							<InputText v-model="form.customer.street" />
-						</div>
-
-						<div class="input">
-							<label>Postleitzahl</label>
-							<InputText v-model="form.customer.postalCode" />
-						</div>
-
+				<div class="item-group">
+					<div class="item">
+						<SelectCustomer
+							@customerSelected="selectedCustomer = $event;"
+						/>
 					</div>
 
-					<div class="customer-group-item">
-
-						<div class="input">
-							<label>Stadt</label>
-							<InputText v-model="form.customer.city" />
-						</div>
-
-						<div class="input">
-							<label>E-Mail</label>
-							<InputText v-model="form.customer.email" />
-						</div>
-
-						<div class="input">
-							<label>USt-IdNr. (optional)</label>
-							<InputText v-model="form.customer.vatId" />
-						</div>
-
+					<div class="item">
+						<Button
+							label="Kunde anlegen"
+							severity="secondary"
+							@click="router.push('/customer/create')"
+						/>
 					</div>
 				</div>
-			</fieldset>
+			</section>
+		</form>
 
-			<!-- Seller -->
-			<fieldset class="seller-section">
-				<legend class="seller-header"><h2>Verkäufer</h2></legend>
-
-				<div class="seller-group">
-					<div class="seller-group-item">
-
-						<div class="input">
-							<label>Firmenname</label>
-							<InputText v-model="form.seller.name" />
-						</div>
-
-						<div class="input">
-							<label>Straße</label>
-							<InputText v-model="form.seller.street" />
-						</div>
-
-						<div class="input">
-							<label>Postleitzahl</label>
-							<InputText v-model="form.seller.postalCode" />
-						</div>
-
-					</div>
-
-					<div class="seller-group-item">
-
-						<div class="input">
-							<label>Stadt</label>
-							<InputText v-model="form.seller.city" />
-						</div>
-
-						<div class="input">
-							<label>USt-IdNr.</label>
-							<InputText v-model="form.seller.vatId" />
-						</div>
-
-						<div class="input">
-							<label>Steuernummer</label>
-							<InputText v-model="form.seller.taxNumber" />
-						</div>
-
-					</div>
-				</div>
-			</fieldset>
-
+		<form v-if="invoice && selectedCustomer">
 			<Divider />
 
-			<!-- Items -->
-			<fieldset class="items-section">
-				<legend><h2>Positionen</h2></legend>
+			<section>
+				<h2>Kunde</h2>
 
-				<div class="items-container">
-					<Card
-						v-for="(item, index) in form.items"
-						:key="index"
-					>
-						<template #content>
-							<div class="item">
+				<div class="item-group-1-column company" v-if="selectedCustomer?.customerType === 'company'">
+					<div class="item">
+						<div class="item-label">
+							Firma
+						</div>
 
-								<div class="input">
-									<label>Name</label>
-									<InputText v-model="item.name" />
-								</div>
-
-								<div class="input">
-									<label>Beschreibung</label>
-									<InputText v-model="item.description" />
-								</div>
-
-								<div class="input">
-									<label>Menge</label>
-									<InputNumber
-										v-model="item.quantity"
-										@input="(e) => item.quantity = e.value ?? 0"
-									/>
-								</div>
-
-								<div class="input">
-									<label>Einzelpreis</label>
-									<InputNumber
-										v-model="item.unitPrice"
-										mode="currency"
-										currency="EUR"
-										@input="(e) => item.unitPrice = e.value ?? 0"
-									/>
-								</div>
-
-								<div class="input">
-									<label>Steuer (%)</label>
-									<InputNumber
-										v-model="item.taxRate"
-										:min="0"
-										@input="(e) => item.taxRate = e.value ?? 0"
-									/>
-								</div>
-
-								<Button
-									label="Entfernen"
-									severity="danger"
-									text
-									@click="removeItem(index)"
-								/>
-
-							</div>
-						</template>
-					</Card>
-				</div>
-
-				<div class="section-btns-container">
-					<Button
-						label="Position hinzufügen"
-						icon="pi pi-plus"
-						@click="addItem"
-					/>
-				</div>
-			</fieldset>
-
-			<Divider />
-
-			<!-- Meta -->
-			<fieldset>
-				<legend>Rechnungsdaten</legend>
-
-				<div class="grid">
-					<InputText v-model="form.invoiceNumber" placeholder="Rechnungsnummer" />
-					<InputText v-model="form.invoiceDate" placeholder="Rechnungsdatum YYYY-MM-DD" />
-					<InputText v-model="form.serviceDate" placeholder="Leistungsdatum YYYY-MM-DD" />
-					<InputText v-model="form.dueDate" placeholder="Fälligkeitsdatum YYYY-MM-DD" />
-				</div>
-			</fieldset>
-
-			<Divider />
-
-			<!-- Totals -->
-			<fieldset>
-				<legend>Summen</legend>
-
-				<div class="totals">
-					<div>Netto: {{totals.netTotal}} €</div>
-
-					<div v-for="(value, rate) in totals.taxBreakdown" :key="rate">
-						Steuer ({{ rate }}%): {{ value.toFixed(2) }} €
+						<div class="item-value">
+							{{selectedCustomer.companyName}}
+						</div>
 					</div>
 
-					<div>Steuer gesamt: {{ totals.taxTotal.toFixed(2) }} €</div>
+					<div class="item">
+						<div class="item-label">
+							Ansprechpartner
+						</div>
 
-					<div class="gross">Brutto: {{ totals.grossTotal.toFixed(2) }} €</div>
+						<div class="item-value">
+							{{selectedCustomer.contactPerson}}
+						</div>
+					</div>
 				</div>
-			</fieldset>
 
-			<Divider />
+				<div class="item-group-1-column company" v-if="selectedCustomer?.customerType === 'private'">
+					<div class="item">
+						<div class="item-label">
+							Name
+						</div>
 
-			<!-- Note -->
-			<fieldset class="note">
-				<legend><h2>Notiz</h2></legend>
-
-				<Textarea v-model="form.note" rows="4" />
-			</fieldset>
-
-			<section class="actions">
-				<div class="section-btns-container">
-					<Button label="Abbrechen" severity="secondary" type="button" @click="router.push('/invoice')" />
-					<Button label="Rechnung erstellen" type="submit" :loading="isSaving" />
+						<div class="item-value">
+							{{selectedCustomer.name}}
+						</div>
+					</div>
 				</div>
-				<p v-if="error" class="error">{{ error }}</p>
+
+				<div class="item-group-1-column">
+					<div class="item">
+						<div class="item-label">
+							Straße
+						</div>
+
+						<div class="item-value">
+							{{selectedCustomer.street}}
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="item-label">
+							Postleitzahl
+						</div>
+
+						<div class="item-value">
+							{{selectedCustomer.postalCode}}
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="item-label">
+							Wohnort
+						</div>
+
+						<div class="item-value">
+							{{selectedCustomer.city}}
+						</div>
+					</div>
+				</div>
 			</section>
 
+			<Divider />
+				<h2>Rechnungsdaten</h2>
+
+				<div class="input-group">
+					<div class="input">
+						<label for="invoiceDate">Rechnungs Datum</label>
+
+						<DatePicker
+							v-model="invoice.invoiceDate"
+						/>
+					</div>
+
+					<div class="input">
+						<label for="dueDate">Fällig bis</label>
+
+						<DatePicker
+							v-model="invoice.dueDate"
+						/>
+					</div>
+				</div>
+			<Divider />
+
+			<section>
+				<h2>Positionen</h2>
+
+				<LineItems
+					v-model="invoice.items"
+					:itemSettings="itemSettings"
+				/>
+			</section>
+
+			<Divider />
+
+			<section>
+				<h2>Zahlungs Methode</h2>
+
+				<Select
+					v-model="invoice.paymentMethod"
+					:options="paymentMethodOptions"
+					optionLabel="label"
+					optionValue="value"
+					placeholder="Zahlungsart auswählen"
+				/>
+			</section>
+
+			<div class="form-actions">
+				<Button
+					label="Rechnung Speichern"
+					@click="createInvoice"
+				/>
+			</div>
 		</form>
-	</div>
+	</PageContainer>
 </template>
 
-<style scoped lang="scss">
-@use "@/shared/styles/breakpoints" as bp;
-@use "@/shared/styles/media" as media;
 
-.create-invoice {
-	width: 100%;
-	max-width: 1400px;
-	padding: var(--space-lg);
-
-	@include media.up(bp.$bp-lg) {
-		padding: 0 var(--space-xl3);
-	}
-}
-
-.invoice-form {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-xl);
-	user-select: none;
-}
-
-fieldset {
-	border: none;
-	padding: 0;
-	margin: 0;
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-md);
-}
-
-legend {
-	margin-bottom: var(--space-md);
-}
-
-.input {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-xs);
-}
-
-.customer-group, .seller-group {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--space-xl);
-
-	.customer-group-item, .seller-group-item {
-		flex-grow: 1;
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-md);
-	}
-}
-
-.items-container {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--space-lg);
-
-	.p-card {
-		max-width: 300px;
-		flex-grow: 1;
-	}
-
-	.item {
-		display: grid;
-		row-gap: var(--space-lg);
-	}
-}
-
-.section-btns-container {
+<style lang="scss" scoped>
+.form-actions {
 	display: flex;
 	justify-content: flex-end;
-	gap: var(--space-lg);
 	margin-top: var(--space-xl);
 }
 </style>

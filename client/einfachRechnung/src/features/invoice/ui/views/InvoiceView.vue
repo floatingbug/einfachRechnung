@@ -1,89 +1,543 @@
 <script setup>
-import {onMounted, ref} from "vue";
-import {useRoute} from "vue-router";
+import {onMounted, ref, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
 import {useToast} from "primevue/usetoast";
-import InputNumber from "primevue/inputnumber";
-import DatePicker from "primevue/datepicker";
-import {canSendReminder} from "../../domainRules/dunning.rules.js";
 import useInvoiceStore from "../../store/useInvoiceStore.js";
+import {
+	CustomerCard,
+	ItemsList,
+	PageContainer,
+	TotalsList,
+} from "@/shared/components";
+import {DocumentDetailsLayout} from "@/shared/layouts";
+import {
+	InvoiceDetailsActions,
+	InvoiceDetailsSummary,
+} from "../components";
+import {formatCurrency} from "@/shared/helpers";
+
 
 const invoiceStore = useInvoiceStore();
 const route = useRoute();
-const invoice = ref(null);
-const error = ref("");
+const router = useRouter();
 const toast = useToast();
-const payment = ref({amount: null, paidAt: new Date()});
+
+const invoice = ref(null);
+const customer = ref(null);
+
+
+// --- lifecycle ---
 
 onMounted(async () => {
-	try {
-		invoice.value = await invoiceStore.getInvoiceById({invoiceId: route.params.invoiceId});
-	}
-	catch {
-		error.value = "Die Rechnung konnte nicht geladen werden.";
-	}
+	await loadInvoice();
 });
 
-const invoiceId = () => invoice.value.id || route.params.invoiceId;
-
-async function run(action, successMessage){
-	try {
-		invoice.value = await action();
-		toast.add({severity: "success", summary: successMessage, life: 5000});
+watch(
+	() => route.params.invoiceNumber,
+	async () => {
+		await loadInvoice();
 	}
-	catch (actionError) {
-		toast.add({severity: "error", summary: "Fehler", detail: actionError.message || "Aktion konnte nicht ausgeführt werden.", life: 5000});
+);
+
+
+// --- actions ---
+
+function onInvoiceDetailsAction(event) {
+	const invoiceNumber = invoice.value.invoiceNumber;
+
+	switch (event.action) {
+		case "edit":
+			router.push(`/invoice/edit/${invoiceNumber}`);
+			break;
+
+		case "showPdf":
+			showPdf();
+			break;
+
+		case "downloadPdf":
+			downloadPdf();
+			break;
+
+		case "sendMail":
+			sendInvoice();
+			break;
+
+		case "cancel":
+			cancelInvoice();
+			break;
 	}
 }
 
-function send(){ return run(() => invoiceStore.sendInvoice({invoiceId: invoiceId()}), "Rechnung versendet"); }
-function cancel(){ return run(() => invoiceStore.cancelInvoice({invoiceId: invoiceId()}), "Rechnung storniert"); }
-function remind(){ return run(() => invoiceStore.sendReminder({invoiceId: invoiceId()}), "Mahnung versendet"); }
-async function savePayment(){
-	await run(() => invoiceStore.registerPayment({invoiceId: invoiceId(), payment: payment.value, openAmount: invoice.value.openAmount}), "Zahlung erfasst");
-	payment.value = {amount: null, paidAt: new Date()};
-}
-async function downloadPdf(){
+
+async function sendInvoice() {
 	try {
-		const pdf = await invoiceStore.getInvoicePdf({invoiceId: invoiceId()});
+		await invoiceStore.sendInvoice({
+			invoiceNumber: invoice.value.invoiceNumber,
+		});
+
+		toast.add({
+			severity: "success",
+			summary: "Rechnung versendet",
+			life: 5000,
+		});
+
+		await loadInvoice();
+	}
+	catch {
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "Rechnung konnte nicht versendet werden.",
+			life: 5000,
+		});
+	}
+}
+
+
+async function cancelInvoice() {
+	try {
+		await invoiceStore.cancelInvoice({
+			invoiceNumber: invoice.value.invoiceNumber,
+		});
+
+		toast.add({
+			severity: "success",
+			summary: "Rechnung storniert",
+			life: 5000,
+		});
+
+		await loadInvoice();
+	}
+	catch {
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "Rechnung konnte nicht storniert werden.",
+			life: 5000,
+		});
+	}
+}
+
+
+async function showPdf() {
+	try {
+		const pdf = await invoiceStore.getPdf({
+			invoiceNumber: invoice.value.invoiceNumber,
+		});
+
 		const url = URL.createObjectURL(pdf);
+
+		window.open(url, "_blank");
+	}
+	catch {
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "PDF konnte nicht geöffnet werden.",
+			life: 5000,
+		});
+	}
+}
+
+
+async function downloadPdf() {
+	try {
+		const pdf = await invoiceStore.getPdf({
+			invoiceNumber: invoice.value.invoiceNumber,
+		});
+
+		const url = URL.createObjectURL(pdf);
+
 		const link = document.createElement("a");
 		link.href = url;
 		link.download = `${invoice.value.invoiceNumber}.pdf`;
 		link.click();
+
 		URL.revokeObjectURL(url);
 	}
 	catch {
-		toast.add({severity: "error", summary: "Fehler", detail: "PDF konnte nicht heruntergeladen werden.", life: 5000});
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "PDF konnte nicht heruntergeladen werden.",
+			life: 5000,
+		});
 	}
+}
+
+
+// --- data ---
+
+async function loadInvoice() {
+	try {
+		const invoiceNumber = route.params.invoiceNumber;
+
+		invoice.value = await invoiceStore.getInvoiceByInvoiceNumber({
+			invoiceNumber,
+		});
+
+		customer.value = createCustomerFromInvoice(invoice.value);
+	}
+	catch {
+		invoice.value = null;
+		customer.value = null;
+
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "Rechnung konnte nicht geladen werden.",
+			life: 5000,
+		});
+	}
+}
+
+
+function createCustomerFromInvoice(invoice) {
+	if (!invoice?.customer) {
+		return null;
+	}
+
+	const customerData = invoice.customer;
+
+	return {
+		customerType: customerData.customerType ?? "",
+
+		companyName: customerData.companyName ?? "",
+		customerName: customerData.firstName && customerData.lastName
+			? `${customerData.firstName} ${customerData.lastName}`
+			: "",
+
+		contactPerson: customerData.contactPerson ?? "",
+
+		street: customerData.street ?? "",
+		postalCode: customerData.postalCode ?? "",
+		city: customerData.city ?? "",
+		countryCode: customerData.countryCode ?? "",
+
+		email: customerData.email ?? "",
+		phone: customerData.phone ?? "",
+
+		vatId: customerData.vatId ?? "",
+		customerNumber: customerData.customerNumber ?? "",
+	};
+}
+
+
+function formatPaymentMethod(method) {
+	const methods = {
+		bank_transfer: "Überweisung",
+		cash: "Barzahlung",
+		card: "Kartenzahlung",
+		direct_debit: "Lastschrift",
+	};
+
+	return methods[method] ?? method;
+}
+
+
+function formatPaymentStatus(status) {
+	const statuses = {
+		unpaid: "Unbezahlt",
+		partially_paid: "Teilbezahlt",
+		paid: "Bezahlt",
+	};
+
+	return statuses[status] ?? status;
+}
+
+
+function formatInvoiceStatus(status) {
+	const statuses = {
+		draft: "Entwurf",
+		open: "Offen",
+		cancelled: "Storniert",
+		paid: "Bezahlt",
+	};
+
+	return statuses[status] ?? status;
 }
 </script>
 
 
 <template>
-	<section v-if="invoice">
-		<h1>Rechnung {{ invoice.invoiceNumber }}</h1>
-		<p><strong>Kunde:</strong> {{ invoice.customer?.name }}</p>
-		<p><strong>Bruttosumme:</strong> {{ invoice.grossTotal }} {{ invoice.currency }}</p>
-		<p><strong>Offener Betrag:</strong> {{ invoice.openAmount }} {{ invoice.currency }}</p>
-		<div class="actions">
-			<Button v-if="invoice.status === 'draft'" label="Rechnung senden" @click="send" />
-			<Button label="PDF herunterladen" severity="secondary" @click="downloadPdf" />
-			<Button v-if="invoice.status !== 'cancelled' && invoice.paymentStatus !== 'paid'" label="Stornieren" severity="danger" @click="cancel" />
-			<Button v-if="canSendReminder(invoice)" label="Mahnung senden" severity="warn" @click="remind" />
-		</div>
-		<form v-if="invoice.status !== 'cancelled' && invoice.openAmount > 0" class="payment" @submit.prevent="savePayment">
-			<h2>Zahlung erfassen</h2>
-			<InputNumber v-model="payment.amount" mode="currency" :currency="invoice.currency || 'EUR'" :min="0.01" />
-			<DatePicker v-model="payment.paidAt" dateFormat="yy-mm-dd" />
-			<Button label="Zahlung speichern" type="submit" />
-		</form>
-	</section>
-	<p v-else-if="error">{{ error }}</p>
-	<p v-else>Lade Rechnung …</p>
+	<PageContainer>
+		<DocumentDetailsLayout v-if="invoice">
+
+			<!-- Aktionen -->
+			<template #actions>
+				<InvoiceDetailsActions
+					class="invoice-details-actions"
+					@action="onInvoiceDetailsAction"
+				/>
+			</template>
+
+
+			<!-- Kunde -->
+			<template #customer>
+				<CustomerCard
+					v-if="customer"
+					class="customer-card"
+					:customer="customer"
+				/>
+			</template>
+
+
+			<!-- Rechnungsdaten -->
+			<template #documentData>
+				<h2>Rechnungsdaten</h2>
+
+				<InvoiceDetailsSummary
+					class="invoice-summary"
+					:invoice="invoice"
+				/>
+			</template>
+
+
+			<!-- Positionen -->
+			<template #items>
+				<h2>Positionen</h2>
+
+				<ItemsList
+					:items="invoice.items"
+					:showTaxRatePerItem="true"
+				/>
+			</template>
+
+
+			<!-- Preisübersicht -->
+			<template #totals>
+				<h2>Preisübersicht</h2>
+
+				<TotalsList
+					:totals="invoice.totals"
+				/>
+			</template>
+
+
+			<!-- Zahlung -->
+			<template #payment>
+				<h2>Zahlung</h2>
+
+				<div class="item-group-1-column">
+
+					<div class="item">
+						<div class="item-label">
+							Zahlungsart
+						</div>
+
+						<div class="item-value">
+							{{ formatPaymentMethod(invoice.payment.method) }}
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="item-label">
+							Zahlungsstatus
+						</div>
+
+						<div class="item-value">
+							{{ formatPaymentStatus(invoice.payment.status) }}
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="item-label">
+							Rechnungsbetrag
+						</div>
+
+						<div class="item-value">
+							{{ formatCurrency(invoice.totals.totalGross) }}
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="item-label">
+							Bezahlt
+						</div>
+
+						<div class="item-value">
+							{{ formatCurrency(invoice.payment.paidAmount) }}
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="item-label">
+							Offener Betrag
+						</div>
+
+						<div class="item-value">
+							{{ formatCurrency(invoice.payment.openAmount) }}
+						</div>
+					</div>
+
+				</div>
+
+				<div
+					v-if="invoice.payment.payments?.length"
+					class="payments"
+				>
+					<h3>Zahlungen</h3>
+
+					<div
+						v-for="(payment, index) in invoice.payment.payments"
+						:key="payment.id ?? index"
+						class="item"
+					>
+						<div class="item-label">
+							{{ payment.date }}
+						</div>
+
+						<div class="item-value">
+							{{ formatCurrency(payment.amount) }}
+						</div>
+					</div>
+				</div>
+
+			</template>
+
+
+			<!-- Hinweis -->
+			<template #note>
+				<template v-if="invoice.note">
+					<Divider />
+
+					<h2>Hinweis</h2>
+
+					<div class="value">
+						{{ invoice.note }}
+					</div>
+				</template>
+			</template>
+
+			<!-- Bankverbindung -->
+			<template #bank>
+				<Divider />
+
+				<h2>Bankverbindung</h2>
+
+				<div class="item-group-1-column">
+					<div class="item">
+						<div class="item-label">
+							Bank
+						</div>
+
+						<div class="item-value">
+							{{ invoice.seller.bank?.bankName ?? "" }}
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="item-label">
+							IBAN
+						</div>
+
+						<div class="item-value">
+							{{ invoice.seller.bank?.iban ?? "" }}
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="item-label">
+							BIC
+						</div>
+
+						<div class="item-value">
+							{{ invoice.seller.bank?.bic ?? "" }}
+						</div>
+					</div>
+				</div>
+			</template>
+
+			<!-- Historie -->
+			<template #history>
+				<div class="history">
+
+					<h2>Historie</h2>
+
+					<div class="history-item">
+						<div class="history-label">
+							Status
+						</div>
+
+						<div class="history-value">
+							{{ formatInvoiceStatus(invoice.status) }}
+						</div>
+					</div>
+
+					<div class="history-item">
+						<div class="history-label">
+							Rechnungsdatum
+						</div>
+
+						<div class="history-value">
+							{{ new Date(invoice.invoiceDate).toLocaleDateString() }}
+						</div>
+					</div>
+
+					<div class="history-item">
+						<div class="history-label">
+							Fälligkeitsdatum
+						</div>
+
+						<div class="history-value">
+							{{ new Date(invoice.dueDate).toLocaleDateString() }}
+						</div>
+					</div>
+
+				</div>
+			</template>
+
+		</DocumentDetailsLayout>
+	</PageContainer>
 </template>
 
 
 <style scoped lang="scss">
-.actions, .payment { display: flex; flex-wrap: wrap; gap: var(--space-md); margin-top: var(--space-xl); }
-.payment { flex-direction: column; max-width: 28rem; }
+.invoice-details-actions {
+	width: 100%;
+	max-width: 200px;
+
+	justify-self: start;
+
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+}
+
+.customer-card {
+	width: 100%;
+	max-width: 380px;
+}
+
+.invoice-summary {
+	width: 100%;
+	max-width: 600px;
+}
+
+.payments {
+	margin-top: var(--space-xl);
+
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+}
+
+.history {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+}
+
+.history-item {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
+.history-label {
+	color: var(--text-color-muted);
+}
+
+.history-value {
+	min-width: 0;
+}
 </style>

@@ -3,7 +3,7 @@ import {ref, onMounted, computed} from "vue";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 import {useSettingsStore} from "@/features/settings/store/useSettingsStore.js";
-import {offerNumberFormatOptions} from "../../options";
+import {offerNumberFormatOptions} from "../options";
 import Select from "primevue/select";
 import Message from "primevue/message";
 import Textarea from "primevue/textarea";

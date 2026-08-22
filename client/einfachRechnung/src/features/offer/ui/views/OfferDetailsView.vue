@@ -1,31 +1,43 @@
 <script setup>
-import {ref, onMounted, watch} from "vue";
-import {useRoute, useRouter} from "vue-router";
-import {useOfferStore} from "../../store";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast";
+
+import { useOfferStore } from "../../store";
 import {
 	OfferDetailsActions,
 	OfferDetailsSummary,
 } from "../components";
+
 import {
 	CustomerCard,
 	TotalsList,
 	ItemsList,
 	PageContainer,
-} from "../../../../shared/components";
-import { useToast } from 'primevue/usetoast';
+} from "@/shared/components";
+
+import { DocumentDetailsLayout } from "@/shared/layouts";
 
 
 const offerStore = useOfferStore();
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
+
 const offer = ref(null);
-const customer = ref(null);
+
+
+const customer = computed(() => {
+	if (!offer.value) {
+		return null;
+	}
+
+	return createCustomerFromOffer(offer.value);
+});
 
 
 onMounted(async () => {
 	await loadOffer();
-	customer.value = createCustomerFromOffer(offer);
 });
 
 
@@ -33,64 +45,146 @@ watch(
 	() => route.params.offerNumber,
 	async () => {
 		await loadOffer();
-		customer.value = createCustomerFromOffer(offer);
 	}
 );
 
 
-// --- handlers ---
-function onOfferDetailsAction(event){
-	const offerNumber = offer.value.offerNumber;
+// -----------------------------------------------------------------------------
+// Data
+// -----------------------------------------------------------------------------
 
-	switch(event.action){
-		case "edit" :
-			router.push(`/offer/edit/${offerNumber}`)
-		break;
+async function loadOffer() {
+	try {
+		const offerNumber = route.params.offerNumber;
 
-		case "showPdf" :
-			showPdf();
-		break;
+		offer.value = await offerStore.getOfferByOfferNumber({
+			offerNumber,
+		});
+	}
+	catch {
+		offer.value = null;
 
-		case "downloadPdf" :
-			downloadPdf();
-		break;
-
-		case "sendMail" :
-			sendOffer();
-		break;
-
-		case "convert" :
-			convertToInvoice();
-		break;
-
-		case "delete" :
-			deleteOffer();
-		break;
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "Angebot konnte nicht geladen werden.",
+			life: 5000,
+		});
 	}
 }
 
-async function sendOffer(){
+
+function createCustomerFromOffer(offer) {
+	return {
+		customerType: offer.customerSnapshot?.customerType ?? "",
+		companyName: offer.companyName ?? "",
+		customerName: offer.customerName ?? "",
+		contactPerson: offer.contactPerson ?? "",
+		street: offer.customerSnapshot?.street ?? "",
+		postalCode: offer.customerSnapshot?.postalCode ?? "",
+		city: offer.customerSnapshot?.city ?? "",
+		email: offer.customerSnapshot?.email ?? "",
+		phone: offer.customerSnapshot?.phone ?? "",
+		vatId: offer.customerSnapshot?.vatId ?? "",
+	};
+}
+
+
+// -----------------------------------------------------------------------------
+// Actions
+// -----------------------------------------------------------------------------
+
+function onOfferDetailsAction(event) {
+	if (!offer.value) {
+		return;
+	}
+
+	const offerNumber = offer.value.offerNumber;
+
+	switch (event.action) {
+		case "edit":
+			router.push(`/offer/edit/${offerNumber}`);
+			break;
+
+		case "showPdf":
+			showPdf();
+			break;
+
+		case "downloadPdf":
+			downloadPdf();
+			break;
+
+		case "sendMail":
+			sendOffer();
+			break;
+
+		case "convert":
+			convertToInvoice();
+			break;
+
+		case "delete":
+			deleteOffer();
+			break;
+	}
+}
+
+
+async function sendOffer() {
 	try {
-		await offerStore.sendOffer({offerNumber: offer.value.offerNumber});
-		toast.add({severity: "success", summary: "Angebot versendet", life: 5000});
+		await offerStore.sendOffer({
+			offerNumber: offer.value.offerNumber,
+		});
+
+		toast.add({
+			severity: "success",
+			summary: "Angebot versendet",
+			life: 5000,
+		});
+
 		await loadOffer();
 	}
 	catch {
-		toast.add({severity: "error", summary: "Fehler", detail: "Angebot konnte nicht versendet werden.", life: 5000});
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "Angebot konnte nicht versendet werden.",
+			life: 5000,
+		});
 	}
 }
 
-async function convertToInvoice(){
+
+async function convertToInvoice() {
 	try {
-		const result = await offerStore.convertToInvoice({offerNumber: offer.value.offerNumber});
+		const result = await offerStore.convertToInvoice({
+			offerNumber: offer.value.offerNumber,
+		});
+
 		const invoice = result.invoice ?? result;
-		toast.add({severity: "success", summary: "Rechnung erstellt", life: 5000});
-		await router.push({name: "invoice-details", params: {invoiceId: invoice.id ?? invoice.invoiceNumber}});
+
+		toast.add({
+			severity: "success",
+			summary: "Rechnung erstellt",
+			life: 5000,
+		});
+
+		await router.push({
+			name: "invoice-details",
+			params: {
+				invoiceNumber: invoice.invoiceNumber,
+			},
+		});
 	}
 	catch {
-		toast.add({severity: "error", summary: "Fehler", detail: "Angebot konnte nicht umgewandelt werden.", life: 5000});
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "Angebot konnte nicht umgewandelt werden.",
+			life: 5000,
+		});
 	}
 }
+
 
 async function showPdf() {
 	try {
@@ -103,9 +197,15 @@ async function showPdf() {
 		window.open(url, "_blank");
 	}
 	catch {
-		toast.add({severity: "error", summary: "Fehler", detail: "PDF konnte nicht geöffnet werden.", life: 5000});
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "PDF konnte nicht geöffnet werden.",
+			life: 5000,
+		});
 	}
 }
+
 
 async function downloadPdf() {
 	try {
@@ -116,6 +216,7 @@ async function downloadPdf() {
 		const url = URL.createObjectURL(pdf);
 
 		const link = document.createElement("a");
+
 		link.href = url;
 		link.download = "angebot.pdf";
 		link.click();
@@ -123,250 +224,149 @@ async function downloadPdf() {
 		URL.revokeObjectURL(url);
 	}
 	catch {
-		toast.add({severity: "error", summary: "Fehler", detail: "PDF konnte nicht heruntergeladen werden.", life: 5000});
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "PDF konnte nicht heruntergeladen werden.",
+			life: 5000,
+		});
 	}
 }
 
-async function deleteOffer(){
+
+async function deleteOffer() {
 	try {
 		const result = await offerStore.deleteOffer({
 			offerNumber: offer.value.offerNumber,
-		})
+		});
 
-		if(!result.success){
-			return toast.add(
-				{
-					severity: "error",
-					summary: 'Löschen fehlgeschlagen',
-					detail: result.message,
-					life: 5000
-				}
-			);
+		if (!result.success) {
+			toast.add({
+				severity: "error",
+				summary: "Löschen fehlgeschlagen",
+				detail: result.message,
+				life: 5000,
+			});
+
+			return;
 		}
 
-		toast.add(
-			{
-				summary: 'Angebot gelöscht',
-				detail: result.message,
-				life: 5000
-			}
-		);
+		toast.add({
+			severity: "success",
+			summary: "Angebot gelöscht",
+			detail: result.message,
+			life: 5000,
+		});
 
-		router.push("/offer/list");
+		await router.push("/offer/list");
 	}
 	catch {
-		toast.add({severity: "error", summary: "Fehler", detail: "Angebot konnte nicht gelöscht werden.", life: 5000});
-	}
-}
-
-
-// --- helpers ---
-async function loadOffer() {
-	try {
-		const offerNumber = route.params.offerNumber;
-
-		offer.value = await offerStore.getOfferByOfferNumber({
-			offerNumber,
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "Angebot konnte nicht gelöscht werden.",
+			life: 5000,
 		});
 	}
-	catch {
-		toast.add({severity: "error", summary: "Fehler", detail: "Angebot konnte nicht geladen werden.", life: 5000});
-	}
 }
-
-function createCustomerFromOffer(offer){
-	return {
-		customerType: offer.value.customerSnapshot.customerType ?? "",
-		companyName: offer.value.companyName ?? "",
-		customerName: offer.value.customerName ?? "",
-		contactPerson: offer.value.contactPerson ?? "",
-		street: offer.value.customerSnapshot.street ?? "",
-		postalCode: offer.value.customerSnapshot.postalCode ?? "",
-		city: offer.value.customerSnapshot.city ?? "",
-		email: offer.value.customerSnapshot.email ?? "",
-		phone: offer.value.customerSnapshot.phone ?? "",
-		vatId: offer.value.customerSnapshot.vatId ?? "",
-	};
-}
-
 </script>
 
 
 <template>
 	<PageContainer>
-		<div class="offer-details document" v-if="offer">
-			<section class="top-section">
-				<OfferDetailsActions class="offer-details-actions"
+		<DocumentDetailsLayout v-if="offer">
+
+			<template #actions>
+				<OfferDetailsActions
 					@action="onOfferDetailsAction"
 				/>
+			</template>
 
-				<CustomerCard class="customer-card" v-if="customer"
+
+			<template #customer>
+				<CustomerCard
+					v-if="customer"
 					:customer="customer"
 				/>
-			</section>
+			</template>
 
-			<Divider />
 
-			<section>
+			<template #document-data>
 				<h2>Angebotsdaten</h2>
 
-				<OfferDetailsSummary class="offer-summary"
+				<OfferDetailsSummary
 					:offer="offer"
 				/>
-			</section>
+			</template>
 
-			<Divider />
 
-			<section>
-				<div class="introduction">
-					<h2>Einleitung</h2>
+			<template #contentBeforeItems>
+				<h2>Einleitung</h2>
 
-					<div class="value">
-						{{offer.introduction}}
-					</div>
+				<div class="value">
+					{{ offer.introduction }}
 				</div>
-			</section>
+			</template>
 
-			<Divider />
 
-			<section>
+			<template #items>
 				<h2>Positionen</h2>
 
 				<ItemsList
 					:items="offer.items"
 					:showTaxRatePerItem="offer.showTaxRatePerItem"
 				/>
-			</section>
+			</template>
 
-			<Divider />
 
-			<section>
+			<template #totals>
 				<h2>Preisübersicht</h2>
 
 				<TotalsList
 					:totals="offer.totals"
 				/>
-			</section>
+			</template>
 
-			<Divider />
 
-			<section>
+			<template #contentAfterTotals>
 				<h2>Schlussbemerkung</h2>
 
-				<div class="closing">
-					{{offer.closing}}
+				<div class="value">
+					{{ offer.closing }}
 				</div>
-			</section>
+			</template>
 
-			<Divider />
 
-			<section>
+			<template #history>
 				<h2>Historie</h2>
 
-				<div class="grid-2-columns">
-					<div class="history">
-						<div class="history-item">
-							<div class="history-label">
-								Erstellt
-							</div>
-
-							<div class="history-value">
-								{{offer.createdAt.toLocaleDateString()}}
-							</div>
+				<div class="item-group-1-column">
+					<div class="item">
+						<div class="item-label">
+							Erstellt
 						</div>
 
-						<div class="history-item">
-							<div class="history-label">
-								Geändert
-							</div>
+						<div class="item-value">
+							{{ offer.createdAt.toLocaleDateString() }}
+						</div>
+					</div>
 
-							<div class="history-value">
-								{{offer.updatedAt.toLocaleDateString()}}
-							</div>
+					<div class="item">
+						<div class="item-label">
+							Geändert
+						</div>
+
+						<div class="item-value">
+							{{ offer.updatedAt.toLocaleDateString() }}
 						</div>
 					</div>
 				</div>
-			</section>
-		</div>
+			</template>
+
+		</DocumentDetailsLayout>
 	</PageContainer>
 </template>
 
 
-<style lang="scss" scoped>
-@use "@/shared/styles/media" as media;
-@use "@/shared/styles/breakpoints" as bp;
-
-.offer-details {
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-xl);
-}
-
-.top-section {
-	display: grid;
-	gap: var(--space-xl);
-
-	@include media.up(bp.$bp-md){
-		grid-template-columns: 1fr 1fr;
-	}
-}
-
-.customer-card {
-	width: 100%;
-	max-width: 380px;
-}
-
-.offer-details-actions {
-	width: 100%;
-	max-width: 200px;
-	justify-self: start;
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-sm);
-}
-
-@include media.up(bp.$bp-md){
-	.customer-card {
-		order: 1;
-	}
-
-	.offer-details-actions {
-		max-width: 320px;
-		justify-self: end;
-		order: 2;
-	}
-}
-
-.grid-2-columns {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-
-	.offer-summary {
-		grid-column: 1 / 3;
-	}
-
-	.history {
-		grid-column: 1 / 3;
-	}
-
-	@include media.up(bp.$bp-md){
-		.offer-summary {
-			grid-column: 1 / 2;
-		}
-
-		.history {
-			grid-column: 1 / 2;
-		}
-	}
-}
-
-.history-item {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-}
-
-.history-label, .history-value {
-	flex: 1;
-}
+<style scoped lang="scss">
 </style>

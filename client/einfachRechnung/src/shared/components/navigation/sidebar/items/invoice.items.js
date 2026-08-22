@@ -4,7 +4,7 @@ export default function getInvoiceItems({router}){
 		items: [
 			{
 				id: "invoiceList",
-				label: "Übersicht",
+				label: "Rechungs Liste",
 				icon: "pi pi-list",
 				command: () => router.push("/invoice"),
 			},

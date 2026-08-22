@@ -26,7 +26,7 @@ export default [
 				},
 			},
 			{
-				path: ":invoiceId",
+				path: ":invoiceNumber",
 				name: "invoice-details",
 				component: () => import("../ui/views/InvoiceView.vue"),
 				meta: {

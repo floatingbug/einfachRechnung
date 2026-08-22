@@ -1,13 +1,8 @@
 import {invoiceApi} from "../api";
-import {
-	mapInvoiceFormToCreatePayload,
-	mapInvoiceDtoToEntity,
-} from "../mappers";
 
 
-export default async function createInvoice(form){
-	const payload = mapInvoiceFormToCreatePayload(form);
-	const result = await invoiceApi.createInvoice({invoice: payload});
+export default async function createInvoice({invoice, customerId}){
+	const invoiceNumber = await invoiceApi.createInvoice({invoice, customerId});
 
-	return mapInvoiceDtoToEntity(result.invoice ?? result.data ?? result);
+	return invoiceNumber;
 }

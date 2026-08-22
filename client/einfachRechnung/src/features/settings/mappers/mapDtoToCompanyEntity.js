@@ -14,6 +14,11 @@ export function mapDtoToCompanyEntity({dto} = {}){
 		city: dto.city ?? "",
 		postalCode: dto.postalCode ?? "",
 		countryCode: dto.countryCode ?? "",
+		bank: {
+			bankName: dto.bank?.bankName ?? "",
+			iban: dto.bank?.iban ?? "",
+			bic: dto.bank?.bic ?? "",
+		},
 	};
 
 	return createCompanyEntity({company});

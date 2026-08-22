@@ -14,10 +14,21 @@ onMounted(async () => {
 	await settingsStore.getInvoice();
 });
 
-async function onInvoiceSettingsFormSubmit(event){
+async function onInvoiceSettingsAction(event){
+	switch (event.action) {
+		case "update":
+				updateInvoice(event.invoiceSettings);
+			break;
+
+		default:
+			break;
+	}
+}
+
+async function updateInvoice(invoiceSettings) {
 	try{
 		await settingsStore.updateInvoice({
-			invoiceSettings: event.data,
+			invoiceSettings,
 		});
 
 		toast.add({
@@ -43,8 +54,7 @@ async function onInvoiceSettingsFormSubmit(event){
 		</template>
 
 		<InvoiceSettingsForm
-			:data="settingsStore.invoice"
-			@submit="onInvoiceSettingsFormSubmit"
+			@action="onInvoiceSettingsAction"
 		/>
 	</PageContainer>
 </template>

@@ -1,7 +1,7 @@
 <script setup>
 import {ref, onMounted} from "vue";
 import {useOfferStore} from "../../store";
-import {OfferList} from "../components";
+import {OfferList, OfferListCards} from "../components";
 import Paginator from 'primevue/paginator';
 import {useRouter} from "vue-router";
 import {PageContainer} from "@/shared/components";
@@ -12,7 +12,7 @@ const offerStore = useOfferStore();
 const isInitializing = ref(true);
 const PAGINATION_LIMIT = 10;
 const totalRecords = ref();
-const tableItems = ref([]);
+const items = ref([]);
 
 
 onMounted(async () => {
@@ -22,11 +22,11 @@ onMounted(async () => {
 			page: 1,
 		});
 
-		tableItems.value = getOffersResult.items;
+		items.value = getOffersResult.items;
 		totalRecords.value = getOffersResult.pagination.total;
 	}
 	catch {
-		tableItems.value = [];
+		items.value = [];
 	}
 
 	isInitializing.value = false;
@@ -39,7 +39,7 @@ async function onPaginationAction(event){
 		page: event.page +1,
 	});
 
-	tableItems.value = getOffersResult.items;
+	items.value = getOffersResult.items;
 	totalRecords.value = getOffersResult.pagination.total;
 }
 
@@ -53,10 +53,18 @@ function onOfferListActions(event){
 
 <template>
 	<PageContainer>
+		<template #header>
+			Angebots Liste
+		</template>
+
 		<div class="offer-list" v-if="!isInitializing">
-			<OfferList
-				:items="tableItems"
+			<OfferList class="offer-list-data-table"
+				:items="items"
 				@action="onOfferListActions"
+			/>
+
+			<OfferListCards class="offer-list-cards"
+				:items="items"
 			/>
 
 			<Paginator
@@ -74,7 +82,30 @@ function onOfferListActions(event){
 .offer-list {
 	width: 100%;
 	min-width: 0;
+	height: 100%;
 	display: grid;
 	grid-template-rows: 1fr auto;
+	row-gap: var(--space-xl2);
+}
+
+.offer-list-data-table {
+	display: none;
+}
+
+.offer-list-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+	gap: var(--space-md);
+}
+
+@media (min-width: 1548px) {
+	.offer-list-data-table {
+		display: block;
+	}
+
+	.offer-list-cards {
+		display: none;
+	}
+
 }
 </style>

@@ -1,8 +1,8 @@
 const catchAsync = require("../../../utils/catchAsync");
-const { exportXrechnung } = require("../services");
+const services = require("../services");
 
 module.exports = catchAsync(async (req, res) => {
-	const xml = await exportXrechnung({
+	const xml = await services.exportXInvoice({
 		invoiceId: req.params.invoiceId,
 	});
 

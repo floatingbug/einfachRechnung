@@ -1,25 +1,9 @@
 const DEFAULT_INVOICE = {
-	id: "",
-	invoiceNumber: "",
-	seller: null,
-	customer: null,
 	invoiceDate: null,
-	serviceDate: null,
 	dueDate: null,
-	currency: "",
 	items: [],
 	note: "",
-	netTotal: 0,
-	taxAmount: 0,
-	grossTotal: 0,
-	paidAmount: 0,
-	openAmount: 0,
-	paymentStatus: "",
-	status: "",
-	payments: [],
-	reminders: [],
-	createdAt: null,
-	updatedAt: null,
+	paymentMethod: "cash",
 };
 
 export default function createInvoiceEntity(invoice = {}){

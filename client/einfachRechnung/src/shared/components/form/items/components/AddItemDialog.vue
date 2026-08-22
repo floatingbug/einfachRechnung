@@ -85,13 +85,13 @@ function onUpdateVisible(){
 		}"
 	>
 
-		<SelectTemplate
+		<SelectTemplate class="select-template"
 			@action="onSelectTemplate"
 		/>
 
 		<form @submit.prevent="onSubmit">
-			<div class="input-group-dialog">
-				<div class="one-column">
+			<div class="input-group">
+				<div class="input">
 					<div class="input">
 						<label for="title">Position</label>
 						<InputText
@@ -100,7 +100,7 @@ function onUpdateVisible(){
 					</div>
 				</div>
 
-				<div class="two-columns">
+				<div class="input">
 					<div class="input description">
 						<label for="description">Beschreibung</label>
 						<Textarea class="input-description"
@@ -108,10 +108,12 @@ function onUpdateVisible(){
 						/>
 					</div>
 				</div>
+			</div>
 
-				<Divider />
+			<Divider />
 
-				<div class="one-column">
+			<div class="input-group">
+				<div class="input">
 					<div class="input">
 						<label for="quantity">Anzahl</label>
 						<InputNumber
@@ -120,7 +122,7 @@ function onUpdateVisible(){
 					</div>
 				</div>
 
-				<div class="two-columns">
+				<div class="input">
 					<div class="input">
 						<label for="unit">Einheit</label>
 						<Select
@@ -140,44 +142,44 @@ function onUpdateVisible(){
 						/>
 					</div>
 				</div>
+			</div>
 
-				<Divider />
+			<Divider />
 
-				<div class="one-column">
-					<div class="input">
-						<label for="tax">MwSt.</label>
-						<Select
-							v-model="item.taxRate"
-							:options="taxRateOptions"
-							optionLabel="label"
-							optionValue="value"
-						/>
-					</div>
+			<div class="input">
+				<label for="tax">MwSt.</label>
+				<Select
+					v-model="item.taxRate"
+					:options="taxRateOptions"
+					optionLabel="label"
+					optionValue="value"
+				/>
+			</div>
+
+			<Divider />
+
+			<div class="input-group">
+				<div class="input">
+					<label for="discountType">Rabatt Typ (Optional)</label>
+					<SelectButton
+						v-model="item.discountType"
+						:options="discountTypeOptions"
+						optionLabel="label"
+						optionValue="value"
+						local="de-DE"
+						@update:modelValue="item.discountType = $event ?? 'none'"
+					/>
 				</div>
 
-				<Divider />
-
-				<div class="two-columns">
-					<div class="input">
-						<label for="discountType">Rabatt Typ (Optional)</label>
-						<SelectButton
-							v-model="item.discountType"
-							:options="discountTypeOptions"
-							optionLabel="label"
-							optionValue="value"
-							local="de-DE"
-						/>
-					</div>
-
-					<div class="input">
-						<label for="discountValue">Rabatt Wert (Optional)</label>
-						<InputNumber
-							v-model="item.discountValue"
-							:mode="item.discountType === 'fixed' ? 'currency' : 'decimal'"
-							currency="EUR"
-							:suffix="item.discountType === 'percentage' ? ' %' : ''"
-						/>
-					</div>
+				<div class="input">
+					<label for="discountValue">Rabatt Wert (Optional)</label>
+					<InputNumber
+						:disabled="item.discountType === 'none' ? true : false"
+						v-model="item.discountValue"
+						:mode="item.discountType === 'fixed' ? 'currency' : 'decimal'"
+						currency="EUR"
+						:suffix="item.discountType === 'percentage' ? ' %' : ''"
+					/>
 				</div>
 			</div>
 
@@ -196,29 +198,8 @@ function onUpdateVisible(){
 @use "@/shared/styles/media" as media;
 @use "@/shared/styles/breakpoints" as bp;
 
-.input-group-dialog {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-xl);
-}
-
-.one-column {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: var(--space-lg);
-}
-
-.two-columns {
-	display: grid;
-	gap: var(--space-lg);
-
-	@include media.up(bp.$bp-md) {
-		grid-template-columns: 1fr 1fr;
-	}
-}
-
-.description {
-	grid-column: 1 / -1;
+.select-template {
+	margin-bottom: var(--space-xl2);
 }
 
 .action-buttons {

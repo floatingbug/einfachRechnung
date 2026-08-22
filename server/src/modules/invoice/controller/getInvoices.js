@@ -1,5 +1,5 @@
 const catchAsync = require("../../../utils/catchAsync");
-const { findMany } = require("../services");
+const services = require("../services");
 
 module.exports = catchAsync(async (req, res) => {
     const query = req.query ?? null;
@@ -13,7 +13,7 @@ module.exports = catchAsync(async (req, res) => {
         if(query.limit) params.limit = Number(query.limit);
     }
 
-	const result = await findMany(params);
+	const result = await services.getInvoices(params);
 
 	return res.status(200).json(result);
 });

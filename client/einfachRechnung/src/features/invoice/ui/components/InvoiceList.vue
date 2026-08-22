@@ -85,7 +85,7 @@ const filters = ref({
 function onRowClick(event){
 	emit("action", {
 		action: "openInvoice",
-		invoiceId: event.data.id,
+		invoiceNumber: event.data.invoiceNumber,
 	});
 }
 
@@ -213,7 +213,6 @@ function onRowClick(event){
 			@keydown.space.prevent="onRowClick({ data: item })"
 		> <template #title>{{ item.invoiceNumber }}</template>
 			<template #subtitle>
-				asdf
 			</template>
 			<template #content>
 				<div class="card-content">
@@ -277,8 +276,12 @@ function onRowClick(event){
 .invoice-list-cards {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
-	grid-template-rows: repeat(auto-fit, minmax(200px, auto));
+	grid-template-rows: repeat(auto-fit, minmax(200px, 305px));
 	gap: var(--space-md);
+}
+
+.list-card {
+	max-width: 500px;
 }
 
 .card-content {

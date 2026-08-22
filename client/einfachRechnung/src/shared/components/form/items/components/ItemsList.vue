@@ -1,15 +1,15 @@
 <script setup>
-import {  reactive } from "vue";
+import {  reactive, watch } from "vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 import Message from "primevue/message";
-import {unitOptions} from "../../../../options";;
+import {unitOptions} from "@/shared/options";;
 import Select from "primevue/select";
-import {createItemEntity} from "@/features/offer/entities";
 import SelectTemplate from "./SelectTemplate.vue";
+import {createItemEntity} from "@/shared/entities";
 
 
 const props = defineProps({
@@ -28,15 +28,7 @@ const emit = defineEmits(["action"]);
 
 
 const newItem = reactive(createItemEntity({...props.itemSettings}));
-const errors = reactive({
-	title: "",
-	description: "",
-	quantity: "",
-	unit: "",
-	unitprice: "",
-	taxrate: "",
-
-});
+const errors = reactive(createErrors());
 
 
 function addItem(){
@@ -100,6 +92,27 @@ function getUnitLabel(value) {
         unit => unit.value === value
     )?.label ?? value;
 }
+
+function createErrors(){
+	return {
+		title: "",
+		description: "",
+		quantity: "",
+		unit: "",
+		unitprice: "",
+		taxrate: "",
+	};
+}
+
+watch(
+	() => errors.value,
+	() => {
+		errors.value = createErrors();
+	},
+	{
+		deep: true,
+	}
+)
 
 </script>
 
@@ -239,11 +252,6 @@ function getUnitLabel(value) {
 
 
 <style scoped lang="scss">
-
-.items-table {
-}
-
-
 .new-item-row {
 	display:flex;
 	gap:0.75rem;

@@ -72,12 +72,6 @@ export function validateInvoice({
 		errors.invoiceNumberStart =
 			"Startwert der Rechnungsnummer muss eine ganze Zahl sein";
 	}
-	else if(
-		normalizedInvoiceSettings.invoiceNumberStart < 1
-	){
-		errors.invoiceNumberStart =
-			"Startwert der Rechnungsnummer muss größer als 0 sein";
-	}
 
 	// --------------------
 	// invoiceNumberFormat
@@ -95,37 +89,6 @@ export function validateInvoice({
 	}
 
 	// --------------------
-	// defaultPaymentTermsDays
-	// --------------------
-	if(
-		typeof normalizedInvoiceSettings.defaultPaymentTermsDays !==
-		"number"
-	){
-		errors.defaultPaymentTermsDays =
-			"Standard-Zahlungsziel ist erforderlich";
-	}
-	else if(
-		!Number.isInteger(
-			normalizedInvoiceSettings.defaultPaymentTermsDays,
-		)
-	){
-		errors.defaultPaymentTermsDays =
-			"Standard-Zahlungsziel muss eine ganze Zahl sein";
-	}
-	else if(
-		normalizedInvoiceSettings.defaultPaymentTermsDays < 0
-	){
-		errors.defaultPaymentTermsDays =
-			"Standard-Zahlungsziel darf nicht negativ sein";
-	}
-	else if(
-		normalizedInvoiceSettings.defaultPaymentTermsDays > 365
-	){
-		errors.defaultPaymentTermsDays =
-			"Standard-Zahlungsziel darf maximal 365 Tage betragen";
-	}
-
-	// --------------------
 	// defaultDueDays
 	// --------------------
 	if(
@@ -134,14 +97,6 @@ export function validateInvoice({
 	){
 		errors.defaultDueDays =
 			"Standard-Fälligkeitsdauer ist erforderlich";
-	}
-	else if(
-		!Number.isInteger(
-			normalizedInvoiceSettings.defaultDueDays,
-		)
-	){
-		errors.defaultDueDays =
-			"Standard-Fälligkeitsdauer muss eine ganze Zahl sein";
 	}
 	else if(
 		normalizedInvoiceSettings.defaultDueDays < 0
@@ -221,7 +176,7 @@ export function validateInvoice({
 	return {
 		valid: Object.keys(errors).length === 0,
 		errors,
-		data: normalizedInvoiceSettings,
+		invoiceSettings: normalizedInvoiceSettings,
 	};
 }
 

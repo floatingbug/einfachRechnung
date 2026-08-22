@@ -42,7 +42,7 @@ module.exports = async ({
 	method,
 	reference,
 }) => {
-	const invoice = await model.findById({ invoiceId });
+	const invoice = await model.getInvoiceById({ invoiceId });
 
 	if (!invoice) {
 		throw createError(404, "Invoice not found");
@@ -69,7 +69,7 @@ module.exports = async ({
 		reference: reference || "",
 	};
 
-	await model.addPayment({
+	await model.addPaymentToInvoice({
 		invoiceId,
 		payment,
 		paidAmount: nextPaidAmount,
@@ -84,10 +84,10 @@ module.exports = async ({
 		grossTotal: invoice.grossTotal,
 	});
 
-	await model.updateStatus({
+	await model.updateInvoiceStatus({
 		invoiceId,
 		status: nextStatus,
 	});
 
-	return model.findById({ invoiceId });
+	return model.getInvoiceById({ invoiceId });
 };

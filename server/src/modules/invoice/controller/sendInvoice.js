@@ -1,8 +1,8 @@
 const catchAsync = require("../../../utils/catchAsync");
-const { send } = require("../services");
+const services = require("../services");
 
 module.exports = catchAsync(async (req, res) => {
-	const invoice = await send({
+	const invoice = await services.sendInvoice({
 		invoiceId: req.params.invoiceId,
 	});
 

@@ -5,16 +5,19 @@ import {InvoiceList} from "../components";
 import Paginator from 'primevue/paginator';
 import {useRouter} from "vue-router";
 import {PageContainer} from "@/shared/components";
+import {createTableItems} from "../items/";
 
 const router = useRouter();
 const invoiceStore = useInvoiceStore();
+const tableItems = ref();
 const isInitializing = ref(true);
 const PAGINATION_LIMIT = 10;
 
 
 onMounted(async () => {
 	try{
-		await invoiceStore.getInvoices({limit: PAGINATION_LIMIT});
+		const invoices = await invoiceStore.getInvoices({limit: PAGINATION_LIMIT});
+		tableItems.value = createTableItems(invoices);
 	}
 	catch {
 		invoiceStore.invoices = [];
@@ -33,7 +36,7 @@ async function onPaginationAction(event){
 
 function onInvoiceListActions(event){
 	if(event.action === "openInvoice"){
-		router.push({name: "invoice-details", params: {invoiceId: event.invoiceId}});
+		router.push({name: "invoice-details", params: {invoiceNumber: event.invoiceNumber}});
 	}
 }
 </script>
@@ -41,9 +44,13 @@ function onInvoiceListActions(event){
 
 <template>
 	<PageContainer>
+		<template #header>
+			Rechnungs Liste
+		</template>
+
 		<div class="invoice-list" v-if="!isInitializing">
 			<InvoiceList
-				:items="invoiceStore.invoiceTableItems"
+				:items="tableItems"
 				@action="onInvoiceListActions"
 			/>
 
@@ -63,8 +70,9 @@ function onInvoiceListActions(event){
 .invoice-list {
 	width: 100%;
 	min-width: 0;
-	height: 100dvh;
+	height: 100%;
 	display: grid;
-	grid-template-rows: auto 1fr;
+	row-gap: var(--space-md);
+	grid-template-rows: 1fr auto;
 }
 </style>

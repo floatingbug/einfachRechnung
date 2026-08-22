@@ -16,7 +16,7 @@ defineProps({
 	<div class="totals-items" v-if="totals">
 		<div class="item">
 			<div class="label">
-				Zwischenzumme
+				Zwischensumme
 			</div>
 
 			<div class="value">
@@ -109,7 +109,7 @@ defineProps({
 	display: flex;
 }
 
-.label, value {
+.label, .value {
 	flex: 1;
 }
 

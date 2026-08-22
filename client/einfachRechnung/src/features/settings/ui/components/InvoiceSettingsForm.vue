@@ -1,9 +1,8 @@
 <script setup>
 import {
 	ref,
-	watch,
-	toRaw,
 	computed,
+	onMounted,
 } from "vue";
 
 import InputText from "primevue/inputtext";
@@ -15,55 +14,41 @@ import Select from "primevue/select";
 
 import {validateInvoice} from "@/features/settings/domainRules";
 import {invoiceNumberFormatOptions} from "../options";
-
-
-const props = defineProps({
-	data: {
-		type: Object,
-		required: true,
-	},
-});
+import {useSettingsStore} from "../../store/useSettingsStore.js";
+import {paymentMethodOptions} from "@/shared/options";
 
 
 const emit = defineEmits([
-	"submit",
+	"action",
 ]);
 
 
 // --------------------
 // state
 // --------------------
-const form = ref({});
+const settingsStore = useSettingsStore();
 const errors = ref({});
+const invoiceSettings = ref();
 
 
-// --------------------
-// sync props -> form
-// --------------------
-watch(
-	() => props.data,
-	(value) => {
-		form.value = structuredClone(
-			toRaw(value)
-		);
-	},
-	{
-		immediate: true,
-	},
-);
+onMounted(async () => {
+	invoiceSettings.value = await settingsStore.getInvoice();
+
+	console.log(invoiceSettings.value);
+});
 
 
 // --------------------
 // invoice number preview
 // --------------------
 const invoiceNumberPreview = computed(() => {
-	if (!form.value) {
+	if (!invoiceSettings.value) {
 		return "";
 	}
 
-	const prefix = form.value.invoicePrefix ?? "";
+	const prefix = invoiceSettings.value.invoicePrefix ?? "";
 
-	const format = form.value.invoiceNumberFormat ?? "";
+	const format = invoiceSettings.value.invoiceNumberFormat ?? "";
 
 	return format
 		.replace("{prefix}", prefix)
@@ -77,7 +62,7 @@ const invoiceNumberPreview = computed(() => {
 // --------------------
 function onSubmit(){
 	const result = validateInvoice({
-		invoiceSettings: form.value,
+		invoiceSettings: invoiceSettings.value,
 	});
 
 	errors.value = result.errors;
@@ -87,9 +72,10 @@ function onSubmit(){
 	}
 
 	emit(
-		"submit",
+		"action",
 		{
-			data: result.data,
+			action: "update",
+			invoiceSettings: result.invoiceSettings,
 		}
 	);
 }
@@ -97,20 +83,20 @@ function onSubmit(){
 
 
 <template>
-	<form>
+	<form v-if="invoiceSettings">
 		<h2>Rechnungsnummer</h2>
 
 		<div class="input-group">
 
 			<div class="input">
 				<label for="invoicePrefix">
-					Präfix (optional)
+					Präfix
 				</label>
 
 				<InputText
 					id="invoicePrefix"
-					v-model="form.invoicePrefix"
-					:placeholder="form.invoicePrefix"
+					v-model="invoiceSettings.invoicePrefix"
+					:placeholder="invoiceSettings.invoicePrefix"
 				/>
 
 				<Message
@@ -128,12 +114,12 @@ function onSubmit(){
 
 			<div class="input">
 				<label for="invoiceNumberFormat">
-					Nummernformat
+					Rechnungnummer Format
 				</label>
 
 				<Select
 					id="invoiceNumberFormat"
-					v-model="form.invoiceNumberFormat"
+					v-model="invoiceSettings.invoiceNumberFormat"
 					:options="invoiceNumberFormatOptions"
 					optionLabel="label"
 					optionValue="value"
@@ -145,7 +131,7 @@ function onSubmit(){
 					size="small"
 					variant="simple"
 				>
-					{{ errors.invoiceNumberFormat }}
+					{{ errors.invoiceNumberinvoiceSettingsat }}
 				</Message>
 			</div>
 
@@ -167,48 +153,48 @@ function onSubmit(){
 		<h2>Zahlung</h2>
 
 		<div class="input-group">
-
 			<div class="input">
-				<label for="defaultPaymentTermsDays">
-					Zahlungsziel (Tage)
-				</label>
-
-				<InputNumber
-					id="defaultPaymentTermsDays"
-					v-model="form.defaultPaymentTermsDays"
-				/>
-
-				<Message
-					v-if="errors.defaultPaymentTermsDays"
-					severity="error"
-					size="small"
-					variant="simple"
-				>
-					{{ errors.defaultPaymentTermsDays }}
-				</Message>
-			</div>
-
-
-			<div class="input">
-				<label for="defaultDueDays">
+				<label for="dueDays">
 					Fälligkeit (Tage)
 				</label>
 
 				<InputNumber
-					id="defaultDueDays"
-					v-model="form.defaultDueDays"
+					id="dueDays"
+					v-model="invoiceSettings.dueDays"
 				/>
 
 				<Message
-					v-if="errors.defaultDueDays"
+					v-if="errors.dueDays"
 					severity="error"
 					size="small"
 					variant="simple"
 				>
-					{{ errors.defaultDueDays }}
+					{{ errors.dueDays }}
 				</Message>
 			</div>
 
+			<div class="input">
+				<label for="paymentMethod">
+					Zahlungs Methode
+				</label>
+
+				<Select
+					v-model="invoiceSettings.paymentMethod"
+					:options="paymentMethodOptions"
+					optionLabel="label"
+					optionValue="value"
+					placeholder="Zahlungsart auswählen"
+				/>
+
+				<Message
+					v-if="errors.paymentMethod"
+					severity="error"
+					size="small"
+					variant="simple"
+				>
+					{{ errors.paymentMethod }}
+				</Message>
+			</div>
 		</div>
 
 
@@ -224,7 +210,7 @@ function onSubmit(){
 
 				<InputText
 					id="currency"
-					v-model="form.currency"
+					v-model="invoiceSettings.currency"
 				/>
 
 				<Message
@@ -245,7 +231,7 @@ function onSubmit(){
 
 				<InputText
 					id="language"
-					v-model="form.language"
+					v-model="invoiceSettings.language"
 				/>
 
 				<Message
@@ -260,22 +246,22 @@ function onSubmit(){
 
 
 			<div class="input">
-				<label for="defaultTaxRate">
+				<label for="taxRate">
 					Standard-Steuersatz (%)
 				</label>
 
 				<InputNumber
-					id="defaultTaxRate"
-					v-model="form.defaultTaxRate"
+					id="taxRate"
+					v-model="invoiceSettings.taxRate"
 				/>
 
 				<Message
-					v-if="errors.defaultTaxRate"
+					v-if="errors.taxRate"
 					severity="error"
 					size="small"
 					variant="simple"
 				>
-					{{ errors.defaultTaxRate }}
+					{{ errors.taxRate}}
 				</Message>
 			</div>
 

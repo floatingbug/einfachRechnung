@@ -16,10 +16,10 @@ async function getInvoiceById({invoiceId}){
 	return data;
 }
 
-async function createInvoice({invoice}){
-	const {data} = await http.post(`/invoices`, invoice);
+async function createInvoice({invoice, customerId}){
+	const {data} = await http.post(`/invoices`, {invoice, customerId});
 
-	return data;
+	return data.invoiceNumber;
 }
 
 async function sendInvoice({invoiceId}){
@@ -47,6 +47,14 @@ async function sendReminder({invoiceId}){
 	return data;
 }
 
+async function getInvoiceByInvoiceNumber({invoiceNumber}){
+	const {data} = await http.get(
+		`/invoices/by-invoice-number/${invoiceNumber}`
+	);
+
+	return data;
+}
+
 
 export const invoiceApi = {
 	getInvoices,
@@ -57,4 +65,5 @@ export const invoiceApi = {
 	cancelInvoice,
 	registerPayment,
 	sendReminder,
+	getInvoiceByInvoiceNumber,
 };

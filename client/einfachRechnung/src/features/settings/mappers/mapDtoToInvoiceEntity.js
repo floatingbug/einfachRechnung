@@ -1,6 +1,3 @@
-import {createInvoiceEntity} from "../entities";
-
-
 export function mapDtoToInvoiceEntity({dto} = {}){
 	dto = dto ?? {};
 
@@ -8,13 +5,14 @@ export function mapDtoToInvoiceEntity({dto} = {}){
 		invoicePrefix: dto.invoicePrefix ?? "",
 		invoiceNumberStart: dto.invoiceNumberStart ?? 0,
 		invoiceNumberFormat: dto.invoiceNumberFormat ?? "",
-		defaultPaymentTermsDays: dto.defaultPaymentTermsDays ?? 0,
-		defaultDueDays: dto.defaultDueDays ?? 0,
+		paymentTermsDays: dto.paymentTermsDays ?? 0,
+		dueDays: dto.dueDays ?? 7,
 		currency: dto.currency ?? "",
 		language: dto.language ?? "",
 		autoSendEnabled: dto.autoSendEnabled ?? false,
-		defaultTaxRate: dto.defaultTaxRate ?? 0,
+		taxRate: dto.taxRate ?? 19,
+		paymentMethod: dto.paymentMethod ?? "",
 	};
 
-	return createInvoiceEntity({invoice});
+	return invoice;
 };

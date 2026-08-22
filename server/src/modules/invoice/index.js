@@ -1,16 +1,44 @@
 const router = require("express").Router();
 const controller = require("./controller");
 const validator = require("./validator");
-const {authUser} = require("../../middlewares");
+const { authUser } = require("../../middlewares");
 
 
-router.post("/", validator.create, controller.create);
-router.get("/", authUser, controller.findMany);
-router.get("/:invoiceId", validator.findById, controller.findById);
-router.patch("/:invoiceId/send", validator.send, controller.send);
-router.patch("/:invoiceId/cancel", validator.cancel, controller.cancel);
-router.post("/:invoiceId/payments", validator.addPayment, controller.addPayment);
-router.get("/:invoiceId/export-xrechnung", validator.exportXrechnung, controller.exportXrechnung);
+// TODO: impolement validators
+router.post("/", authUser, controller.createInvoice);
+
+router.get("/", authUser, controller.getInvoices);
+
+router.get(
+	"/by-invoice-number/:invoiceNumber",
+	authUser,
+	controller.getInvoiceByInvoiceNumber
+);
+
+router.get(
+	"/:invoiceId",
+	controller.getInvoiceById
+);
+
+router.patch(
+	"/:invoiceId/send",
+	controller.sendInvoice
+);
+
+router.patch(
+	"/:invoiceId/cancel",
+	controller.cancelInvoice
+);
+
+router.post(
+	"/:invoiceId/payments",
+	controller.addPaymentToInvoice
+);
+
+router.get(
+	"/:invoiceId/export-xrechnung",
+	controller.exportXInvoice
+);
 
 
 module.exports = router;

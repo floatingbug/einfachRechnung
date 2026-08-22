@@ -1,59 +1,59 @@
 <script setup>
-import { ref, watch, toRaw } from "vue";
+import {ref} from "vue";
 import InputText from "primevue/inputtext";
 import Button from "primevue/button";
 import Divider from "primevue/divider";
 import Message from "primevue/message";
 
-import { validateCompany } from "@/features/settings/domainRules";
+// TODO: use validator
+// import {validateCompany} from "@/features/settings/domainRules";
 
 
 const props = defineProps({
-	data: {
+	modelValue: {
 		type: Object,
 		required: true,
 	},
 });
 
+
 const emit = defineEmits([
-	"submit",
+	"action",
+	"update:modelValue",
 ]);
 
 
-// --- state ---
-const form = ref({});
 const errors = ref({});
 
 
-// --- sync props -> form ---
-watch(
-	() => props.data,
-	(value) => {
-		form.value = structuredClone(
-			toRaw(value)
-		);
-	},
-	{
-		immediate: true,
-	},
-);
+// --- model ---
 
-
-// --- submit ---
-function onSubmit(){
-	const result = validateCompany({company: form.value});
-
-	errors.value = result.errors;
-
-	if(!result.valid){
-		return;
-	}
-
-	emit("submit", {
-		data: result.data,
+function updateField(field, value) {
+	emit("update:modelValue", {
+		...props.modelValue,
+		[field]: value,
 	});
 }
 
+
+function updateBankField(field, value) {
+	emit("update:modelValue", {
+		...props.modelValue,
+		bank: {
+			...props.modelValue.bank,
+			[field]: value,
+		},
+	});
+}
+
+
+// --- submit ---
+
+function onSubmit() {
+	emit("action", {
+		action: "updateCompany",
+	});
+}
 </script>
 
 
@@ -65,7 +65,10 @@ function onSubmit(){
 			<div class="input">
 				<label>Firmenname</label>
 
-				<InputText v-model="form.companyName" />
+				<InputText
+					:modelValue="modelValue.companyName"
+					@update:modelValue="updateField('companyName', $event)"
+				/>
 
 				<Message
 					v-if="errors.companyName"
@@ -81,7 +84,10 @@ function onSubmit(){
 			<div class="input">
 				<label>Inhaber</label>
 
-				<InputText v-model="form.ownerName" />
+				<InputText
+					:modelValue="modelValue.ownerName"
+					@update:modelValue="updateField('ownerName', $event)"
+				/>
 
 				<Message
 					v-if="errors.ownerName"
@@ -97,7 +103,10 @@ function onSubmit(){
 			<div class="input">
 				<label>E-Mail</label>
 
-				<InputText v-model="form.email" />
+				<InputText
+					:modelValue="modelValue.email"
+					@update:modelValue="updateField('email', $event)"
+				/>
 
 				<Message
 					v-if="errors.email"
@@ -113,7 +122,10 @@ function onSubmit(){
 			<div class="input">
 				<label>Telefon</label>
 
-				<InputText v-model="form.phone" />
+				<InputText
+					:modelValue="modelValue.phone"
+					@update:modelValue="updateField('phone', $event)"
+				/>
 
 				<Message
 					v-if="errors.phone"
@@ -129,7 +141,10 @@ function onSubmit(){
 			<div class="input">
 				<label>Website</label>
 
-				<InputText v-model="form.website" />
+				<InputText
+					:modelValue="modelValue.website"
+					@update:modelValue="updateField('website', $event)"
+				/>
 
 				<Message
 					v-if="errors.website"
@@ -142,7 +157,9 @@ function onSubmit(){
 			</div>
 		</div>
 
+
 		<Divider />
+
 
 		<h2>Adresse</h2>
 
@@ -150,7 +167,10 @@ function onSubmit(){
 			<div class="input">
 				<label>Straße</label>
 
-				<InputText v-model="form.street" />
+				<InputText
+					:modelValue="modelValue.street"
+					@update:modelValue="updateField('street', $event)"
+				/>
 
 				<Message
 					v-if="errors.street"
@@ -166,7 +186,10 @@ function onSubmit(){
 			<div class="input">
 				<label>Stadt</label>
 
-				<InputText v-model="form.city" />
+				<InputText
+					:modelValue="modelValue.city"
+					@update:modelValue="updateField('city', $event)"
+				/>
 
 				<Message
 					v-if="errors.city"
@@ -182,7 +205,10 @@ function onSubmit(){
 			<div class="input">
 				<label>Postleitzahl</label>
 
-				<InputText v-model="form.postalCode" />
+				<InputText
+					:modelValue="modelValue.postalCode"
+					@update:modelValue="updateField('postalCode', $event)"
+				/>
 
 				<Message
 					v-if="errors.postalCode"
@@ -198,7 +224,10 @@ function onSubmit(){
 			<div class="input">
 				<label>Ländercode</label>
 
-				<InputText v-model="form.countryCode" />
+				<InputText
+					:modelValue="modelValue.countryCode"
+					@update:modelValue="updateField('countryCode', $event)"
+				/>
 
 				<Message
 					v-if="errors.countryCode"
@@ -209,10 +238,51 @@ function onSubmit(){
 					{{ errors.countryCode }}
 				</Message>
 			</div>
-
 		</div>
 
+
 		<Divider />
+
+
+		<h2>Bankverbindung</h2>
+
+		<div class="input-group">
+			<div class="input">
+				<label for="bankName">Bank Name</label>
+
+				<InputText
+					id="bankName"
+					:modelValue="modelValue.bank?.bankName"
+					@update:modelValue="updateBankField('bankName', $event)"
+				/>
+			</div>
+
+
+			<div class="input">
+				<label for="iban">IBAN</label>
+
+				<InputText
+					id="iban"
+					:modelValue="modelValue.bank?.iban"
+					@update:modelValue="updateBankField('iban', $event)"
+				/>
+			</div>
+
+
+			<div class="input">
+				<label for="bic">BIC</label>
+
+				<InputText
+					id="bic"
+					:modelValue="modelValue.bank?.bic"
+					@update:modelValue="updateBankField('bic', $event)"
+				/>
+			</div>
+		</div>
+
+
+		<Divider />
+
 
 		<h2>Steuerdaten</h2>
 
@@ -220,7 +290,10 @@ function onSubmit(){
 			<div class="input">
 				<label>USt-ID</label>
 
-				<InputText v-model="form.vatId" />
+				<InputText
+					:modelValue="modelValue.vatId"
+					@update:modelValue="updateField('vatId', $event)"
+				/>
 
 				<Message
 					v-if="errors.vatId"
@@ -236,7 +309,10 @@ function onSubmit(){
 			<div class="input">
 				<label>Steuernummer</label>
 
-				<InputText v-model="form.taxNumber" />
+				<InputText
+					:modelValue="modelValue.taxNumber"
+					@update:modelValue="updateField('taxNumber', $event)"
+				/>
 
 				<Message
 					v-if="errors.taxNumber"
@@ -247,11 +323,12 @@ function onSubmit(){
 					{{ errors.taxNumber }}
 				</Message>
 			</div>
-
 		</div>
+
 
 		<div class="actions">
 			<Button
+				type="button"
 				label="Speichern"
 				icon="pi pi-save"
 				@click="onSubmit"

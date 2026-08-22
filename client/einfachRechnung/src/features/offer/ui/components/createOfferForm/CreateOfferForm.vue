@@ -23,16 +23,14 @@ onMounted(async () => {
 	try {
 		const offerSettings = await settingsStore.getOffer();
 		itemSettings.value = {
-			showItemNumbers: offerSettings.showItemNumber,
-			showTaxRatePerItem: offerSettings.showTaxRatePerItem,
-			taxRate: 19,
+			taxRate: offerSettings.taxRate,
 		};
 
 		offer.value = await offerStore.getOfferTemplate();
 
 		const date = new Date();
 		const validUntil = new Date(date);
-		validUntil.setDate(date.getDate() + offer.value.defaultValidityDays);
+		validUntil.setDate(date.getDate() + offer.value.validityDays);
 
 		offer.value.offerDate = date;
 		offer.value.validUntil = validUntil;

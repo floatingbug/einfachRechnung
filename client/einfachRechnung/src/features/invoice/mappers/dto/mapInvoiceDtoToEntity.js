@@ -35,7 +35,7 @@ export default function mapInvoiceDtoToEntity(dto = {}){
 
 	if(dto.createdAt){
 		const date = new Date(dto.createdAt);
-		invoice.createdAti = date.toLocaleDateString();
+		invoice.createdAt = date.toLocaleDateString();
 	}
 
 	if(dto.updatedAt){
@@ -71,6 +71,7 @@ export default function mapInvoiceDtoToEntity(dto = {}){
 	else{
 		invoice.seller = null;
 	}
+
 
 	if(dto.customer){
 		invoice.customer = {

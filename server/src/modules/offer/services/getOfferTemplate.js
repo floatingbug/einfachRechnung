@@ -8,7 +8,7 @@ module.exports = async ({userId}) => {
     });
 
     const offerTemplate = {
-        defaultValidityDays: offerSettings.defaultValidityDays,
+        validityDays: offerSettings.validityDays,
         offerPrefix: offerSettings.offerPrefix,
         offerNumberFormat: offerSettings.offerNumberFormat,
         introduction: offerSettings.introduction,

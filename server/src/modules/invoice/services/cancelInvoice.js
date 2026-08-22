@@ -8,7 +8,7 @@ function createError(status, message){
 }
 
 module.exports = async ({ invoiceId }) => {
-	const invoice = await model.findById({ invoiceId });
+	const invoice = await model.getInvoiceById({ invoiceId });
 
 	if (!invoice) {
 		throw createError(404, "Invoice not found");
@@ -22,10 +22,10 @@ module.exports = async ({ invoiceId }) => {
 		return invoice;
 	}
 
-	await model.updateStatus({
+	await model.updateInvoiceStatus({
 		invoiceId,
 		status: "cancelled",
 	});
 
-	return model.findById({ invoiceId });
+	return model.getInvoiceById({ invoiceId });
 };

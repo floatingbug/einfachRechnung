@@ -9,6 +9,7 @@ let desktopMediaQuery;
 
 function updateViewport({ matches }) {
 	isDesktop.value = matches;
+
 	if (matches) {
 		mobileSidebarOpen.value = false;
 	}
@@ -29,7 +30,9 @@ function closeMobileSidebar() {
 
 onMounted(() => {
 	desktopMediaQuery = window.matchMedia("(min-width: 1024px)");
+
 	updateViewport(desktopMediaQuery);
+
 	desktopMediaQuery.addEventListener("change", updateViewport);
 });
 
@@ -79,31 +82,38 @@ onBeforeUnmount(() => {
 			"sidebar topbar"
 			"sidebar main";
 		transition: grid-template-columns 220ms ease;
+
+		.topbar {
+			grid-area: topbar;
+		}
+
+		.sidebar {
+			grid-area: sidebar;
+		}
+
+		.main {
+			grid-area: main;
+		}
 	}
 
 	&.is-sidebar-collapsed {
 		@include media.up(bp.$bp-lg) {
-			grid-template-columns: var(--sidebar-collapsed-width) minmax(0, 1fr);
+			grid-template-columns:
+				var(--sidebar-collapsed-width)
+				minmax(0, 1fr);
 		}
 	}
 }
 
 .topbar {
-	grid-area: topbar;
 	width: 100%;
 	position: sticky;
 	top: 0;
 	z-index: 20;
 }
 
-.sidebar {
-	grid-area: sidebar;
-}
-
 .main {
-	grid-area: main;
 	width: 100%;
 	min-width: 0;
-	margin-bottom: 12rem;
 }
 </style>

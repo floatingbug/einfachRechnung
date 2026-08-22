@@ -26,6 +26,7 @@ module.exports = (req, res, next) => {
         "countryCode",
         "greeting",
         "signatory",
+        "bank",
     ];
 
     // Reject unknown fields
@@ -60,6 +61,7 @@ module.exports = (req, res, next) => {
         countryCode: payload.countryCode ?? null,
         greeting: payload.greeting ?? null,
         signatory: payload.signatory ?? null,
+        bank: payload.bank ?? null,
     };
 
     // companyName
