@@ -3,7 +3,8 @@ import getInvoiceById from "./getInvoiceById.js";
 import createInvoice from "./createInvoice.js";
 import calculateInvoiceTotals from "./calculateInvoiceTotals.js";
 import { getInvoiceByInvoiceNumber } from "./getInvoiceByInvoiceNumber.js";
-
+import { updateInvoice } from "./updateInvoice.js";
+import {getPdf} from "./getPdf";
 
 
 export const services = {
@@ -12,4 +13,6 @@ export const services = {
 	createInvoice,
 	calculateInvoiceTotals,
 	getInvoiceByInvoiceNumber,
+	updateInvoice,
+	getPdf,
 };

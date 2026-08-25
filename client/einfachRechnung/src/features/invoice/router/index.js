@@ -33,6 +33,14 @@ export default [
 					breadcrumb: "Details",
 				},
 			},
+			{
+				path: "edit/:invoiceNumber",
+				name: "invoice-edit",
+				component: () => import("../ui/views/InvoiceEditView.vue"),
+				meta: {
+					breadcrumb: "Bearbeiten"
+				},
+			},
 		],
 	}
 ];

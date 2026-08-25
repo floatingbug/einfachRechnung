@@ -6,6 +6,8 @@ const sendInvoice = require("./sendInvoice");
 const cancelInvoice = require("./cancelInvoice");
 const exportXInvoice = require("./exportXInvoice");
 const getInvoiceByInvoiceNumber = require("./getInvoiceByInvoiceNumber");
+const updateInvoice = require("./updateInvoice");
+const getPdf = require("./getPdf");
 
 module.exports = {
 	createInvoice,
@@ -16,4 +18,6 @@ module.exports = {
 	cancelInvoice,
 	exportXInvoice,
     getInvoiceByInvoiceNumber,
+    updateInvoice,
+    getPdf,
 };

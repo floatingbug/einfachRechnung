@@ -1,4 +1,5 @@
 import {invoiceApi} from "../api";
+import {mapInvoiceToInvoiceDraft} from "../mappers";
 
 
 export async function getInvoiceByInvoiceNumber({invoiceNumber}){
@@ -6,5 +7,12 @@ export async function getInvoiceByInvoiceNumber({invoiceNumber}){
 		invoiceNumber
 	});
 
-	return invoice;
+	const invoiceDraft = mapInvoiceToInvoiceDraft({
+		invoice,
+	});
+
+	return {
+		invoice,
+		invoiceDraft,
+	};
 }

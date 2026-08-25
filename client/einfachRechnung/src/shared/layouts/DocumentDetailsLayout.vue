@@ -16,60 +16,37 @@
 			</div>
 		</section>
 
-
-		<Divider v-if="$slots.documentData" />
-
 		<section v-if="$slots.documentData">
 			<slot name="documentData" />
 		</section>
-
-
-		<Divider v-if="$slots.contentBeforeItems" />
 
 		<section v-if="$slots.contentBeforeItems">
 			<slot name="contentBeforeItems" />
 		</section>
 
-
-		<Divider v-if="$slots.items" />
-
 		<section v-if="$slots.items">
 			<slot name="items" />
 		</section>
-
-
-		<Divider v-if="$slots.totals" />
 
 		<section v-if="$slots.totals">
 			<slot name="totals" />
 		</section>
 
-
-		<Divider v-if="$slots.payment" />
-
 		<section v-if="$slots.payment">
 			<slot name="payment" />
 		</section>
-
-
-		<Divider v-if="$slots.contentAfterTotals" />
 
 		<section v-if="$slots.contentAfterTotals">
 			<slot name="contentAfterTotals" />
 		</section>
 
-
 		<section v-if="$slots.note">
 			<slot name="note" />
 		</section>
 
-		<Divider v-if="$slots.bank" />
-
 		<section v-if="$slots.bank">
 			<slot name="bank" />
 		</section>
-
-		<Divider v-if="$slots.history" />
 
 		<section v-if="$slots.history">
 			<slot name="history" />

@@ -16,28 +16,45 @@ router.get(
 );
 
 router.get(
-	"/:invoiceId",
+	"/:invoiceNumber",
+    authUser,
 	controller.getInvoiceById
 );
 
 router.patch(
-	"/:invoiceId/send",
+    "/:invoiceNumber",
+    authUser,
+    controller.updateInvoice
+);
+
+router.patch(
+	"/send/:invoiceNumber",
+    authUser,
 	controller.sendInvoice
 );
 
 router.patch(
-	"/:invoiceId/cancel",
+	"/cancel/:invoiceNumber",
+    authUser,
 	controller.cancelInvoice
 );
 
 router.post(
-	"/:invoiceId/payments",
+	"/payments/:invoiceNmber",
+    authUser,
 	controller.addPaymentToInvoice
 );
 
 router.get(
-	"/:invoiceId/export-xrechnung",
+	"/export-xrechnung/:invoiceNumber",
+    authUser,
 	controller.exportXInvoice
+);
+
+router.get(
+    "/pdf/:invoiceNumber",
+    authUser,
+    controller.getPdf
 );
 
 

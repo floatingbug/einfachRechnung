@@ -175,8 +175,6 @@ async function loadInvoice() {
 		invoice.value = await invoiceStore.getInvoiceByInvoiceNumber({
 			invoiceNumber,
 		});
-
-		customer.value = createCustomerFromInvoice(invoice.value);
 	}
 	catch {
 		invoice.value = null;
@@ -190,38 +188,6 @@ async function loadInvoice() {
 		});
 	}
 }
-
-
-function createCustomerFromInvoice(invoice) {
-	if (!invoice?.customer) {
-		return null;
-	}
-
-	const customerData = invoice.customer;
-
-	return {
-		customerType: customerData.customerType ?? "",
-
-		companyName: customerData.companyName ?? "",
-		customerName: customerData.firstName && customerData.lastName
-			? `${customerData.firstName} ${customerData.lastName}`
-			: "",
-
-		contactPerson: customerData.contactPerson ?? "",
-
-		street: customerData.street ?? "",
-		postalCode: customerData.postalCode ?? "",
-		city: customerData.city ?? "",
-		countryCode: customerData.countryCode ?? "",
-
-		email: customerData.email ?? "",
-		phone: customerData.phone ?? "",
-
-		vatId: customerData.vatId ?? "",
-		customerNumber: customerData.customerNumber ?? "",
-	};
-}
-
 
 function formatPaymentMethod(method) {
 	const methods = {
@@ -275,21 +241,25 @@ function formatInvoiceStatus(status) {
 			<!-- Kunde -->
 			<template #customer>
 				<CustomerCard
-					v-if="customer"
+					v-if="invoice.customer"
 					class="customer-card"
-					:customer="customer"
+					:customer="invoice.customer"
 				/>
 			</template>
 
 
 			<!-- Rechnungsdaten -->
 			<template #documentData>
+				<Divider />
+
 				<h2>Rechnungsdaten</h2>
 
 				<InvoiceDetailsSummary
 					class="invoice-summary"
 					:invoice="invoice"
 				/>
+
+				<Divider />
 			</template>
 
 
@@ -301,6 +271,8 @@ function formatInvoiceStatus(status) {
 					:items="invoice.items"
 					:showTaxRatePerItem="true"
 				/>
+
+				<Divider />
 			</template>
 
 
@@ -311,6 +283,8 @@ function formatInvoiceStatus(status) {
 				<TotalsList
 					:totals="invoice.totals"
 				/>
+
+				<Divider />
 			</template>
 
 
@@ -393,26 +367,23 @@ function formatInvoiceStatus(status) {
 					</div>
 				</div>
 
+				<Divider />
 			</template>
 
 
 			<!-- Hinweis -->
-			<template #note>
-				<template v-if="invoice.note">
-					<Divider />
+			<template #note v-if="invoice.note">
+				<h2>Hinweis</h2>
 
-					<h2>Hinweis</h2>
+				<div class="value">
+					{{ invoice.note }}
+				</div>
 
-					<div class="value">
-						{{ invoice.note }}
-					</div>
-				</template>
+				<Divider />
 			</template>
 
 			<!-- Bankverbindung -->
 			<template #bank>
-				<Divider />
-
 				<h2>Bankverbindung</h2>
 
 				<div class="item-group-1-column">
@@ -446,6 +417,8 @@ function formatInvoiceStatus(status) {
 						</div>
 					</div>
 				</div>
+
+				<Divider />
 			</template>
 
 			<!-- Historie -->
@@ -483,10 +456,8 @@ function formatInvoiceStatus(status) {
 							{{ new Date(invoice.dueDate).toLocaleDateString() }}
 						</div>
 					</div>
-
 				</div>
 			</template>
-
 		</DocumentDetailsLayout>
 	</PageContainer>
 </template>

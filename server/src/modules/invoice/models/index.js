@@ -4,6 +4,7 @@ const getInvoices = require("./getInvoices");
 const addPaymentToInvoice = require("./addPaymentToInvoice");
 const updateInvoiceStatus = require("./updateInvoiceStatus");
 const getInvoiceByInvoiceNumber = require("./getInvoiceByInvoiceNumber");
+const updateInvoice = require("./updateInvoice");
 
 module.exports = {
 	createInvoice,
@@ -12,4 +13,5 @@ module.exports = {
 	addPaymentToInvoice,
 	updateInvoiceStatus,
     getInvoiceByInvoiceNumber,
+    updateInvoice,
 };

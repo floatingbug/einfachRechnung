@@ -292,6 +292,8 @@ async function deleteOffer() {
 
 
 			<template #document-data>
+				<Divider />
+
 				<h2>Angebotsdaten</h2>
 
 				<OfferDetailsSummary
@@ -306,6 +308,8 @@ async function deleteOffer() {
 				<div class="value">
 					{{ offer.introduction }}
 				</div>
+
+				<Divider />
 			</template>
 
 
@@ -316,6 +320,8 @@ async function deleteOffer() {
 					:items="offer.items"
 					:showTaxRatePerItem="offer.showTaxRatePerItem"
 				/>
+
+				<Divider />
 			</template>
 
 
@@ -325,6 +331,8 @@ async function deleteOffer() {
 				<TotalsList
 					:totals="offer.totals"
 				/>
+
+				<Divider />
 			</template>
 
 
@@ -334,6 +342,8 @@ async function deleteOffer() {
 				<div class="value">
 					{{ offer.closing }}
 				</div>
+
+				<Divider />
 			</template>
 
 
@@ -361,6 +371,8 @@ async function deleteOffer() {
 						</div>
 					</div>
 				</div>
+
+				<Divider />
 			</template>
 
 		</DocumentDetailsLayout>

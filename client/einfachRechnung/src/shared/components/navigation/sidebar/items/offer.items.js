@@ -14,12 +14,6 @@ export default function getOfferItems({router}){
 				icon: "pi pi-file-edit",
 				command: () => router.push("/offer/create"),
 			},
-			{
-				id: "offerToInvoice",
-				label: "Angebot → Rechnung",
-				icon: "pi pi-file-import",
-				command: () => router.push("/offer/convert"),
-			},
 		],
 	};
 

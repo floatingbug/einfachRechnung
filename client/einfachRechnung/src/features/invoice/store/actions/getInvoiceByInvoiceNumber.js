@@ -2,7 +2,10 @@ import {services} from "../../services";
 
 
 export async function getInvoiceByInvoiceNumber({invoiceNumber}){
-	const invoice = await services.getInvoiceByInvoiceNumber({invoiceNumber});
+	const result = await services.getInvoiceByInvoiceNumber({invoiceNumber});
 
-	return invoice;
+	this.invoice = result.invoice;
+	this.invoiceDraft = result.invoiceDraft;
+
+	return this.invoice;
 }
