@@ -5,14 +5,16 @@ import {
 	toRaw,
 } from "vue";
 
-import InputText from "primevue/inputtext";
-import InputNumber from "primevue/inputnumber";
-import ToggleSwitch from "primevue/toggleswitch";
-import Button from "primevue/button";
-import Divider from "primevue/divider";
-import Message from "primevue/message";
+import {
+	InputText,
+	InputNumber,
+	ToggleSwitch,
+	Message,
+	Select,
+} from "primevue";
 
 import {validateTax} from "@/features/settings/domainRules";
+import {vatModeOptions} from "../options";
 
 
 const props = defineProps({
@@ -78,23 +80,16 @@ function onSubmit(){
 		<h2>Mehrwertsteuer</h2>
 
 		<div class="input-group">
-			<div class="field switch-field">
-				<label>Mehrwertsteuer aktiviert</label>
+			<div class="input">
+				<label for="vatMode">Umsatzsteuerliche Behandlung</label>
 
-				<ToggleSwitch
-					v-model="form.vatEnabled"
+				<Select
+					v-model="form.vatMode"
+					:options="vatModeOptions"
+					optionLabel="label"
+					optionValue="value"
 				/>
-
-				<Message
-					v-if="errors.vatEnabled"
-					severity="error"
-					size="small"
-					variant="simple"
-				>
-					{{ errors.vatEnabled }}
-				</Message>
 			</div>
-
 
 			<div class="input">
 				<label>Standard-Mehrwertsteuersatz</label>
@@ -188,6 +183,8 @@ function onSubmit(){
 			</div>
 
 		</div>
+
+		<Divider />
 
 		<div class="actions">
 			<Button

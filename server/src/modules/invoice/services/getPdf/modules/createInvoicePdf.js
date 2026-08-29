@@ -29,31 +29,31 @@ const CONTENT = {
 };
 
 const SPACING = {
+    section: 28,
+
+    headingToContent: 8,
+
     sellerToDivider: 12,
 
-    offerHeaderTop: 1.5,
+    invoiceHeaderToCustomer: 28,
 
-    offerHeaderToCustomer: 24,
-
-    customerToProject: 16,
-
-    projectToIntroduction: 16,
-
-    introductionToItems: 22,
+    customerToItems: 30,
 
     itemsHeaderToFirstRow: 9,
 
     itemAfterRow: 7,
 
-    itemsToTotals: 22,
+    itemsToTotals: 28,
 
     totalRow: 16,
 
-    totalsToClosing: 24,
+    totalsToTaxInformation: 28,
 
-    closingToLegal: 22,
+    taxInformationToPayment: 28,
 
-    headingToContent: 8,
+    paymentHeadingToContent: 8,
+
+    paymentToLegal: 20,
 };
 
 const COLORS = {
@@ -67,7 +67,7 @@ const COLORS = {
 // Entry
 // -----------------------------------------------------------------------------
 
-module.exports = async ({offer}) => {
+module.exports = async ({invoice}) => {
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument({
             size: "A4",
@@ -95,9 +95,9 @@ module.exports = async ({offer}) => {
         doc.on("error", reject);
 
         try {
-            renderOffer(
+            renderInvoice(
                 doc,
-                offer,
+                invoice,
             );
 
             renderPageNumber(doc);
@@ -112,61 +112,48 @@ module.exports = async ({offer}) => {
 
 
 // -----------------------------------------------------------------------------
-// Offer
+// Invoice
 // -----------------------------------------------------------------------------
 
-function renderOffer(doc, offer) {
-    const seller =
-        offer.companySnapshot ||
-        {};
-
-    const customer =
-        offer.customerSnapshot ||
-        {};
-
+function renderInvoice(doc, invoice) {
     renderSellerHeader(
         doc,
-        seller,
+        invoice.seller,
     );
 
-    renderOfferHeader(
+    renderInvoiceHeader(
         doc,
-        offer,
+        invoice,
     );
 
     renderCustomer(
         doc,
-        customer,
-    );
-
-    renderProject(
-        doc,
-        offer,
-    );
-
-    renderIntroduction(
-        doc,
-        offer,
+        invoice.customer,
     );
 
     renderItems(
         doc,
-        offer,
+        invoice,
     );
 
     renderTotals(
         doc,
-        offer,
+        invoice,
     );
 
-    renderClosing(
+    renderTaxInformation(
         doc,
-        offer,
+        invoice,
+    );
+
+    renderPaymentInformation(
+        doc,
+        invoice,
     );
 
     renderSellerLegalInformation(
         doc,
-        seller,
+        invoice.seller,
     );
 }
 
@@ -288,17 +275,15 @@ function renderSellerHeader(doc, seller) {
 
 
 // -----------------------------------------------------------------------------
-// Offer header
+// Invoice header
 // -----------------------------------------------------------------------------
 
-function renderOfferHeader(doc, offer) {
+function renderInvoiceHeader(doc, invoice) {
     /*
-     * Abstand zwischen Trennlinie des Verkäufers
-     * und "ANGEBOT".
+     * Abstand zwischen Trennlinie des
+     * Verkäuferbereichs und "RECHNUNG".
      */
-    doc.moveDown(
-        SPACING.offerHeaderTop,
-    );
+    doc.moveDown(1.5);
 
     doc
         .font("Helvetica-Bold")
@@ -306,7 +291,7 @@ function renderOfferHeader(doc, offer) {
         .fillColor(COLORS.text);
 
     doc.text(
-        "ANGEBOT",
+        "RECHNUNG",
         CONTENT.x,
         doc.y,
         {
@@ -318,24 +303,31 @@ function renderOfferHeader(doc, offer) {
 
     const rows = [];
 
-    if(offer.offerNumber){
+    if(invoice.invoiceNumber){
         rows.push([
-            "Angebotsnummer",
-            offer.offerNumber,
+            "Rechnungsnummer",
+            invoice.invoiceNumber,
         ]);
     }
 
-    if(offer.offerDate){
+    if(invoice.invoiceDate){
         rows.push([
-            "Angebotsdatum",
-            formatDate(offer.offerDate),
+            "Rechnungsdatum",
+            formatDate(invoice.invoiceDate),
         ]);
     }
 
-    if(offer.validUntil){
+    if(invoice.serviceDate){
         rows.push([
-            "Gültig bis",
-            formatDate(offer.validUntil),
+            "Leistungsdatum",
+            formatDate(invoice.serviceDate),
+        ]);
+    }
+
+    if(invoice.dueDate){
+        rows.push([
+            "Fällig am",
+            formatDate(invoice.dueDate),
         ]);
     }
 
@@ -359,7 +351,7 @@ function renderOfferHeader(doc, offer) {
     );
 
     doc.moveDown(
-        SPACING.offerHeaderToCustomer / 12,
+        SPACING.invoiceHeaderToCustomer / 12,
     );
 }
 
@@ -379,7 +371,7 @@ function renderCustomer(doc, customer) {
         .fillColor(COLORS.text);
 
     doc.text(
-        "Angebotsempfänger",
+        "Rechnungsempfänger",
         CONTENT.x,
         doc.y,
         {
@@ -481,82 +473,7 @@ function renderCustomer(doc, customer) {
     }
 
     doc.moveDown(
-        SPACING.customerToProject / 12,
-    );
-}
-
-
-// -----------------------------------------------------------------------------
-// Project
-// -----------------------------------------------------------------------------
-
-function renderProject(doc, offer) {
-    if(!offer.project){
-        return;
-    }
-
-    doc
-        .font("Helvetica-Bold")
-        .fontSize(9)
-        .fillColor(COLORS.text);
-
-    doc.text(
-        "Projekt",
-        CONTENT.x,
-        doc.y,
-        {
-            width: CONTENT.width,
-        },
-    );
-
-    doc.moveDown(
-        SPACING.headingToContent / 12,
-    );
-
-    doc
-        .font("Helvetica")
-        .fontSize(9);
-
-    doc.text(
-        offer.project,
-        CONTENT.x,
-        doc.y,
-        {
-            width: CONTENT.width,
-        },
-    );
-
-    doc.moveDown(
-        SPACING.projectToIntroduction / 12,
-    );
-}
-
-
-// -----------------------------------------------------------------------------
-// Introduction
-// -----------------------------------------------------------------------------
-
-function renderIntroduction(doc, offer) {
-    if(!offer.introduction){
-        return;
-    }
-
-    doc
-        .font("Helvetica")
-        .fontSize(9)
-        .fillColor(COLORS.text);
-
-    doc.text(
-        offer.introduction,
-        CONTENT.x,
-        doc.y,
-        {
-            width: CONTENT.width,
-        },
-    );
-
-    doc.moveDown(
-        SPACING.introductionToItems / 12,
+        SPACING.customerToItems / 12,
     );
 }
 
@@ -565,10 +482,10 @@ function renderIntroduction(doc, offer) {
 // Items
 // -----------------------------------------------------------------------------
 
-function renderItems(doc, offer) {
+function renderItems(doc, invoice) {
     const items =
-        Array.isArray(offer.items)
-            ? offer.items
+        Array.isArray(invoice.items)
+            ? invoice.items
             : [];
 
     if(items.length === 0){
@@ -576,21 +493,16 @@ function renderItems(doc, offer) {
     }
 
     const showTaxRate =
-        offer.showTaxRatePerItem === true;
-
-    const showItemNumbers =
-        offer.showItemNumbers !== false;
+        invoice.taxTreatment !== "reverse_charge";
 
     const columns =
         getItemColumns({
             showTaxRate,
-            showItemNumbers,
         });
 
     renderItemHeader(
         doc,
         columns,
-        showItemNumbers,
     );
 
     items.forEach(
@@ -600,7 +512,7 @@ function renderItems(doc, offer) {
                 item,
                 index + 1,
                 columns,
-                showItemNumbers,
+                invoice.currency,
             );
         },
     );
@@ -611,54 +523,17 @@ function renderItems(doc, offer) {
 // Item columns
 // -----------------------------------------------------------------------------
 
-function getItemColumns({
-    showTaxRate,
-    showItemNumbers,
-}) {
+function getItemColumns({showTaxRate}) {
     if(showTaxRate){
-        if(showItemNumbers){
-            return {
-                number: {
-                    x: 50,
-                    width: 25,
-                },
-
-                description: {
-                    x: 80,
-                    width: 185,
-                },
-
-                quantity: {
-                    x: 270,
-                    width: 45,
-                },
-
-                unit: {
-                    x: 320,
-                    width: 55,
-                },
-
-                unitPrice: {
-                    x: 380,
-                    width: 65,
-                },
-
-                taxRate: {
-                    x: 450,
-                    width: 35,
-                },
-
-                total: {
-                    x: 490,
-                    width: 55,
-                },
-            };
-        }
-
         return {
-            description: {
+            number: {
                 x: 50,
-                width: 215,
+                width: 25,
+            },
+
+            description: {
+                x: 80,
+                width: 185,
             },
 
             quantity: {
@@ -688,44 +563,15 @@ function getItemColumns({
         };
     }
 
-    if(showItemNumbers){
-        return {
-            number: {
-                x: 50,
-                width: 25,
-            },
-
-            description: {
-                x: 80,
-                width: 250,
-            },
-
-            quantity: {
-                x: 335,
-                width: 45,
-            },
-
-            unit: {
-                x: 385,
-                width: 55,
-            },
-
-            unitPrice: {
-                x: 445,
-                width: 65,
-            },
-
-            total: {
-                x: 515,
-                width: 30,
-            },
-        };
-    }
-
     return {
-        description: {
+        number: {
             x: 50,
-            width: 280,
+            width: 25,
+        },
+
+        description: {
+            x: 80,
+            width: 250,
         },
 
         quantity: {
@@ -755,11 +601,7 @@ function getItemColumns({
 // Item header
 // -----------------------------------------------------------------------------
 
-function renderItemHeader(
-    doc,
-    columns,
-    showItemNumbers,
-) {
+function renderItemHeader(doc, columns) {
     const y = doc.y;
 
     doc
@@ -767,16 +609,14 @@ function renderItemHeader(
         .fontSize(8)
         .fillColor(COLORS.text);
 
-    if(showItemNumbers){
-        doc.text(
-            "Pos.",
-            columns.number.x,
-            y,
-            {
-                width: columns.number.width,
-            },
-        );
-    }
+    doc.text(
+        "Pos.",
+        columns.number.x,
+        y,
+        {
+            width: columns.number.width,
+        },
+    );
 
     doc.text(
         "Beschreibung",
@@ -859,7 +699,7 @@ function renderItem(
     item,
     position,
     columns,
-    showItemNumbers,
+    currency,
 ) {
     const quantity =
         Number(item.quantity) || 0;
@@ -881,8 +721,8 @@ function renderItem(
     const discount =
         getDiscountText(
             item,
-        "EUR",
-    );
+            currency,
+        );
 
     const fullDescription =
         discount
@@ -910,16 +750,14 @@ function renderItem(
 
     const y = doc.y;
 
-    if(showItemNumbers){
-        doc.text(
-            String(position),
-            columns.number.x,
-            y,
-            {
-                width: columns.number.width,
-            },
-        );
-    }
+    doc.text(
+        String(position),
+        columns.number.x,
+        y,
+        {
+            width: columns.number.width,
+        },
+    );
 
     doc.text(
         fullDescription,
@@ -952,7 +790,7 @@ function renderItem(
     doc.text(
         formatCurrency(
             unitPrice,
-            "EUR",
+            currency,
         ),
         columns.unitPrice.x,
         y,
@@ -977,7 +815,7 @@ function renderItem(
     doc.text(
         formatCurrency(
             total,
-            "EUR",
+            currency,
         ),
         columns.total.x,
         y,
@@ -1003,7 +841,14 @@ function renderItem(
 // Totals
 // -----------------------------------------------------------------------------
 
-function renderTotals(doc, offer) {
+function renderTotals(doc, invoice) {
+    const totals =
+        invoice.totals || {};
+
+    doc.moveDown(
+        SPACING.itemsToTotals / 12,
+    );
+
     const totalAreaX = 320;
 
     const totalAreaWidth =
@@ -1020,102 +865,133 @@ function renderTotals(doc, offer) {
         totalAreaWidth -
         labelWidth;
 
-    doc.moveDown(
-        SPACING.itemsToTotals / 12,
-    );
-
-    if(offer.subtotalNet !== undefined){
+    if(totals.subtotalNet !== undefined){
         renderTotalRow(
             doc,
             "Zwischensumme netto",
-            offer.subtotalNet,
+            totals.subtotalNet,
             totalAreaX,
             valueX,
             valueWidth,
+            invoice.currency,
         );
     }
 
     if(
-        offer.discountNet !== undefined &&
-        Number(offer.discountNet) !== 0
+        totals.discountNet !== undefined &&
+        Number(totals.discountNet) !== 0
     ){
         renderTotalRow(
             doc,
             "Rabatt",
             -Math.abs(
-                Number(offer.discountNet),
+                Number(totals.discountNet),
             ),
             totalAreaX,
             valueX,
             valueWidth,
+            invoice.currency,
         );
     }
 
-    if(offer.totalNet !== undefined){
+    if(totals.totalNet !== undefined){
         doc.moveDown(0.25);
 
         renderTotalRow(
             doc,
             "Gesamt netto",
-            offer.totalNet,
+            totals.totalNet,
             totalAreaX,
             valueX,
             valueWidth,
+            invoice.currency,
             true,
         );
     }
 
     if(
-        Array.isArray(offer.taxBreakdown) &&
-        offer.taxBreakdown.length > 0
+        invoice.taxTreatment !== "reverse_charge"
     ){
-        doc.moveDown(0.15);
+        if(
+            Array.isArray(totals.taxBreakdown) &&
+            totals.taxBreakdown.length > 0
+        ){
+            doc.moveDown(0.15);
 
-        offer.taxBreakdown.forEach(
-            (tax) => {
-                renderTotalRow(
-                    doc,
-                    `${formatNumber(tax.taxRate)} % MwSt.`,
-                    tax.taxAmount,
-                    totalAreaX,
-                    valueX,
-                    valueWidth,
-                );
-            },
-        );
+            totals.taxBreakdown.forEach(
+                (tax) => {
+                    renderTotalRow(
+                        doc,
+                        `${formatNumber(tax.taxRate)} % MwSt.`,
+                        tax.taxAmount,
+                        totalAreaX,
+                        valueX,
+                        valueWidth,
+                        invoice.currency,
+                    );
+                },
+            );
+        }
+        else if(
+            totals.totalTax !== undefined
+        ){
+            renderTotalRow(
+                doc,
+                "Umsatzsteuer",
+                totals.totalTax,
+                totalAreaX,
+                valueX,
+                valueWidth,
+                invoice.currency,
+            );
+        }
+
+        if(totals.totalGross !== undefined){
+            doc.moveDown(0.45);
+
+            drawLine(
+                doc,
+                totalAreaX,
+                CONTENT.right,
+            );
+
+            doc.moveDown(0.35);
+
+            renderTotalRow(
+                doc,
+                "Gesamt brutto",
+                totals.totalGross,
+                totalAreaX,
+                valueX,
+                valueWidth,
+                invoice.currency,
+                true,
+            );
+        }
+
+        return;
     }
-    else if(offer.totalTax !== undefined){
-        renderTotalRow(
-            doc,
-            "Umsatzsteuer",
-            offer.totalTax,
-            totalAreaX,
-            valueX,
-            valueWidth,
-        );
-    }
 
-    if(offer.totalGross !== undefined){
-        doc.moveDown(0.45);
+    doc.moveDown(0.45);
 
-        drawLine(
-            doc,
-            totalAreaX,
-            CONTENT.right,
-        );
+    drawLine(
+        doc,
+        totalAreaX,
+        CONTENT.right,
+    );
 
-        doc.moveDown(0.35);
+    doc.moveDown(0.35);
 
-        renderTotalRow(
-            doc,
-            "Gesamt brutto",
-            offer.totalGross,
-            totalAreaX,
-            valueX,
-            valueWidth,
-            true,
-        );
-    }
+    renderTotalRow(
+        doc,
+        "Rechnungsbetrag",
+        totals.totalNet,
+        totalAreaX,
+        valueX,
+        valueWidth,
+        invoice.currency,
+        true,
+    );
 }
 
 
@@ -1130,6 +1006,7 @@ function renderTotalRow(
     labelX,
     valueX,
     valueWidth,
+    currency = "EUR",
     bold = false,
 ) {
     doc
@@ -1164,7 +1041,7 @@ function renderTotalRow(
     doc.text(
         formatCurrency(
             value,
-            "EUR",
+            currency,
         ),
         valueX,
         y,
@@ -1182,31 +1059,156 @@ function renderTotalRow(
 
 
 // -----------------------------------------------------------------------------
-// Closing
+// Tax information
 // -----------------------------------------------------------------------------
 
-function renderClosing(doc, offer) {
-    if(!offer.closing){
+function renderTaxInformation(doc, invoice) {
+    if(
+        invoice.taxTreatment !== "reverse_charge"
+    ){
         return;
     }
 
     doc.moveDown(
-        SPACING.totalsToClosing / 12,
+        SPACING.totalsToTaxInformation / 12,
     );
 
     doc
-        .font("Helvetica")
+        .font("Helvetica-Bold")
         .fontSize(9)
         .fillColor(COLORS.text);
 
     doc.text(
-        offer.closing,
+        "Steuerschuldnerschaft des Leistungsempfängers",
         CONTENT.x,
         doc.y,
         {
             width: CONTENT.width,
         },
     );
+}
+
+
+// -----------------------------------------------------------------------------
+// Payment information
+// -----------------------------------------------------------------------------
+
+function renderPaymentInformation(doc, invoice) {
+    const bank =
+        invoice.seller?.bank;
+
+    const hasBankData =
+        Boolean(
+            bank?.bankName ||
+            bank?.iban ||
+            bank?.bic,
+        );
+
+    const hasDueDate =
+        Boolean(invoice.dueDate);
+
+    if(
+        !hasBankData &&
+        !hasDueDate
+    ){
+        return;
+    }
+
+    /*
+     * Zahlungsinformationen werden bewusst
+     * unten links positioniert.
+     *
+     * Sie befinden sich nicht mehr im
+     * normalen Dokumentfluss.
+     *
+     * Dadurch kann PDFKit hier keinen
+     * automatischen Seitenumbruch erzeugen.
+     */
+    const paymentX =
+        CONTENT.x;
+
+    const paymentY =
+        PAGE.height -
+        145;
+
+    doc
+        .font("Helvetica-Bold")
+        .fontSize(10)
+        .fillColor(COLORS.text);
+
+    doc.text(
+        "Zahlungsinformationen",
+        paymentX,
+        paymentY,
+        {
+            width: CONTENT.width,
+            lineBreak: false,
+        },
+    );
+
+    let y =
+        paymentY +
+        18;
+
+    doc
+        .font("Helvetica")
+        .fontSize(8.5);
+
+    if(hasDueDate){
+        doc.text(
+            `Bitte überweisen Sie den Rechnungsbetrag bis zum ${formatDate(invoice.dueDate)}.`,
+            paymentX,
+            y,
+            {
+                width: CONTENT.width,
+                lineBreak: false,
+            },
+        );
+
+        y += 16;
+    }
+
+    if(hasBankData){
+        if(bank.bankName){
+            doc.text(
+                bank.bankName,
+                paymentX,
+                y,
+                {
+                    width: CONTENT.width,
+                    lineBreak: false,
+                },
+            );
+
+            y += 12;
+        }
+
+        if(bank.iban){
+            doc.text(
+                `IBAN: ${bank.iban}`,
+                paymentX,
+                y,
+                {
+                    width: CONTENT.width,
+                    lineBreak: false,
+                },
+            );
+
+            y += 12;
+        }
+
+        if(bank.bic){
+            doc.text(
+                `BIC: ${bank.bic}`,
+                paymentX,
+                y,
+                {
+                    width: CONTENT.width,
+                    lineBreak: false,
+                },
+            );
+        }
+    }
 }
 
 
@@ -1237,9 +1239,16 @@ function renderSellerLegalInformation(doc, seller) {
         return;
     }
 
-    doc.moveDown(
-        SPACING.closingToLegal / 12,
-    );
+    /*
+     * Rechtliche Angaben werden fest am unteren
+     * Rand der ersten Seite positioniert.
+     *
+     * Kein normaler Dokumentfluss.
+     * Kein automatischer Seitenumbruch.
+     */
+    const legalY =
+        PAGE.height -
+        65;
 
     doc
         .font("Helvetica")
@@ -1249,7 +1258,7 @@ function renderSellerLegalInformation(doc, seller) {
     doc.text(
         values.join("  |  "),
         CONTENT.x,
-        doc.y,
+        legalY,
         {
             width: CONTENT.width,
             align: "left",
@@ -1257,7 +1266,9 @@ function renderSellerLegalInformation(doc, seller) {
         },
     );
 
-    doc.fillColor(COLORS.text);
+    doc.fillColor(
+        COLORS.text,
+    );
 }
 
 
@@ -1267,42 +1278,38 @@ function renderSellerLegalInformation(doc, seller) {
 
 function renderPageNumber(doc) {
     /*
-     * Das Angebot besteht bewusst aus genau einer Seite.
+     * Die Seitenzahl wird absolut auf der
+     * einzigen A4-Seite positioniert.
      *
-     * Keine bufferPages.
-     * Kein addPage().
-     * Keine nachträgliche Seitennummerierung.
-     *
-     * Dadurch kann die Seitenzahl keine zusätzliche
-     * Seite erzeugen.
+     * lineBreak: false verhindert dabei
+     * ebenfalls einen Seitenumbruch.
      */
-
     const footerY =
-        doc.page.height -
-        28;
+        PAGE.height -
+        30;
 
     doc
         .font("Helvetica")
         .fontSize(7)
-        .fillColor(COLORS.muted);
-
-    doc.text(
-        "Seite 1 von 1",
-        CONTENT.x,
-        footerY,
-        {
-            width: CONTENT.width,
-            align: "center",
-            lineBreak: false,
-        },
-    );
-
-    doc.fillColor(COLORS.text);
+        .fillColor(COLORS.muted)
+        .text(
+            "Seite 1 von 1",
+            CONTENT.x,
+            footerY,
+            {
+                width: CONTENT.width,
+                align: "center",
+                lineBreak: false,
+            },
+        )
+        .fillColor(
+            COLORS.text,
+        );
 }
 
 
 // -----------------------------------------------------------------------------
-// Drawing helpers
+// Layout helpers
 // -----------------------------------------------------------------------------
 
 function drawLine(
@@ -1414,7 +1421,10 @@ function calculateItemTotal(item) {
 }
 
 
-function getDiscountText(item) {
+function getDiscountText(
+    item,
+    currency,
+) {
     if(
         item.discountType ===
         "percentage"
@@ -1435,7 +1445,7 @@ function getDiscountText(item) {
             `Rabatt: ` +
             `${formatCurrency(
                 item.discountValue,
-                "EUR",
+                currency,
             )}`
         );
     }

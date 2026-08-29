@@ -283,7 +283,6 @@ function onSubmit() {
 
 		<Divider />
 
-
 		<h2>Steuerdaten</h2>
 
 		<div class="input-group">
@@ -325,6 +324,7 @@ function onSubmit() {
 			</div>
 		</div>
 
+		<Divider />
 
 		<div class="actions">
 			<Button

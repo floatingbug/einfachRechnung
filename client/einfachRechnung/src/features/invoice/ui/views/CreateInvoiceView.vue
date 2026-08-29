@@ -7,6 +7,7 @@ import { DatePicker, Select, useToast } from "primevue";
 import {createInvoiceEntity} from "@/features/invoice/entities";
 import {paymentMethodOptions} from "@/shared/options";
 import {useInvoiceStore} from "../../store";
+import { taxTreatmentOptions } from "../options";
 
 
 const invoiceStore = useInvoiceStore();
@@ -20,28 +21,19 @@ const selectedCustomer = ref();
 
 onMounted(async () => {
 	const invoiceSettings = await settingsStore.getInvoice();
+	const taxSettings = await settingsStore.getTax();
 
 	// itemSettings for LineItems.vue
 	itemSettings.value = {
-		taxRate: invoiceSettings.taxRate,
+		taxRate: taxSettings.defaultVatRate,
 	};
 
-	// --- set invoice defaults ---
+	invoice.value = createInvoiceEntity({
+		invoiceSettings,
+		taxSettings,
+	});
 
-	// set dates
-	const date = new Date();
-	const dueDate = new Date();
-	dueDate.setDate(date.getDate() + invoiceSettings.dueDays);
-
-	const invoiceDate = date;
-
-	invoice.value = createInvoiceEntity(
-		{
-			invoiceDate,
-			dueDate,
-			paymentMethod: invoiceSettings.paymentMethod,
-		}
-	);
+	console.log(invoice.value);
 });
 
 async function createInvoice(){
@@ -191,6 +183,25 @@ async function createInvoice(){
 
 						<DatePicker
 							v-model="invoice.dueDate"
+						/>
+					</div>
+
+					<div class="input">
+						<label for="serviceDate">Leistungs Datum</label>
+
+						<DatePicker
+							v-model="invoice.serviceDate"
+						/>
+					</div>
+
+					<div class="input" v-if="invoice.reverseChargeEnabled">
+						<label for="taxTreatment">Steuerliche Behandlung</label>
+
+						<Select
+							v-model="invoice.taxTreatment"
+							:options="taxTreatmentOptions"
+							optionLabel="label"
+							optionValue="value"
 						/>
 					</div>
 				</div>

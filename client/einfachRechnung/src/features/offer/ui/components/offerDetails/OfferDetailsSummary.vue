@@ -6,6 +6,15 @@ defineProps({
 	}
 });
 
+const statusLabels = {
+	draft: "Entwurf",
+	sent: "Versendet",
+	accepted: "Angenommen",
+	rejected: "Abgelehnt",
+	expired: "Abgelaufen",
+	cancelled: "Storniert",
+};
+
 </script>
 
 
@@ -20,6 +29,14 @@ defineProps({
 
 				<div class="item-value">
 					{{offer.offerNumber}}
+				</div>
+			</div>
+
+			<div class="item">
+				<div class="item-label">Status</div>
+
+				<div class="item-label">
+					{{statusLabels[offer.status]}}
 				</div>
 			</div>
 		</div>

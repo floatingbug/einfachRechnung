@@ -7,10 +7,10 @@ const model = defineModel({
 });
 
 const paymentMethodOptions = [
-	{ label: "Überweisung", value: "bank_transfer" },
+	{ label: "Überweisung", value: "bankTransfer" },
 	{ label: "Barzahlung", value: "cash" },
 	{ label: "Kartenzahlung", value: "card" },
-	{ label: "Lastschrift", value: "direct_debit" },
+	{ label: "Lastschrift", value: "directDebit" },
 	{ label: "PayPal", value: "paypal" },
 	{ label: "Sonstige", value: "other" },
 ];

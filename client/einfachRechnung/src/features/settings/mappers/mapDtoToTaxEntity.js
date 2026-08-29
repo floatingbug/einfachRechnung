@@ -1,18 +1,13 @@
-import {createTaxEntity} from "../entities";
-
-
 export function mapDtoToTaxEntity({dto} = {}){
-	let tax = {};
+	const taxSettings = {
+		vatId: dto.vatId,
+		taxNumber: dto.taxNumber,
+		vatMode: dto.vatMode,
+		defaultVatRate: dto.defaultVatRate,
+		reducedVatRate: dto.reducedVatRate,
+		taxCountryCode: dto.taxCountryCode,
+		reverseChargeEnabled: dto.reverseChargeEnabled,
+	};
 
-	if(dto){
-		tax = {
-			vatEnabled: dto.vatEnabled ?? false,
-			defaultVatRate: dto.defaultVatRate ?? 0,
-			reducedVatRate: dto.reducedVatRate ?? 0,
-			taxCountryCode: dto.taxCountryCode ?? "",
-			reverseChargeEnabled: dto.reverseChargeEnabled ?? false,
-		};
-	}
-
-	return createTaxEntity({tax});
+	return taxSettings;
 }

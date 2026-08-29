@@ -93,27 +93,30 @@ upsert("settings", { userId }, {
     userId,
 
     company: {
-        companyName: "",
-        ownerName: "",
+        companyName: "Mustermann Handwerk GmbH",
+        ownerName: "Thomas Mustermann",
 
-        email: "",
-        phone: "",
-        website: "",
+        email: "info@mustermann-handwerk.de",
+        phone: "+49 271 1234567",
+        website: "https://www.mustermann-handwerk.de",
 
-        street: "",
-        postalCode: "",
-        city: "",
-        countryCode: "",
+        street: "Musterstraße 12",
+        postalCode: "57072",
+        city: "Siegen",
+        countryCode: "DE",
 
         logo: null,
 
         greeting: "Mit freundlichen Grüßen",
 
         bank: {
-            bankName: "",
-            iban: "",
-            bic: "",
+            bankName: "Musterbank",
+            iban: "DE89370400440532013000",
+            bic: "COBADEFFXXX",
         },
+        
+        vatId: "DE123456789",
+        taxNumber: "342/5678/9012",
     },
     email: {
         senderName: "",
@@ -128,7 +131,7 @@ upsert("settings", { userId }, {
         autoSendEnabled: false,
     },
     invoice: {
-        invoicePrefix: "",
+        invoicePrefix: "RE",
         invoiceNumberFormat: "{prefix}{year}-{number}",
 
         nextInvoiceNumber: 1,
@@ -150,12 +153,14 @@ upsert("settings", { userId }, {
         taxRate: 19,
     },
     tax: {
-        vatId: "",
-        taxNumber: "",
+        vatMode: "standard",
 
-        taxRate: 19,
+        defaultVatRate: 19,
+        reducedVatRate: 7,
+        
+        taxCountryCode: "DE",
 
-        isSmallBusiness: false,
+        reverseChargeEnabled: false,
     },
     offer: {
         offerPrefix: "",

@@ -8,6 +8,8 @@ const deleteOffer = require("./deleteOffer");
 const getPdf = require("./getPdf");
 const createOfferPdf = require("./createOfferPdf");
 
+const convertToInvoice = require("./convertToInvoice");
+
 
 module.exports = {
     getOfferTemplate,
@@ -19,4 +21,6 @@ module.exports = {
 
     getPdf,
     createOfferPdf,
+
+    convertToInvoice,
 };

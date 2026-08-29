@@ -8,6 +8,7 @@ import Textarea from "primevue/textarea";
 import DatePicker from "primevue/datepicker";
 import {LineItems, TotalsList} from "@/shared/components";
 import { useToast } from 'primevue/usetoast';
+import {SelectStatus} from "../components"
 
 
 const route = useRoute();
@@ -28,6 +29,7 @@ onMounted(async () => {
 	offerToEdit.value = createOfferEntity(
 		structuredClone(offer)
 	);
+
 })
 
 async function updateOffer(){
@@ -140,6 +142,14 @@ function onLineItemsAction(event){
 
 					<Textarea
 						v-model="offerToEdit.project"
+					/>
+				</div>
+
+				<div class="input">
+					<label for="status">Status</label>
+
+					<SelectStatus
+						v-model="offerToEdit.status"
 					/>
 				</div>
 			</section>

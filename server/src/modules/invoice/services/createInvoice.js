@@ -1,36 +1,30 @@
 const invoiceModels = require("../models");
 const settingsModels = require("../../settings/models");
 const customersModels = require("../../customers/models");
+const {mapCustomerToInvoiceCustomer} = require("../mappers");
 const {calculateTotals} = require("../../../utils");
 
 
-module.exports = async ({invoice, customerId, userId}) => {
+module.exports = async ({
+	invoice,
+	customerId,
+	userId,
+	customerSnapshot,
+}) => {
 	// --- customer ---
-	const customer = await customersModels.getCustomerById({
-		customerId,
-	});
+	let customer;
 
-	const normalizedCustomer = {
-		bank: customer.bank ?? {},
-		city: customer.city ?? "",
-		countryCode: customer.countryCode ?? "",
-		customerNumber: customer.customerNumber ?? "",
-		customerType: customer.customerType ?? "",
-		email: customer.email ?? "",
-		phone: customer.phone ?? "",
-		postalCode: customer.postalCode ?? "",
-		street: customer.street ?? "",
-		vatId: customer.vatId ?? "",
-	};
-
-	if (customer.customerType === "company") {
-		normalizedCustomer.companyName = customer.companyName ?? "";
-		normalizedCustomer.contactPerson = customer.contactPerson ?? "";
+	if (customerSnapshot) {
+		customer = customerSnapshot;
 	}
 	else {
-		normalizedCustomer.firstName = customer.firstName ?? "";
-		normalizedCustomer.lastName = customer.lastName ?? "";
+		customer = await customersModels.getCustomerById({
+			customerId,
+		});
 	}
+
+	const normalizedCustomer =
+		mapCustomerToInvoiceCustomer(customer);
 
 	// --- seller ---
 	const companySettings = await settingsModels.getSettings({
@@ -39,7 +33,7 @@ module.exports = async ({invoice, customerId, userId}) => {
 	});
 
 	const normalizedSeller = {
-        bank: companySettings.bank ?? {},
+		bank: companySettings.bank ?? {},
 		companyName: companySettings.companyName ?? "",
 		ownerName: companySettings.ownerName ?? "",
 		email: companySettings.email ?? "",
@@ -49,6 +43,8 @@ module.exports = async ({invoice, customerId, userId}) => {
 		postalCode: companySettings.postalCode ?? "",
 		city: companySettings.city ?? "",
 		countryCode: companySettings.countryCode ?? "",
+		vatId: companySettings.vatId ?? null,
+		taxNumber: companySettings.taxNumber ?? null,
 	};
 
 	// --- totals ---
@@ -57,11 +53,12 @@ module.exports = async ({invoice, customerId, userId}) => {
 	// --- invoice document ---
 	const invoiceDocument = {
 		seller: normalizedSeller,
-
 		customer: normalizedCustomer,
 
 		invoiceDate: new Date(invoice.invoiceDate),
 		dueDate: new Date(invoice.dueDate),
+		serviceDate: new Date(invoice.serviceDate),
+		taxTreatment: invoice.taxTreatment,
 
 		currency: invoice.currency ?? "EUR",
 
@@ -82,6 +79,15 @@ module.exports = async ({invoice, customerId, userId}) => {
 		status: "draft",
 	};
 
+    // convertet from offer
+    if(invoice.offerId){
+        invoiceDocument.source = {
+            type: "offer",
+            offerId: invoice.offerId,
+            offerNumber: invoice.offerNumber,
+        };
+    }
+
 	// --- save ---
 	const result = await invoiceModels.createInvoice({
 		invoiceDocument,
@@ -95,5 +101,6 @@ module.exports = async ({invoice, customerId, userId}) => {
 
 	return {
 		invoiceNumber: result.invoiceNumber,
+        invoiceId: result.insertedId,
 	};
 };

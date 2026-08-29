@@ -19,7 +19,8 @@ module.exports = async ({userId, offer}) => {
 
     const result = await models.updateOffer({
         userId,
-        offer: offerWithTotals,
+        offerNumber: offer.offerNumber,
+        update: offerWithTotals,
     });
 
     if(result.modifiedCount === 0){

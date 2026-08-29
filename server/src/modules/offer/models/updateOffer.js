@@ -1,16 +1,16 @@
 const {getDb, ObjectId} = require("../../../db/mongo");
 
 
-module.exports = async ({userId, offer}) => {
-    const {customerId, ...sanitizedOffer} = offer;
+module.exports = async ({userId, offerNumber, update}) => {
     const filter = {
+        offerNumber: offerNumber,
         userId: new ObjectId(userId),
-        offerNumber: offer.offerNumber,
+        invoiceId: {
+            $exists: false,
+        },
     };
     const doc = {
-        $set: {
-            ...sanitizedOffer
-        },
+        $set: update,
     };
     const db = getDb();
 

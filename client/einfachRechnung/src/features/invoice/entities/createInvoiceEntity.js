@@ -1,14 +1,22 @@
-const DEFAULT_INVOICE = {
-	invoiceDate: null,
-	dueDate: null,
-	items: [],
-	note: "",
-	paymentMethod: "cash",
-};
+export default function createInvoiceEntity({invoiceSettings, taxSettings}){
+	const date = new Date();
+	const dueDate = new Date();
+	dueDate.setDate(date.getDate() + invoiceSettings.dueDays);
+	const invoiceDate = date;
 
-export default function createInvoiceEntity(invoice = {}){
-	return {
-		...DEFAULT_INVOICE,
-		...invoice,
+	const invoice = {
+		taxNumber: invoiceSettings.taxNumber,
+		invoiceDate,
+		dueDate,
+		serviceDate: date,
+		paymentMethod: invoiceSettings.paymentMethod ?? "bankTransfer",
+		vatId: invoiceSettings.vatId,
+		items: [],
+		note: "",
+		reverseChargeEnabled: taxSettings.reverseChargeEnabled ?? false,
+		vatMode: taxSettings.vatMode ?? "",
+		taxTreatment: "standard",
 	};
+
+	return invoice;
 }

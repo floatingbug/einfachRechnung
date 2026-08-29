@@ -26,7 +26,6 @@ const toast = useToast();
 
 const offer = ref(null);
 
-
 const customer = computed(() => {
 	if (!offer.value) {
 		return null;
@@ -156,11 +155,9 @@ async function sendOffer() {
 
 async function convertToInvoice() {
 	try {
-		const result = await offerStore.convertToInvoice({
+		const invoiceNumber = await offerStore.convertToInvoice({
 			offerNumber: offer.value.offerNumber,
 		});
-
-		const invoice = result.invoice ?? result;
 
 		toast.add({
 			severity: "success",
@@ -171,15 +168,15 @@ async function convertToInvoice() {
 		await router.push({
 			name: "invoice-details",
 			params: {
-				invoiceNumber: invoice.invoiceNumber,
+				invoiceNumber,
 			},
 		});
 	}
-	catch {
+	catch(error) {
 		toast.add({
 			severity: "error",
 			summary: "Fehler",
-			detail: "Angebot konnte nicht umgewandelt werden.",
+			detail: error.response.data.message,
 			life: 5000,
 		});
 	}
@@ -235,6 +232,16 @@ async function downloadPdf() {
 
 
 async function deleteOffer() {
+	if(!offer.value.state === "draft"){
+		toast.add({
+			severity: "error",
+			summary: 'Nur Angebote mit dem Status "Entwurf" können gelöscht werden.',
+			life: 5000,
+		});
+
+		return;
+	}
+
 	try {
 		const result = await offerStore.deleteOffer({
 			offerNumber: offer.value.offerNumber,
@@ -278,6 +285,7 @@ async function deleteOffer() {
 
 			<template #actions>
 				<OfferDetailsActions
+					:isDeleteable="offer.status === 'draft'"
 					@action="onOfferDetailsAction"
 				/>
 			</template>
@@ -291,7 +299,7 @@ async function deleteOffer() {
 			</template>
 
 
-			<template #document-data>
+			<template #documentData>
 				<Divider />
 
 				<h2>Angebotsdaten</h2>

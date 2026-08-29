@@ -1,5 +1,7 @@
 import {offerApi} from "../../api";
 
 export async function convertToInvoice({offerNumber}){
-	return offerApi.convertToInvoice({offerNumber});
+	const invoiceNumber = offerApi.convertToInvoice({offerNumber});
+
+	return invoiceNumber;
 }

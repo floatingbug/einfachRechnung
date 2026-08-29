@@ -65,12 +65,14 @@ async function deleteOffer({offerNumber}){
 
 async function sendOffer({offerNumber}){
 	const {data} = await http.post(`/offers/${offerNumber}/send`);
+
 	return data;
 }
 
 async function convertToInvoice({offerNumber}){
-	const {data} = await http.post(`/offers/${offerNumber}/convert`);
-	return data;
+	const {data} = await http.post(`/offers/convert-to-invoice/${offerNumber}`);
+
+	return data.invoiceNumber;
 }
 
 

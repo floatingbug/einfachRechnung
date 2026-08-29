@@ -244,27 +244,6 @@ function onSubmit(){
 				</Message>
 			</div>
 
-
-			<div class="input">
-				<label for="taxRate">
-					Standard-Steuersatz (%)
-				</label>
-
-				<InputNumber
-					id="taxRate"
-					v-model="invoiceSettings.taxRate"
-				/>
-
-				<Message
-					v-if="errors.taxRate"
-					severity="error"
-					size="small"
-					variant="simple"
-				>
-					{{ errors.taxRate}}
-				</Message>
-			</div>
-
 		</div>
 
 

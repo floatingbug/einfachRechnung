@@ -1,5 +1,8 @@
 import {services} from "../../../services";
 
-export function convertToInvoice({offerNumber}){
-	return services.convertToInvoice({offerNumber});
+export async function convertToInvoice({offerNumber}){
+	const invoiceNumber = await services.convertToInvoice({offerNumber});
+
+	return invoiceNumber;
 }
+

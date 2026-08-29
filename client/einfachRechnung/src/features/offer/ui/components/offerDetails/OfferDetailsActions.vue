@@ -3,6 +3,14 @@ import {ref} from "vue";
 import TieredMenu from 'primevue/tieredmenu';
 
 
+defineProps({
+	isDeleteable: {
+		type: Boolean,
+		default: false,
+	},
+})
+
+
 const emit = defineEmits(["action"]);
 
 
@@ -89,7 +97,7 @@ function toggle(event){
 				@click="emit('action', {action: 'convert'})"
 			/>
 
-			<Button
+			<Button v-if="isDeleteable"
 				label="Löschen"
 				severity="danger"
 				@click="emit('action', {action: 'delete'})"

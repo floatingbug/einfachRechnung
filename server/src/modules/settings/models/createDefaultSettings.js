@@ -66,9 +66,14 @@ module.exports = async ({userId}) => {
             vatId: "",
             taxNumber: "",
 
-            taxRate: 19,
+            vatMode: "standard",
 
-            isSmallBusiness: false,
+            defaultVatRate: 19,
+            reducedVatRate: 7,
+            
+            taxCountryCode: "DE",
+
+            reverseChargeEnabled: false,
         },
         offer: {
             offerPrefix: "",

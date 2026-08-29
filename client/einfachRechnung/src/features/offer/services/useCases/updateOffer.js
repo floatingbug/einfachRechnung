@@ -19,7 +19,9 @@ export async function updateOffer({offer}){
 
 		showTaxRatePerItem: offer.showTaxRatePerItem,
 
-		items: offer.items
+		items: offer.items,
+
+		status: offer.status,
 	};
 
 	if(offer.contactPerson){

@@ -46,4 +46,10 @@ router.delete(
     controller.deleteOffer
 );
 
+router.post(
+    "/convert-to-invoice/:offerNumber",
+    authUser,
+    controller.convertToInvoice
+);
+
 module.exports = router;
