@@ -1,12 +1,12 @@
 const {getDb, ObjectId} = require("../../../db/mongo");
 
 
-module.exports = async ({userId, offerNumber}) => {
+module.exports = async ({userId, offerId}) => {
     const db = getDb();
 
     const filter = {
         userId: new ObjectId(userId),
-        offerNumber,
+        offerId: new ObjectId(offerId),
         type: "pdf",
     };
 

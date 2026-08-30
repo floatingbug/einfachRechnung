@@ -3,14 +3,12 @@ const {getDb, ObjectId} = require("../../../db/mongo");
 
 module.exports = async ({userId, offerId}) => {
     const db = getDb();
-
     const filter = {
         userId: new ObjectId(userId),
-        _id: new ObjectId(offerId),
+        offerId: new ObjectId(offerId),
     };
 
-    const result = await db
-        .collection("offers")
+    const result = await db.collection("documents")
         .deleteOne(filter);
 
     return result;

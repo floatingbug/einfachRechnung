@@ -78,6 +78,12 @@ module.exports = async ({offer}) => {
                 bottom: PAGE.bottom,
                 left: PAGE.left,
             },
+
+            /*
+             * Wird benötigt, damit wir die Seitenzahlen nach dem
+             * vollständigen Rendern auf alle Seiten schreiben können.
+             */
+            bufferPages: true,
         });
 
         const chunks = [];
@@ -100,7 +106,15 @@ module.exports = async ({offer}) => {
                 offer,
             );
 
-            renderPageNumber(doc);
+            /*
+             * Wichtig:
+             *
+             * Die Seitenzahlen werden erst nach dem vollständigen
+             * Rendern des Inhalts hinzugefügt.
+             *
+             * renderPageNumbers() darf dabei KEINE neue Seite erzeugen.
+             */
+            renderPageNumbers(doc);
 
             doc.end();
         }
@@ -172,6 +186,26 @@ function renderOffer(doc, offer) {
 
 
 // -----------------------------------------------------------------------------
+// Platzberechnung
+// -----------------------------------------------------------------------------
+
+function remainingHeight(doc) {
+    return (
+        doc.page.height -
+        doc.page.margins.bottom -
+        doc.y
+    );
+}
+
+
+function ensureSpace(doc, neededHeight) {
+    if(remainingHeight(doc) < neededHeight){
+        doc.addPage();
+    }
+}
+
+
+// -----------------------------------------------------------------------------
 // Seller header
 // -----------------------------------------------------------------------------
 
@@ -191,6 +225,8 @@ function renderSellerHeader(doc, seller) {
         doc.y,
         {
             width: CONTENT.width,
+            lineBreak: false,
+            ellipsis: true,
         },
     );
 
@@ -206,6 +242,8 @@ function renderSellerHeader(doc, seller) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -222,6 +260,8 @@ function renderSellerHeader(doc, seller) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -240,6 +280,8 @@ function renderSellerHeader(doc, seller) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -253,6 +295,8 @@ function renderSellerHeader(doc, seller) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -264,6 +308,8 @@ function renderSellerHeader(doc, seller) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -275,6 +321,8 @@ function renderSellerHeader(doc, seller) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -292,10 +340,6 @@ function renderSellerHeader(doc, seller) {
 // -----------------------------------------------------------------------------
 
 function renderOfferHeader(doc, offer) {
-    /*
-     * Abstand zwischen Trennlinie des Verkäufers
-     * und "ANGEBOT".
-     */
     doc.moveDown(
         SPACING.offerHeaderTop,
     );
@@ -311,6 +355,7 @@ function renderOfferHeader(doc, offer) {
         doc.y,
         {
             width: CONTENT.width,
+            lineBreak: false,
         },
     );
 
@@ -351,6 +396,8 @@ function renderOfferHeader(doc, offer) {
                 doc.y,
                 {
                     width: CONTENT.width,
+                    lineBreak: false,
+                    ellipsis: true,
                 },
             );
 
@@ -384,6 +431,7 @@ function renderCustomer(doc, customer) {
         doc.y,
         {
             width: CONTENT.width,
+            lineBreak: false,
         },
     );
 
@@ -410,6 +458,8 @@ function renderCustomer(doc, customer) {
                 doc.y,
                 {
                     width: CONTENT.width,
+                    lineBreak: false,
+                    ellipsis: true,
                 },
             );
         }
@@ -422,6 +472,8 @@ function renderCustomer(doc, customer) {
                 doc.y,
                 {
                     width: CONTENT.width,
+                    lineBreak: false,
+                    ellipsis: true,
                 },
             );
         }
@@ -433,6 +485,8 @@ function renderCustomer(doc, customer) {
                 doc.y,
                 {
                     width: CONTENT.width,
+                    lineBreak: false,
+                    ellipsis: true,
                 },
             );
         }
@@ -445,6 +499,8 @@ function renderCustomer(doc, customer) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -463,6 +519,8 @@ function renderCustomer(doc, customer) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -476,6 +534,8 @@ function renderCustomer(doc, customer) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -495,6 +555,13 @@ function renderProject(doc, offer) {
         return;
     }
 
+    const text =
+        String(offer.project).trim();
+
+    if(!text){
+        return;
+    }
+
     doc
         .font("Helvetica-Bold")
         .fontSize(9)
@@ -506,6 +573,7 @@ function renderProject(doc, offer) {
         doc.y,
         {
             width: CONTENT.width,
+            lineBreak: false,
         },
     );
 
@@ -518,7 +586,7 @@ function renderProject(doc, offer) {
         .fontSize(9);
 
     doc.text(
-        offer.project,
+        text,
         CONTENT.x,
         doc.y,
         {
@@ -541,13 +609,20 @@ function renderIntroduction(doc, offer) {
         return;
     }
 
+    const text =
+        String(offer.introduction).trim();
+
+    if(!text){
+        return;
+    }
+
     doc
         .font("Helvetica")
         .fontSize(9)
         .fillColor(COLORS.text);
 
     doc.text(
-        offer.introduction,
+        text,
         CONTENT.x,
         doc.y,
         {
@@ -587,6 +662,11 @@ function renderItems(doc, offer) {
             showItemNumbers,
         });
 
+    ensureSpace(
+        doc,
+        45,
+    );
+
     renderItemHeader(
         doc,
         columns,
@@ -595,6 +675,23 @@ function renderItems(doc, offer) {
 
     items.forEach(
         (item, index) => {
+            const rowHeight =
+                calculateRowHeight(
+                    doc,
+                    item,
+                    columns,
+                );
+
+            if(remainingHeight(doc) < rowHeight){
+                doc.addPage();
+
+                renderItemHeader(
+                    doc,
+                    columns,
+                    showItemNumbers,
+                );
+            }
+
             renderItem(
                 doc,
                 item,
@@ -604,6 +701,56 @@ function renderItems(doc, offer) {
             );
         },
     );
+}
+
+
+function calculateRowHeight(doc, item, columns) {
+    const fullDescription =
+        buildItemDescription(item);
+
+    doc
+        .font("Helvetica")
+        .fontSize(8);
+
+    const descriptionHeight =
+        doc.heightOfString(
+            fullDescription,
+            {
+                width:
+                    columns.description.width,
+            },
+        );
+
+    return (
+        Math.max(
+            descriptionHeight,
+            14,
+        ) +
+        10 +
+        1 +
+        SPACING.itemAfterRow
+    );
+}
+
+
+function buildItemDescription(item) {
+    const title =
+        item.title || "";
+
+    const description =
+        item.description
+            ? `${title}\n${item.description}`
+            : title;
+
+    const discount =
+        getDiscountText(item);
+
+    const fullDescription =
+        discount
+            ? `${description}\n${discount}`
+            : description;
+
+    return fullDescription.trim();
 }
 
 
@@ -774,6 +921,7 @@ function renderItemHeader(
             y,
             {
                 width: columns.number.width,
+                lineBreak: false,
             },
         );
     }
@@ -784,6 +932,7 @@ function renderItemHeader(
         y,
         {
             width: columns.description.width,
+            lineBreak: false,
         },
     );
 
@@ -794,6 +943,7 @@ function renderItemHeader(
         {
             width: columns.quantity.width,
             align: "right",
+            lineBreak: false,
         },
     );
 
@@ -803,6 +953,7 @@ function renderItemHeader(
         y,
         {
             width: columns.unit.width,
+            lineBreak: false,
         },
     );
 
@@ -813,6 +964,7 @@ function renderItemHeader(
         {
             width: columns.unitPrice.width,
             align: "right",
+            lineBreak: false,
         },
     );
 
@@ -824,6 +976,7 @@ function renderItemHeader(
             {
                 width: columns.taxRate.width,
                 align: "right",
+                lineBreak: false,
             },
         );
     }
@@ -835,6 +988,7 @@ function renderItemHeader(
         {
             width: columns.total.width,
             align: "right",
+            lineBreak: false,
         },
     );
 
@@ -870,24 +1024,8 @@ function renderItem(
     const total =
         calculateItemTotal(item);
 
-    const title =
-        item.title || "";
-
-    const description =
-        item.description
-            ? `${title}\n${item.description}`
-            : title;
-
-    const discount =
-        getDiscountText(
-            item,
-        "EUR",
-    );
-
     const fullDescription =
-        discount
-            ? `${description}\n${discount}`
-            : description;
+        buildItemDescription(item);
 
     doc
         .font("Helvetica")
@@ -917,6 +1055,7 @@ function renderItem(
             y,
             {
                 width: columns.number.width,
+                lineBreak: false,
             },
         );
     }
@@ -927,6 +1066,8 @@ function renderItem(
         y,
         {
             width: columns.description.width,
+            height: rowHeight,
+            ellipsis: true,
         },
     );
 
@@ -937,6 +1078,7 @@ function renderItem(
         {
             width: columns.quantity.width,
             align: "right",
+            lineBreak: false,
         },
     );
 
@@ -946,6 +1088,8 @@ function renderItem(
         y,
         {
             width: columns.unit.width,
+            lineBreak: false,
+            ellipsis: true,
         },
     );
 
@@ -959,6 +1103,7 @@ function renderItem(
         {
             width: columns.unitPrice.width,
             align: "right",
+            lineBreak: false,
         },
     );
 
@@ -970,6 +1115,7 @@ function renderItem(
             {
                 width: columns.taxRate.width,
                 align: "right",
+                lineBreak: false,
             },
         );
     }
@@ -984,6 +1130,7 @@ function renderItem(
         {
             width: columns.total.width,
             align: "right",
+            lineBreak: false,
         },
     );
 
@@ -1025,6 +1172,11 @@ function renderTotals(doc, offer) {
     );
 
     if(offer.subtotalNet !== undefined){
+        ensureSpace(
+            doc,
+            SPACING.totalRow,
+        );
+
         renderTotalRow(
             doc,
             "Zwischensumme netto",
@@ -1039,6 +1191,11 @@ function renderTotals(doc, offer) {
         offer.discountNet !== undefined &&
         Number(offer.discountNet) !== 0
     ){
+        ensureSpace(
+            doc,
+            SPACING.totalRow,
+        );
+
         renderTotalRow(
             doc,
             "Rabatt",
@@ -1052,6 +1209,11 @@ function renderTotals(doc, offer) {
     }
 
     if(offer.totalNet !== undefined){
+        ensureSpace(
+            doc,
+            SPACING.totalRow + 10,
+        );
+
         doc.moveDown(0.25);
 
         renderTotalRow(
@@ -1073,6 +1235,11 @@ function renderTotals(doc, offer) {
 
         offer.taxBreakdown.forEach(
             (tax) => {
+                ensureSpace(
+                    doc,
+                    SPACING.totalRow,
+                );
+
                 renderTotalRow(
                     doc,
                     `${formatNumber(tax.taxRate)} % MwSt.`,
@@ -1085,6 +1252,11 @@ function renderTotals(doc, offer) {
         );
     }
     else if(offer.totalTax !== undefined){
+        ensureSpace(
+            doc,
+            SPACING.totalRow,
+        );
+
         renderTotalRow(
             doc,
             "Umsatzsteuer",
@@ -1096,6 +1268,11 @@ function renderTotals(doc, offer) {
     }
 
     if(offer.totalGross !== undefined){
+        ensureSpace(
+            doc,
+            SPACING.totalRow + 40,
+        );
+
         doc.moveDown(0.45);
 
         drawLine(
@@ -1158,6 +1335,7 @@ function renderTotalRow(
                 8,
 
             lineBreak: false,
+            ellipsis: true,
         },
     );
 
@@ -1190,6 +1368,13 @@ function renderClosing(doc, offer) {
         return;
     }
 
+    const text =
+        String(offer.closing).trim();
+
+    if(!text){
+        return;
+    }
+
     doc.moveDown(
         SPACING.totalsToClosing / 12,
     );
@@ -1200,7 +1385,7 @@ function renderClosing(doc, offer) {
         .fillColor(COLORS.text);
 
     doc.text(
-        offer.closing,
+        text,
         CONTENT.x,
         doc.y,
         {
@@ -1241,6 +1426,11 @@ function renderSellerLegalInformation(doc, seller) {
         SPACING.closingToLegal / 12,
     );
 
+    ensureSpace(
+        doc,
+        12,
+    );
+
     doc
         .font("Helvetica")
         .fontSize(7.5)
@@ -1254,6 +1444,7 @@ function renderSellerLegalInformation(doc, seller) {
             width: CONTENT.width,
             align: "left",
             lineBreak: false,
+            ellipsis: true,
         },
     );
 
@@ -1262,42 +1453,63 @@ function renderSellerLegalInformation(doc, seller) {
 
 
 // -----------------------------------------------------------------------------
-// Page number
+// Page numbers
 // -----------------------------------------------------------------------------
 
-function renderPageNumber(doc) {
-    /*
-     * Das Angebot besteht bewusst aus genau einer Seite.
-     *
-     * Keine bufferPages.
-     * Kein addPage().
-     * Keine nachträgliche Seitennummerierung.
-     *
-     * Dadurch kann die Seitenzahl keine zusätzliche
-     * Seite erzeugen.
-     */
+function renderPageNumbers(doc) {
+    const range =
+        doc.bufferedPageRange();
 
-    const footerY =
-        doc.page.height -
-        28;
+    const pageCount =
+        range.count;
 
-    doc
-        .font("Helvetica")
-        .fontSize(7)
-        .fillColor(COLORS.muted);
+    for(
+        let i = range.start;
+        i < range.start + pageCount;
+        i++
+    ){
+        doc.switchToPage(i);
 
-    doc.text(
-        "Seite 1 von 1",
-        CONTENT.x,
-        footerY,
-        {
-            width: CONTENT.width,
-            align: "center",
-            lineBreak: false,
-        },
-    );
+        const footerY =
+            doc.page.height -
+            28;
 
-    doc.fillColor(COLORS.text);
+        /*
+         * PDFKit berechnet seine Textgrenze anhand von
+         * page.margins.bottom.
+         *
+         * Der Footer soll aber bewusst unterhalb dieses
+         * normalen Content-Bereichs stehen.
+         *
+         * Deshalb wird der bottom-Margin nur für die
+         * Footer-Ausgabe temporär auf 0 gesetzt.
+         */
+        const originalBottomMargin =
+            doc.page.margins.bottom;
+
+        doc.page.margins.bottom = 0;
+
+        doc
+            .font("Helvetica")
+            .fontSize(7)
+            .fillColor(COLORS.muted);
+
+        doc.text(
+            `Seite ${i - range.start + 1} von ${pageCount}`,
+            CONTENT.x,
+            footerY,
+            {
+                width: CONTENT.width,
+                align: "center",
+                lineBreak: false,
+            },
+        );
+
+        doc.page.margins.bottom =
+            originalBottomMargin;
+
+        doc.fillColor(COLORS.text);
+    }
 }
 
 

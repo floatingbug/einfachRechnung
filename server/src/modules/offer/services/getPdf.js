@@ -27,7 +27,7 @@ module.exports = async ({userId, offerNumber}) => {
     const contentHash = createContentHash(offer);
 
     // Zugehöriges PDF-Dokument laden
-    let document = await models.getDocumentByOfferNumber({
+    let document = await models.getDocumentByOfferId({
         userId,
         offerId: offer._id,
     });
@@ -36,7 +36,7 @@ module.exports = async ({userId, offerNumber}) => {
     const storageKey = document?.storageKey
         ?? createStorageKey({
             userId,
-            offerNumber,
+            offerId: offer._id,
         });
 
     const filePath = path.join(
@@ -107,11 +107,11 @@ function createContentHash(offer){
 }
 
 
-function createStorageKey({userId, offerNumber}){
+function createStorageKey({userId, offerId}){
     return path.join(
         "offers",
         userId.toString(),
-        offerNumber.toString(),
+        offerId.toString(),
         "offer.pdf",
     );
 }
@@ -148,11 +148,9 @@ async function savePdf({filePath, pdfBuffer}){
 
 
 async function createPdf({offer}){
-    console.log(offer);
     let pdfBuffer;
 
     try {
-        console.log(offer);
         pdfBuffer = await createOfferPdf({
             offer,
         });

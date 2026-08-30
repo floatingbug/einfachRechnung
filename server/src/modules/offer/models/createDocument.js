@@ -3,7 +3,7 @@ const {getDb, ObjectId} = require("../../../db/mongo");
 
 module.exports = async ({
     userId,
-    offerNumber,
+    offerId,
     type,
     storageKey,
     contentHash,
@@ -12,7 +12,7 @@ module.exports = async ({
 
     const document = {
         userId: new ObjectId(userId),
-        offerNumber: new ObjectId(offerNumber),
+        offerId: new ObjectId(offerId),
         type,
         storageKey,
         contentHash,

@@ -148,7 +148,7 @@ function onLineItemsAction(event){
 				<div class="input">
 					<label for="status">Status</label>
 
-					<SelectStatus
+					<SelectStatus v-if="offerToEdit.status === 'draft' || offerToEdit.status === 'sent'"
 						v-model="offerToEdit.status"
 					/>
 				</div>

@@ -23,9 +23,9 @@ module.exports = async ({userId, offerNumber}) => {
     }
 
     const document =
-        await models.getDocumentByOfferNumber({
+        await models.getDocumentByOfferId({
             userId,
-            offerNumber,
+            offerId: offer._id,
         });
 
     if(document?.storageKey){
@@ -40,13 +40,13 @@ module.exports = async ({userId, offerNumber}) => {
     if(document){
         await models.deleteDocument({
             userId,
-            offerNumber,
+            offerId: offer._id,
         });
     }
 
     const deleteResult = await models.deleteOffer({
         userId,
-        offerNumber,
+        offerId: offer._id,
     });
 
     if(deleteResult.deletedCount < 1){

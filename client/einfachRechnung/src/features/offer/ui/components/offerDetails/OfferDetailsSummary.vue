@@ -35,7 +35,7 @@ const statusLabels = {
 			<div class="item">
 				<div class="item-label">Status</div>
 
-				<div class="item-label">
+				<div class="item-value">
 					{{statusLabels[offer.status]}}
 				</div>
 			</div>

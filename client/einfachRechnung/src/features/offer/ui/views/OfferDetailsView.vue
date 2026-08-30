@@ -307,6 +307,8 @@ async function deleteOffer() {
 				<OfferDetailsSummary
 					:offer="offer"
 				/>
+
+				<Divider />
 			</template>
 
 

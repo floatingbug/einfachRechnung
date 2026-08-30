@@ -27,16 +27,16 @@ module.exports = async ({userId, invoiceNumber}) => {
     const contentHash = createContentHash(invoice);
 
     // Zugehöriges PDF-Dokument laden
-    let document = await models.getDocumentByInvoiceNumber({
+    let document = await models.getDocumentByInvoiceId({
         userId,
-        offerId: invoice._id,
+        invoiceId: invoice._id,
     });
 
     // Speicherort der PDF bestimmen
     const storageKey = document?.storageKey
         ?? createStorageKey({
             userId,
-            invoiceNumber,
+            invoiceId: invoice._id,
         });
 
     const filePath = path.join(
@@ -91,7 +91,7 @@ module.exports = async ({userId, invoiceNumber}) => {
 
 function createContentHash(invoice){
     const pdfContent = {
-        invoiceNumber: invoice.invoiceNumber,
+        invoiceId: invoice._id,
         invoiceDate: invoice.invoiceDate,
         dueDate: invoice.dueDate,
         customerSnapshot: invoice.customerSnapshot,
@@ -107,11 +107,11 @@ function createContentHash(invoice){
 }
 
 
-function createStorageKey({userId, invoiceNumber}){
+function createStorageKey({userId, invoiceId}){
     return path.join(
         "invoices",
         userId.toString(),
-        invoiceNumber.toString(),
+        invoiceId.toString(),
         "invoice.pdf",
     );
 }

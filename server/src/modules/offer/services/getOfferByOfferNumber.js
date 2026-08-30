@@ -14,5 +14,9 @@ module.exports = async ({userId, offerNumber}) => {
         throw error;
     }
 
+    offer.possibleActions = getPossibleActions({
+        status: offer.status,
+    });
+
     return offer;
 };

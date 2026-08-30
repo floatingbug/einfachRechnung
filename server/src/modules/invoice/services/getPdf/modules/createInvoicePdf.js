@@ -78,7 +78,58 @@ module.exports = async ({invoice}) => {
                 bottom: PAGE.bottom,
                 left: PAGE.left,
             },
+
+            /*
+             * Alle Seiten werden zunächst im Speicher gehalten.
+             *
+             * Dadurch können wir nach dem Rendern:
+             *
+             * 1. eine eventuell von PDFKit erzeugte leere letzte Seite
+             *    entfernen
+             * 2. danach die korrekten Seitenzahlen schreiben
+             */
+            bufferPages: true,
         });
+
+        // ---------------------------------------------------------------------
+        // Seiten-Tracking
+        // ---------------------------------------------------------------------
+
+        let currentPageIndex = 0;
+
+        const pageHasContent = {
+            0: false,
+        };
+
+        doc.on("pageAdded", () => {
+            currentPageIndex += 1;
+
+            pageHasContent[currentPageIndex] = false;
+        });
+
+        /*
+         * PDFKit kann intern während doc.text() eine neue Seite erzeugen.
+         *
+         * Deshalb markieren wir jede Seite, auf der tatsächlich Text
+         * geschrieben wurde.
+         *
+         * Wichtig:
+         *
+         * Die Seitennummern werden erst NACH dem Entfernen leerer Seiten
+         * geschrieben.
+         */
+        const originalText =
+            doc.text.bind(doc);
+
+        doc.text = function trackedText(...args) {
+            pageHasContent[currentPageIndex] = true;
+
+            return originalText(...args);
+        };
+
+        // ---------------------------------------------------------------------
+        // PDF Buffer
+        // ---------------------------------------------------------------------
 
         const chunks = [];
 
@@ -100,7 +151,19 @@ module.exports = async ({invoice}) => {
                 invoice,
             );
 
-            renderPageNumber(doc);
+            /*
+             * Erst jetzt eventuell erzeugte leere letzte Seiten entfernen.
+             *
+             * Danach werden die Seitennummern geschrieben.
+             */
+            removeTrailingBlankPages(
+                doc,
+                pageHasContent,
+            );
+
+            renderPageNumbers(
+                doc,
+            );
 
             doc.end();
         }
@@ -159,6 +222,29 @@ function renderInvoice(doc, invoice) {
 
 
 // -----------------------------------------------------------------------------
+// Platzberechnung
+// -----------------------------------------------------------------------------
+
+function remainingHeight(doc) {
+    return (
+        doc.page.height -
+        doc.page.margins.bottom -
+        doc.y
+    );
+}
+
+
+function ensureSpace(doc, neededHeight) {
+    if(
+        remainingHeight(doc) <
+        neededHeight
+    ){
+        doc.addPage();
+    }
+}
+
+
+// -----------------------------------------------------------------------------
 // Seller header
 // -----------------------------------------------------------------------------
 
@@ -178,6 +264,8 @@ function renderSellerHeader(doc, seller) {
         doc.y,
         {
             width: CONTENT.width,
+            lineBreak: false,
+            ellipsis: true,
         },
     );
 
@@ -193,6 +281,8 @@ function renderSellerHeader(doc, seller) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -209,6 +299,8 @@ function renderSellerHeader(doc, seller) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -227,6 +319,8 @@ function renderSellerHeader(doc, seller) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -240,6 +334,8 @@ function renderSellerHeader(doc, seller) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -251,6 +347,8 @@ function renderSellerHeader(doc, seller) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -262,6 +360,8 @@ function renderSellerHeader(doc, seller) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -279,10 +379,6 @@ function renderSellerHeader(doc, seller) {
 // -----------------------------------------------------------------------------
 
 function renderInvoiceHeader(doc, invoice) {
-    /*
-     * Abstand zwischen Trennlinie des
-     * Verkäuferbereichs und "RECHNUNG".
-     */
     doc.moveDown(1.5);
 
     doc
@@ -296,6 +392,7 @@ function renderInvoiceHeader(doc, invoice) {
         doc.y,
         {
             width: CONTENT.width,
+            lineBreak: false,
         },
     );
 
@@ -343,6 +440,8 @@ function renderInvoiceHeader(doc, invoice) {
                 doc.y,
                 {
                     width: CONTENT.width,
+                    lineBreak: false,
+                    ellipsis: true,
                 },
             );
 
@@ -376,6 +475,7 @@ function renderCustomer(doc, customer) {
         doc.y,
         {
             width: CONTENT.width,
+            lineBreak: false,
         },
     );
 
@@ -402,6 +502,8 @@ function renderCustomer(doc, customer) {
                 doc.y,
                 {
                     width: CONTENT.width,
+                    lineBreak: false,
+                    ellipsis: true,
                 },
             );
         }
@@ -414,6 +516,8 @@ function renderCustomer(doc, customer) {
                 doc.y,
                 {
                     width: CONTENT.width,
+                    lineBreak: false,
+                    ellipsis: true,
                 },
             );
         }
@@ -425,6 +529,8 @@ function renderCustomer(doc, customer) {
                 doc.y,
                 {
                     width: CONTENT.width,
+                    lineBreak: false,
+                    ellipsis: true,
                 },
             );
         }
@@ -437,6 +543,8 @@ function renderCustomer(doc, customer) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -455,6 +563,8 @@ function renderCustomer(doc, customer) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -468,6 +578,8 @@ function renderCustomer(doc, customer) {
             doc.y,
             {
                 width: CONTENT.width,
+                lineBreak: false,
+                ellipsis: true,
             },
         );
     }
@@ -507,6 +619,33 @@ function renderItems(doc, invoice) {
 
     items.forEach(
         (item, index) => {
+            const rowHeight =
+                calculateItemRowHeight(
+                    doc,
+                    item,
+                    columns,
+                    invoice.currency,
+                );
+
+            /*
+             * Tabellenzeilen werden niemals halb auf eine Seite
+             * geschrieben.
+             *
+             * Ist nicht genug Platz vorhanden, beginnt die komplette
+             * Zeile auf der nächsten Seite.
+             */
+            if(
+                remainingHeight(doc) <
+                rowHeight
+            ){
+                doc.addPage();
+
+                renderItemHeader(
+                    doc,
+                    columns,
+                );
+            }
+
             renderItem(
                 doc,
                 item,
@@ -515,6 +654,58 @@ function renderItems(doc, invoice) {
                 invoice.currency,
             );
         },
+    );
+}
+
+
+function calculateItemRowHeight(
+    doc,
+    item,
+    columns,
+    currency,
+) {
+    const title =
+        item.title || "";
+
+    const description =
+        item.description
+            ? `${title}\n${item.description}`
+            : title;
+
+    const discount =
+        getDiscountText(
+            item,
+            currency,
+        );
+
+    const fullDescription =
+        discount
+            ? `${description}\n${discount}`
+            : description;
+
+    doc
+        .font("Helvetica")
+        .fontSize(8);
+
+    const descriptionHeight =
+        doc.heightOfString(
+            fullDescription,
+            {
+                width:
+                    columns.description.width,
+            },
+        );
+
+    const rowHeight =
+        Math.max(
+            descriptionHeight,
+            14,
+        ) + 10;
+
+    return (
+        rowHeight +
+        1 +
+        SPACING.itemAfterRow
     );
 }
 
@@ -615,6 +806,7 @@ function renderItemHeader(doc, columns) {
         y,
         {
             width: columns.number.width,
+            lineBreak: false,
         },
     );
 
@@ -624,6 +816,7 @@ function renderItemHeader(doc, columns) {
         y,
         {
             width: columns.description.width,
+            lineBreak: false,
         },
     );
 
@@ -634,15 +827,7 @@ function renderItemHeader(doc, columns) {
         {
             width: columns.quantity.width,
             align: "right",
-        },
-    );
-
-    doc.text(
-        "Einheit",
-        columns.unit.x,
-        y,
-        {
-            width: columns.unit.width,
+            lineBreak: false,
         },
     );
 
@@ -653,6 +838,17 @@ function renderItemHeader(doc, columns) {
         {
             width: columns.unitPrice.width,
             align: "right",
+            lineBreak: false,
+        },
+    );
+
+    doc.text(
+        "Einheit",
+        columns.unit.x,
+        y,
+        {
+            width: columns.unit.width,
+            lineBreak: false,
         },
     );
 
@@ -664,6 +860,7 @@ function renderItemHeader(doc, columns) {
             {
                 width: columns.taxRate.width,
                 align: "right",
+                lineBreak: false,
             },
         );
     }
@@ -675,6 +872,7 @@ function renderItemHeader(doc, columns) {
         {
             width: columns.total.width,
             align: "right",
+            lineBreak: false,
         },
     );
 
@@ -756,6 +954,7 @@ function renderItem(
         y,
         {
             width: columns.number.width,
+            lineBreak: false,
         },
     );
 
@@ -765,6 +964,7 @@ function renderItem(
         y,
         {
             width: columns.description.width,
+            height: rowHeight,
         },
     );
 
@@ -775,6 +975,7 @@ function renderItem(
         {
             width: columns.quantity.width,
             align: "right",
+            lineBreak: false,
         },
     );
 
@@ -784,6 +985,8 @@ function renderItem(
         y,
         {
             width: columns.unit.width,
+            lineBreak: false,
+            ellipsis: true,
         },
     );
 
@@ -797,6 +1000,7 @@ function renderItem(
         {
             width: columns.unitPrice.width,
             align: "right",
+            lineBreak: false,
         },
     );
 
@@ -808,6 +1012,7 @@ function renderItem(
             {
                 width: columns.taxRate.width,
                 align: "right",
+                lineBreak: false,
             },
         );
     }
@@ -822,6 +1027,7 @@ function renderItem(
         {
             width: columns.total.width,
             align: "right",
+            lineBreak: false,
         },
     );
 
@@ -866,6 +1072,11 @@ function renderTotals(doc, invoice) {
         labelWidth;
 
     if(totals.subtotalNet !== undefined){
+        ensureSpace(
+            doc,
+            SPACING.totalRow,
+        );
+
         renderTotalRow(
             doc,
             "Zwischensumme netto",
@@ -881,6 +1092,11 @@ function renderTotals(doc, invoice) {
         totals.discountNet !== undefined &&
         Number(totals.discountNet) !== 0
     ){
+        ensureSpace(
+            doc,
+            SPACING.totalRow,
+        );
+
         renderTotalRow(
             doc,
             "Rabatt",
@@ -895,6 +1111,11 @@ function renderTotals(doc, invoice) {
     }
 
     if(totals.totalNet !== undefined){
+        ensureSpace(
+            doc,
+            SPACING.totalRow + 10,
+        );
+
         doc.moveDown(0.25);
 
         renderTotalRow(
@@ -920,6 +1141,11 @@ function renderTotals(doc, invoice) {
 
             totals.taxBreakdown.forEach(
                 (tax) => {
+                    ensureSpace(
+                        doc,
+                        SPACING.totalRow,
+                    );
+
                     renderTotalRow(
                         doc,
                         `${formatNumber(tax.taxRate)} % MwSt.`,
@@ -935,6 +1161,11 @@ function renderTotals(doc, invoice) {
         else if(
             totals.totalTax !== undefined
         ){
+            ensureSpace(
+                doc,
+                SPACING.totalRow,
+            );
+
             renderTotalRow(
                 doc,
                 "Umsatzsteuer",
@@ -947,6 +1178,11 @@ function renderTotals(doc, invoice) {
         }
 
         if(totals.totalGross !== undefined){
+            ensureSpace(
+                doc,
+                SPACING.totalRow + 40,
+            );
+
             doc.moveDown(0.45);
 
             drawLine(
@@ -971,6 +1207,11 @@ function renderTotals(doc, invoice) {
 
         return;
     }
+
+    ensureSpace(
+        doc,
+        SPACING.totalRow + 40,
+    );
 
     doc.moveDown(0.45);
 
@@ -1035,6 +1276,7 @@ function renderTotalRow(
                 8,
 
             lineBreak: false,
+            ellipsis: true,
         },
     );
 
@@ -1069,6 +1311,11 @@ function renderTaxInformation(doc, invoice) {
         return;
     }
 
+    ensureSpace(
+        doc,
+        30,
+    );
+
     doc.moveDown(
         SPACING.totalsToTaxInformation / 12,
     );
@@ -1084,6 +1331,8 @@ function renderTaxInformation(doc, invoice) {
         doc.y,
         {
             width: CONTENT.width,
+            lineBreak: false,
+            ellipsis: true,
         },
     );
 }
@@ -1115,14 +1364,11 @@ function renderPaymentInformation(doc, invoice) {
     }
 
     /*
-     * Zahlungsinformationen werden bewusst
-     * unten links positioniert.
+     * Zahlungsinformationen werden bewusst absolut
+     * positioniert.
      *
-     * Sie befinden sich nicht mehr im
-     * normalen Dokumentfluss.
-     *
-     * Dadurch kann PDFKit hier keinen
-     * automatischen Seitenumbruch erzeugen.
+     * Dadurch kann dieser Block selbst keine neue
+     * PDFKit-Seite erzeugen.
      */
     const paymentX =
         CONTENT.x;
@@ -1143,6 +1389,7 @@ function renderPaymentInformation(doc, invoice) {
         {
             width: CONTENT.width,
             lineBreak: false,
+            ellipsis: true,
         },
     );
 
@@ -1162,6 +1409,7 @@ function renderPaymentInformation(doc, invoice) {
             {
                 width: CONTENT.width,
                 lineBreak: false,
+                ellipsis: true,
             },
         );
 
@@ -1177,6 +1425,7 @@ function renderPaymentInformation(doc, invoice) {
                 {
                     width: CONTENT.width,
                     lineBreak: false,
+                    ellipsis: true,
                 },
             );
 
@@ -1191,6 +1440,7 @@ function renderPaymentInformation(doc, invoice) {
                 {
                     width: CONTENT.width,
                     lineBreak: false,
+                    ellipsis: true,
                 },
             );
 
@@ -1205,6 +1455,7 @@ function renderPaymentInformation(doc, invoice) {
                 {
                     width: CONTENT.width,
                     lineBreak: false,
+                    ellipsis: true,
                 },
             );
         }
@@ -1240,11 +1491,8 @@ function renderSellerLegalInformation(doc, seller) {
     }
 
     /*
-     * Rechtliche Angaben werden fest am unteren
-     * Rand der ersten Seite positioniert.
-     *
-     * Kein normaler Dokumentfluss.
-     * Kein automatischer Seitenumbruch.
+     * Die rechtlichen Angaben werden fest am unteren
+     * Rand der aktuellen Seite positioniert.
      */
     const legalY =
         PAGE.height -
@@ -1263,6 +1511,7 @@ function renderSellerLegalInformation(doc, seller) {
             width: CONTENT.width,
             align: "left",
             lineBreak: false,
+            ellipsis: true,
         },
     );
 
@@ -1273,27 +1522,116 @@ function renderSellerLegalInformation(doc, seller) {
 
 
 // -----------------------------------------------------------------------------
-// Page number
+// Remove trailing blank pages
 // -----------------------------------------------------------------------------
 
-function renderPageNumber(doc) {
-    /*
-     * Die Seitenzahl wird absolut auf der
-     * einzigen A4-Seite positioniert.
-     *
-     * lineBreak: false verhindert dabei
-     * ebenfalls einen Seitenumbruch.
-     */
-    const footerY =
-        PAGE.height -
-        30;
+/**
+ * Entfernt leere Seiten am Ende des Dokuments.
+ *
+ * PDFKit kann durch einen Textblock, der knapp über das Ende
+ * des verfügbaren Bereichs hinausgeht, intern eine neue Seite
+ * erzeugen. Wenn danach kein sichtbarer Inhalt mehr folgt,
+ * bleibt diese Seite leer.
+ *
+ * Wir entfernen deshalb ALLE leeren Seiten am Ende.
+ *
+ * Die interne PDFKit-Seitenstruktur wird hier bewusst verwendet.
+ * Das funktioniert mit den aktuell verwendeten PDFKit-Versionen.
+ */
+function removeTrailingBlankPages(
+    doc,
+    pageHasContent,
+) {
+    let range =
+        doc.bufferedPageRange();
 
-    doc
-        .font("Helvetica")
-        .fontSize(7)
-        .fillColor(COLORS.muted)
-        .text(
-            "Seite 1 von 1",
+    /*
+     * Es können theoretisch mehrere leere Seiten
+     * hintereinander entstanden sein.
+     */
+    while(range.count > 1){
+        const lastIndex =
+            range.start +
+            range.count -
+            1;
+
+        if(pageHasContent[lastIndex]){
+            break;
+        }
+
+        try{
+            const pagesDict =
+                doc._root.data.Pages.data;
+
+            pagesDict.Kids.pop();
+
+            pagesDict.Count -= 1;
+
+            if(Array.isArray(doc._pageBuffer)){
+                doc._pageBuffer.pop();
+            }
+
+            delete pageHasContent[lastIndex];
+        }
+        catch(error){
+            /*
+             * Falls sich die interne PDFKit-Struktur in einer
+             * zukünftigen Version geändert hat, wird das Dokument
+             * nicht beschädigt.
+             */
+            break;
+        }
+
+        range =
+            doc.bufferedPageRange();
+    }
+
+    /*
+     * Nach dem Entfernen auf die letzte vorhandene Seite wechseln.
+     */
+    range =
+        doc.bufferedPageRange();
+
+    const lastExistingPage =
+        range.start +
+        range.count -
+        1;
+
+    doc.switchToPage(
+        lastExistingPage,
+    );
+}
+
+
+// -----------------------------------------------------------------------------
+// Page numbers
+// -----------------------------------------------------------------------------
+
+function renderPageNumbers(doc) {
+    const range =
+        doc.bufferedPageRange();
+
+    const totalPages =
+        range.count;
+
+    for(
+        let i = range.start;
+        i < range.start + range.count;
+        i++
+    ){
+        doc.switchToPage(i);
+
+        const footerY =
+            doc.page.height -
+            30;
+
+        doc
+            .font("Helvetica")
+            .fontSize(7)
+            .fillColor(COLORS.muted);
+
+        doc.text(
+            `Seite ${i + 1} von ${totalPages}`,
             CONTENT.x,
             footerY,
             {
@@ -1301,15 +1639,17 @@ function renderPageNumber(doc) {
                 align: "center",
                 lineBreak: false,
             },
-        )
-        .fillColor(
+        );
+
+        doc.fillColor(
             COLORS.text,
         );
+    }
 }
 
 
 // -----------------------------------------------------------------------------
-// Layout helpers
+// Drawing helpers
 // -----------------------------------------------------------------------------
 
 function drawLine(
