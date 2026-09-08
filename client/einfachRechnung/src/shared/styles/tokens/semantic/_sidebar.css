@@ -5,6 +5,7 @@
 	--sidebar-mark-bg: var(--p-primary-color);
 	--sidebar-mark-text: var(--p-primary-contrast-color);
 	--sidebar-accent: var(--p-primary-color);
+	--sidebar-collapsed-width: 72px;
 
 	/* Borders & Dividers */
 	--sidebar-border: var(--p-content-border-color);

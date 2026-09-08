@@ -2,13 +2,14 @@
 import { useRoute, useRouter } from "vue-router";
 import getItems from "./getItems";
 
+
 const props = defineProps({
 	collapsed: Boolean,
-	mobileOpen: Boolean,
-	desktop: Boolean,
 });
 
-const emit = defineEmits(["close", "toggle-collapse"]);
+
+const emit = defineEmits(["action"]);
+
 
 const router = useRouter();
 const route = useRoute();
@@ -36,104 +37,78 @@ function isActive(item) {
 	return route.path === destinations[item.id];
 }
 
-function navigate(item) {
-	item.command();
-	emit("close");
+function emitAction(action){
+	emit("action", {
+		action,
+	});
 }
 </script>
 
 <template>
-	<div class="sidebar-wrapper">
-		<aside
-			class="sidebar-shell"
-			:class="{
-				'is-collapsed': props.collapsed,
-				'is-mobile-open': props.mobileOpen,
-			}"
-		>
-			<div class="sidebar-header">
-				<RouterLink class="brand" to="/" @click="emit('close')">
-					<span class="brand-mark">ER</span>
-					<span class="brand-name">Einfach Rechnung</span>
-				</RouterLink>
+	<aside
+		:class="{
+			'is-collapsed': props.collapsed,
+			'is-mobile-open': props.mobileOpen,
+		}"
+	>
+		<div class="sidebar-header">
+			<RouterLink class="brand" to="/" data-type="link">
+				<span class="brand-mark">ER</span>
+				<span class="brand-name">Einfach Rechnung</span>
+			</RouterLink>
 
-				<Button
-					class="collapse-button"
-					:icon="
-						props.collapsed
-							? 'pi pi-angle-right'
-							: 'pi pi-angle-left'
-					"
-					:text="true"
-					rounded
-					:aria-label="
-						props.collapsed
-							? 'Navigation ausklappen'
-							: 'Navigation einklappen'
-					"
-					@click="emit('toggle-collapse')"
+			<Button
+				class="collapse-button"
+				:icon="props.collapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'"
+				:text="true"
+				rounded
+				:aria-label="
+					props.collapsed
+						? 'Navigation ausklappen'
+						: 'Navigation einklappen'
+				"
+				@click="emitAction('collapseSidebar')"
+			/>
+		</div>
+
+		<nav class="navigation" aria-label="Hauptnavigation">
+			<template v-for="(group, groupIndex) in items" :key="group.label">
+				<p class="group-label">{{ group.label }}</p>
+
+				<ul class="navigation-list">
+					<li v-for="item in group.items" :key="item.id">
+						<button
+							class="navigation-link"
+							:class="{ 'is-active': isActive(item) }"
+							data-type="link"
+							:aria-current="
+								isActive(item) ? 'page' : undefined
+							"
+							:title="
+								props.collapsed
+									? item.label
+									: undefined
+							"
+							@click="emitAction('linkClicked'); item.command()"
+						>
+							<i :class="item.icon" aria-hidden="true" />
+							<span>{{ item.label }}</span>
+						</button>
+					</li>
+				</ul>
+
+				<div
+					v-if="groupIndex < items.length - 1"
+					class="group-divider"
 				/>
-			</div>
-
-			<nav class="navigation" aria-label="Hauptnavigation">
-				<template
-					v-for="(group, groupIndex) in items"
-					:key="group.label"
-				>
-					<p class="group-label">{{ group.label }}</p>
-
-					<ul class="navigation-list">
-						<li v-for="item in group.items" :key="item.id">
-							<button
-								class="navigation-link"
-								:class="{
-									'is-active': isActive(item),
-								}"
-								:aria-current="
-									isActive(item)
-										? 'page'
-										: undefined
-								"
-								:title="
-									props.collapsed
-										? item.label
-										: undefined
-								"
-								@click="navigate(item)"
-							>
-								<i
-									:class="item.icon"
-									aria-hidden="true"
-								/>
-								<span>{{ item.label }}</span>
-							</button>
-						</li>
-					</ul>
-
-					<div
-						v-if="groupIndex < items.length - 1"
-						class="group-divider"
-					/>
-				</template>
-			</nav>
-		</aside>
-
-		<div
-			v-if="props.mobileOpen"
-			class="sidebar-overlay"
-			@click="emit('close')"
-		/>
-	</div>
+			</template>
+		</nav>
+	</aside>
 </template>
 
 <style scoped lang="scss">
-.sidebar-wrapper {
-	height: 100%;
-}
-
-.sidebar-shell {
+aside {
 	box-sizing: border-box;
-	height: 100%;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden auto;
@@ -144,7 +119,7 @@ function navigate(item) {
 }
 
 .sidebar-header {
-	min-height: var(--topbar-height);
+	min-height: calc(var(--topbar-height) + var(--p-toolbar-padding) - 3px);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -259,18 +234,7 @@ function navigate(item) {
 	background: var(--sidebar-divider);
 }
 
-.sidebar-overlay {
-	display: none;
-}
-
 @media (min-width: 1024px) {
-	.sidebar-shell {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		transform: none;
-	}
-
 	.is-collapsed {
 		.sidebar-header {
 			justify-content: center;
@@ -299,37 +263,4 @@ function navigate(item) {
 	}
 }
 
-@media (max-width: 1023px) {
-	.sidebar-wrapper {
-		height: 100%;
-	}
-
-	.sidebar-shell {
-		position: fixed;
-		top: 0;
-		left: 0;
-		bottom: 0;
-		width: min(280px, 85vw);
-		height: 100vh;
-		z-index: 1001;
-		transform: translateX(-100%);
-		transition: transform 200ms ease;
-	}
-
-	.sidebar-shell.is-mobile-open {
-		transform: translateX(0);
-	}
-
-	.sidebar-overlay {
-		position: fixed;
-		inset: 0;
-		display: block;
-		z-index: 1000;
-		background: rgba(0, 0, 0, 0.45);
-	}
-
-	.collapse-button {
-		display: none;
-	}
-}
 </style>

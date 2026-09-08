@@ -38,7 +38,9 @@ async function onUserMenuActions(event){
 		:pt="{
 			root: {
 				style: {
-					border: 'none',
+					'border-top': 'none',
+					'border-left': 'none',
+					'border-right': 'none',
 				},
 			},
 		}"

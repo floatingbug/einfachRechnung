@@ -6,6 +6,7 @@ const updateOffer = require("./updateOffer");
 const getPdf = require("./getPdf");
 const deleteOffer = require("./deleteOffer");
 const convertToInvoice = require("./convertToInvoice");
+const changeStatus = require("./changeStatus");
 
 
 module.exports = {
@@ -15,6 +16,7 @@ module.exports = {
     getOfferByOfferNumber,
     updateOffer,
     deleteOffer,
+    changeStatus,
 
     getPdf,
 

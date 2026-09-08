@@ -1,4 +1,5 @@
 const models = require("../models");
+const {mapToClientOffer} = require("../mappers");
 
 
 module.exports = async ({userId, offerNumber}) => {
@@ -14,9 +15,9 @@ module.exports = async ({userId, offerNumber}) => {
         throw error;
     }
 
-    offer.possibleActions = getPossibleActions({
-        status: offer.status,
+    const clientOffer = mapToClientOffer({
+        offer,
     });
 
-    return offer;
+    return clientOffer;
 };

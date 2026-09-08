@@ -2,7 +2,7 @@ const catchAsync = require("../../../utils/catchAsync");
 const services = require("../services");
 
 module.exports = catchAsync(async (req, res) => {
-	const invoice = await getInvoiceById({
+	const invoice = await services.getInvoiceById({
 		invoiceId: req.params.invoiceId,
 	});
 

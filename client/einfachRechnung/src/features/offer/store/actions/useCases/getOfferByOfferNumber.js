@@ -2,9 +2,11 @@ import {services} from "../../../services";
 
 
 export async function getOfferByOfferNumber({offerNumber}){
-	const getOfferResult = await services.getOfferByOfferNumber({
+	const offer = await services.getOfferByOfferNumber({
 		offerNumber,
 	});
 
-	return getOfferResult;
+	this.offer = offer;
+
+	return offer;
 };

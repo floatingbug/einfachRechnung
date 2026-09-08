@@ -6,13 +6,13 @@ export default function getInvoiceItems({router}){
 				id: "customerList",
 				label: "Kunden Liste",
 				icon: "pi pi-list",
-				command: () => router.push("/customer"),
+				command: () => router.push("/customers"),
 			},
 			{
 				id: "createCustomer",
 				label: "Kunde Hinzufügen",
 				icon: "pi pi-user",
-				command: () => router.push("/customer/create"),
+				command: () => router.push("/customers/create"),
 			},
 		]
 	};

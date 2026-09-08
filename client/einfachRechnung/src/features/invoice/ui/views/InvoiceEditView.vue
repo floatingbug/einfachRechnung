@@ -66,10 +66,6 @@ async function cancelEdit(){
 
 <template>
 	<PageContainer v-if="invoiceStore.invoice.customer?.customerType">
-		<template #header>
-			Rechnung bearbeiten
-		</template>
-
 		<form>
 			<!-- customer overview -->
 			<section>

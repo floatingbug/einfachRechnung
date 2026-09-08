@@ -3,6 +3,7 @@ const getOffers = require("./getOffers");
 const getOfferByOfferNumber = require("./getOfferByOfferNumber");
 const updateOffer = require("./updateOffer");
 const deleteOffer = require("./deleteOffer");
+const expireOffers = require("./expireOffers");
 
 const createDocument = require("./createDocument");
 const getDocumentByOfferId = require("./getDocumentByOfferId.js");
@@ -16,6 +17,7 @@ module.exports = {
     getOfferByOfferNumber,
     updateOffer,
     deleteOffer,
+    expireOffers,
 
     createDocument,
     getDocumentByOfferId,

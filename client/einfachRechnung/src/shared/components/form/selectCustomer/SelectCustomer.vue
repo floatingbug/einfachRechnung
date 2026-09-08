@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import Select from 'primevue/select'
-import { useCustomerStore } from '@/features/customer/store/useCustomerStore.js'
+import { useCustomersStore } from '@/features/customers/store/';
 
-const customerStore = useCustomerStore()
+const customersStore = useCustomersStore()
 const customers = ref([])
 const customerId = ref()
 
@@ -20,7 +20,7 @@ const customerOptions = computed(() => {
 const emit = defineEmits(['customerSelected'])
 
 onMounted(async () => {
-	customers.value = await customerStore.getCustomers()
+	customers.value = await customersStore.getCustomers()
 })
 
 watch(customerId, () => {

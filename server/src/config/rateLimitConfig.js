@@ -29,4 +29,9 @@ module.exports = {
         max: 5,
         message: "Too many password reset requests. Please try again later.",
     },
+    statusChange: {
+        windowMs: 15 * 60 * 1000,
+        max: 30,
+        message: "Too many status change requests. Please try again later.",
+    },
 };

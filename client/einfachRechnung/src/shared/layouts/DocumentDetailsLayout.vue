@@ -16,6 +16,12 @@
 			</div>
 		</section>
 
+		<Divider />
+
+		<section v-if="$slots.status">
+			<slot name="status" />
+		</section>
+
 		<section v-if="$slots.documentData">
 			<slot name="documentData" />
 		</section>

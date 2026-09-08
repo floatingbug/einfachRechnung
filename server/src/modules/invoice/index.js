@@ -16,7 +16,7 @@ router.get(
 );
 
 router.get(
-	"/:invoiceNumber",
+	"/:invoiceId",
     authUser,
 	controller.getInvoiceById
 );

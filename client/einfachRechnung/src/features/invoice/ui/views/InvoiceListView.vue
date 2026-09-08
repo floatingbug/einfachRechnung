@@ -16,12 +16,13 @@ const PAGINATION_LIMIT = 10;
 
 onMounted(async () => {
 	try{
-		const invoices = await invoiceStore.getInvoices({limit: PAGINATION_LIMIT});
-		tableItems.value = createTableItems(invoices);
+		await invoiceStore.getInvoices({limit: PAGINATION_LIMIT});
+		tableItems.value = createTableItems(invoiceStore.invoices);
 	}
 	catch {
 		invoiceStore.invoices = [];
 	}
+
 
 	isInitializing.value = false;
 });
@@ -32,6 +33,8 @@ async function onPaginationAction(event){
 		limit: event.rows,
 		page: event.page +1,
 	});
+
+	tableItems.value = createTableItems(invoiceStore.invoices);
 }
 
 function onInvoiceListActions(event){
@@ -44,10 +47,6 @@ function onInvoiceListActions(event){
 
 <template>
 	<PageContainer>
-		<template #header>
-			Rechnungs Liste
-		</template>
-
 		<div class="invoice-list" v-if="!isInitializing">
 			<InvoiceList
 				:items="tableItems"

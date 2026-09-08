@@ -21,9 +21,9 @@ const toast = useToast();
 
 onMounted(async () => {
 	try {
-		const offerSettings = await settingsStore.getOffer();
+		const taxSettings = await settingsStore.getTax();
 		itemSettings.value = {
-			taxRate: offerSettings.taxRate,
+			taxRate: taxSettings.defaultVatRate,
 		};
 
 		offer.value = await offerStore.getOfferTemplate();
@@ -79,6 +79,7 @@ async function saveOffer(){
 					/>
 				</div>
 
+				<Divider v-if="customer" />
 
 				<div class="customer-preview" v-if="customer?.customerType === 'private'">
 					<h2>Kunde</h2>
@@ -94,7 +95,9 @@ async function saveOffer(){
 						<p>Postleitzahl: {{customer.postalCode}}</p>
 						<p>Stadt: {{customer.city}}</p>
 					</div>
-				</div> <div class="customer-preview" v-if="customer?.customerType === 'company'">
+				</div>
+
+				<div class="customer-preview" v-if="customer?.customerType === 'company'">
 					<h2>Kunde</h2>
 
 					<div class="customer-items-group">
@@ -112,6 +115,7 @@ async function saveOffer(){
 
 				<Divider />
 			</div>
+
 		</section>
 
 

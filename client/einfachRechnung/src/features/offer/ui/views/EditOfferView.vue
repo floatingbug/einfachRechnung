@@ -1,42 +1,32 @@
 <script setup>
 import {ref, onMounted} from "vue";
 import {useRoute, useRouter} from "vue-router";
-import {createOfferEntity} from "../../entities";
 import {useOfferStore} from "../../store";
 import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import DatePicker from "primevue/datepicker";
 import {LineItems, TotalsList} from "@/shared/components";
 import { useToast } from 'primevue/usetoast';
-import {SelectStatus} from "../components"
 
 
 const route = useRoute();
 const router = useRouter();
 const offerStore = useOfferStore();
 const toast = useToast();
-const offerToEdit = ref();
 const totals = ref();
 
 
 onMounted(async () => {
 	const offerNumber = route.params.offerNumber;
 
-	const offer =  await offerStore.getOfferByOfferNumber({
+	await offerStore.getOfferByOfferNumber({
 		offerNumber,
 	});
-
-	offerToEdit.value = createOfferEntity(
-		structuredClone(offer)
-	);
-
 })
 
 async function updateOffer(){
 	try {
-		const result = await offerStore.updateOffer({
-			offer: offerToEdit.value,
-		})
+		const result = await offerStore.updateOffer();
 
 		if(!result.success){
 			return toast.add(
@@ -57,11 +47,19 @@ async function updateOffer(){
 			}
 		);
 
-		router.push(`/offer/details/${offerToEdit.value.offerNumber}`)
+		router.push(`/offer/details/${offerStore.offer.offerNumber}`)
 	}
 	catch {
 		toast.add({severity: "error", summary: "Fehler", detail: "Angebot konnte nicht geändert werden.", life: 5000});
 	}
+}
+
+async function undueChanges(){
+	const offerNumber = route.params.offerNumber;
+
+	await offerStore.getOfferByOfferNumber({
+		offerNumber,
+	})
 }
 
 function onLineItemsAction(event){
@@ -76,31 +74,31 @@ function onLineItemsAction(event){
 
 
 <template>
-	<div class="edit-offer view" v-if="offerToEdit">
+	<div class="edit-offer view" v-if="offerStore.offer">
 		<form>
 			<section>
 				<h2>Kunde</h2>
 
 				<div class="input-group"
-					v-if="offerToEdit.customerSnapshot.customerType === 'private'"
+					v-if="offerStore.offer.customerSnapshot.customerType === 'private'"
 				>
 					<div class="input">
 						<label for="customerName">Name</label>
 
 						<InputText
-							v-model="offerToEdit.customerName"
+							v-model="offerStore.offer.customerName"
 						/>
 					</div>
 				</div>
 
 				<div class="input-group"
-					v-if="offerToEdit.customerSnapshot.customerType === 'company'"
+					v-if="offerStore.offer.customerSnapshot.customerType === 'company'"
 				>
 					<div class="input">
 						<label for="companyName">Firma</label>
 
 						<InputText
-							v-model="offerToEdit.customerName"
+							v-model="offerStore.offer.customerName"
 						/>
 					</div>
 
@@ -108,7 +106,7 @@ function onLineItemsAction(event){
 						<label for="contactPerson">Ansprechpartner</label>
 
 						<InputText
-							v-model="offerToEdit.contactPerson"
+							v-model="offerStore.offer.contactPerson"
 						/>
 					</div>
 				</div>
@@ -121,10 +119,10 @@ function onLineItemsAction(event){
 
 				<div class="input-group">
 					<div class="input">
-						<label for="offerDate">Angebotsdatum</label>
+						<label for="offerStore.offerDate">Angebotsdatum</label>
 
 						<DatePicker
-							v-model="offerToEdit.offerDate"
+							v-model="offerStore.offer.offerDate"
 						/>
 					</div>
 
@@ -132,7 +130,7 @@ function onLineItemsAction(event){
 						<label for="validUntil">Gültig bis</label>
 
 						<DatePicker
-							v-model="offerToEdit.validUntil"
+							v-model="offerStore.offer.validUntil"
 						/>
 					</div>
 				</div>
@@ -141,15 +139,7 @@ function onLineItemsAction(event){
 					<label for="project">Project</label>
 
 					<Textarea
-						v-model="offerToEdit.project"
-					/>
-				</div>
-
-				<div class="input">
-					<label for="status">Status</label>
-
-					<SelectStatus v-if="offerToEdit.status === 'draft' || offerToEdit.status === 'sent'"
-						v-model="offerToEdit.status"
+						v-model="offerStore.offer.project"
 					/>
 				</div>
 			</section>
@@ -160,7 +150,7 @@ function onLineItemsAction(event){
 				<h2>Positionen</h2>
 
 				<LineItems
-					v-model="offerToEdit.items"
+					v-model="offerStore.offer.items"
 					@action="onLineItemsAction"
 				/>
 			</section>
@@ -175,7 +165,7 @@ function onLineItemsAction(event){
 						<label for="introduction">Einleitung</label>
 
 						<Textarea
-							v-model="offerToEdit.introduction"
+							v-model="offerStore.offer.introduction"
 							rows="4"
 						/>
 					</div>
@@ -184,7 +174,7 @@ function onLineItemsAction(event){
 						<label for="closing">Schlussbemerkung</label>
 
 						<Textarea
-							v-model="offerToEdit.closing"
+							v-model="offerStore.offer.closing"
 							rows="4"
 						/>
 					</div>
@@ -196,7 +186,7 @@ function onLineItemsAction(event){
 			<section>
 				<h2>Preisübersicht</h2>
 
-				<TotalsList
+				<TotalsList v-if="totals"
 					:totals="totals"
 				/>
 			</section>
@@ -213,6 +203,7 @@ function onLineItemsAction(event){
 					<Button
 						label="Abbrechen"
 						severity="secondary"
+						@click="undueChanges"
 					/>
 				</div>
 			</section>

@@ -75,6 +75,17 @@ async function convertToInvoice({offerNumber}){
 	return data.invoiceNumber;
 }
 
+async function updateStatus({offerNumber, newStatus}){
+	const {data} = await http.patch(
+		`/offers/change-status/${offerNumber}`,
+		{
+			newStatus,
+		}
+	);
+
+	return data;
+}
+
 
 export default {
 	getOffers,
@@ -85,6 +96,7 @@ export default {
 	deleteOffer,
 	sendOffer,
 	convertToInvoice,
+	updateStatus,
 
 	getPdf,
 };

@@ -32,8 +32,6 @@ onMounted(async () => {
 		invoiceSettings,
 		taxSettings,
 	});
-
-	console.log(invoice.value);
 });
 
 async function createInvoice(){
@@ -67,10 +65,6 @@ async function createInvoice(){
 
 <template>
 	<PageContainer>
-		<template #header>
-			Schnelle Rechnung
-		</template>
-
 		<form>
 			<section>
 				<h2>Kunde Auswählen</h2>

@@ -14,7 +14,10 @@ module.exports = async ({userId, offerNumber}) => {
 	}
 
     if (offer.invoiceId) {
-        throw new Error("Das Angebot wurde bereits in eine Rechnung umgewandelt.");
+        const error = new Error("Das Angebot wurde bereits in eine Rechnung umgewandelt.");
+        error.status = 409;
+
+        throw error;
     }
 
 	const invoiceSettings = await settingsServices.getSettings({

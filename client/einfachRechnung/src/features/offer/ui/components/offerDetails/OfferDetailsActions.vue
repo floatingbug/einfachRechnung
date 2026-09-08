@@ -3,10 +3,10 @@ import {ref} from "vue";
 import TieredMenu from 'primevue/tieredmenu';
 
 
-defineProps({
-	isDeleteable: {
-		type: Boolean,
-		default: false,
+const props = defineProps({
+	possibleActions: {
+		type: Array,
+		default: () => [],
 	},
 })
 
@@ -15,28 +15,44 @@ const emit = defineEmits(["action"]);
 
 
 const menu = ref(null);
-const items = [
-	{
-		label: "PDF anzeigen",
-		command: () => emit("action", {action: "showPdf"}),
-	},
-	{
-		label: "PDF herunterladen",
-		command: () => emit("action", {action: "downloadPdf"}),
-	},
-	{
-		label: "Per E-Mail senden",
-		command: () => emit("action", {action: "sendMail"}),
-	},
-	{
-		label: "In Rechnung umwandeln",
-		command: () => emit("action", {action: "convert"}),
-	},
-	{
-		label: "Löschen",
-		command: () => emit("action", {action: "delete"}),
-	},
-];
+
+const actionMap = {
+    edit: {
+        label: "Bearbeiten",
+		severity: "secondary",
+    },
+
+    send: {
+        label: "Per E-Mail senden",
+		severity: "secondary",
+    },
+
+    delete: {
+        label: "Löschen",
+		severity: "danger",
+    },
+
+    viewPdf: {
+        label: "PDF anzeigen",
+		severity: "secondary",
+    },
+
+    downloadPdf: {
+        label: "PDF herunterladen",
+		severity: "secondary",
+    },
+
+    convertToInvoice: {
+        label: "In Rechnung umwandeln",
+		severity: "contrast",
+    },
+};
+
+const items = props.possibleActions.map(action => ({
+    label: actionMap[action].label,
+	severity: actionMap[action].severity,
+    command: () => emit("action", {action}),
+}));
 
 
 function toggle(event){
@@ -68,39 +84,11 @@ function toggle(event){
 
 		<div class="action-buttons-desktop">
 			<Button
-				label="Bearbeiten"
-				severity="secondary"
-				@click="emit('action', {action: 'edit'})"
-			/>
-
-			<Button
-				label="PDF anzeigen"
-				severity="secondary"
-				@click="emit('action', {action: 'showPdf'})"
-			/>
-
-			<Button
-				label="PDF herunterladen"
-				severity="secondary"
-				@click="emit('action', {action: 'downloadPdf'})"
-			/>
-
-			<Button
-				label="Per E-Mail senden"
-				severity="secondary"
-				@click="emit('action', {action: 'sendMail'})"
-			/>
-
-			<Button
-				label="In Rechnung umwandeln"
-				severity="contrast"
-				@click="emit('action', {action: 'convert'})"
-			/>
-
-			<Button v-if="isDeleteable"
-				label="Löschen"
-				severity="danger"
-				@click="emit('action', {action: 'delete'})"
+				v-for="(item, index) of items"
+				:key="index"
+				:label="item.label"
+				:severity="item.severity"
+				@click="item.command"
 			/>
 		</div>
 	</div>

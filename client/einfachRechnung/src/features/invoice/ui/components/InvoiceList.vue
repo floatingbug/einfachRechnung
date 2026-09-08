@@ -297,7 +297,7 @@ function onRowClick(event){
 	justify-content: space-between;
 }
 
-@media (min-width: 2005px) {
+@media (min-width: 2027px) {
 	.invoice-list-data-table {
 		display: flex;
 	}

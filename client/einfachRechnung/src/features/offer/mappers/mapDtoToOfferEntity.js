@@ -6,6 +6,9 @@ export function mapDtoToOfferEntity({dtoOffer}){
 
 
 	const offerEntity = {
+		invoiceId: dtoOffer.invoiceId ?? "",
+		possibleActions: dtoOffer.possibleActions,
+		possibleStatus: dtoOffer.possibleStatus,
 		project: dtoOffer.project,
 		offerNumber: dtoOffer.offerNumber,
 		customerId: dtoOffer.customerId,

@@ -2,6 +2,13 @@ const router = require("express").Router();
 const controller = require("./controller");
 const {authUser} = require("../../middlewares");
 
+const rateLimit = require('express-rate-limit');
+const config = require("../../config");
+
+const changeStatusLimit = config.env === "production"
+    ? rateLimit(config.rateLimitConfig.statusChange)
+    : (req, res, next) => next();
+
 
 router.get(
     "/",
@@ -9,7 +16,6 @@ router.get(
     controller.getOffers
 );
 
-// TODO: item.id to item._id (ObjectId) in validation
 router.post(
     "/",
     authUser,
@@ -32,6 +38,13 @@ router.patch(
     "/",
     authUser,
     controller.updateOffer
+);
+
+router.patch(
+    "/change-status/:offerNumber",
+    authUser,
+    changeStatusLimit,
+    controller.changeStatus
 );
 
 router.get(

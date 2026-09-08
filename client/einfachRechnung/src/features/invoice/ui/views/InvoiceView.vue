@@ -250,7 +250,6 @@ function formatInvoiceStatus(status) {
 
 			<!-- Rechnungsdaten -->
 			<template #documentData>
-				<Divider />
 
 				<h2>Rechnungsdaten</h2>
 

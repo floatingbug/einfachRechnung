@@ -1,11 +1,14 @@
 <script setup>
+import {useSlots} from "vue";
+
+const slots = useSlots();
 
 </script>
 
 
 <template>
 	<div class="page-container">
-		<h1>
+		<h1 v-if="slots.header">
 			<slot name="header"></slot>
 		</h1>
 
@@ -22,7 +25,6 @@
 	flex-direction: column;
 	align-items: center;
 	padding: var(--space-xl);
-	margin-bottom: 12rem;
 }
 
 h1 {

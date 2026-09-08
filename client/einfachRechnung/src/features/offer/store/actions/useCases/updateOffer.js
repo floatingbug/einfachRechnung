@@ -1,9 +1,9 @@
 import {services} from "../../../services";
 
 
-export async function updateOffer({offer}){
+export async function updateOffer(){
 	const result = await services.updateOffer({
-		offer,
+		offer: this.offer,
 	});
 
 	return result;

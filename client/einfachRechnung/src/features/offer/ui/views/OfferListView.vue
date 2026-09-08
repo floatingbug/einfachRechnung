@@ -1,7 +1,7 @@
 <script setup>
 import {ref, onMounted} from "vue";
 import {useOfferStore} from "../../store";
-import {OfferList, OfferListCards} from "../components";
+import {OfferList, OfferCard} from "../components";
 import Paginator from 'primevue/paginator';
 import {useRouter} from "vue-router";
 import {PageContainer} from "@/shared/components";
@@ -43,29 +43,28 @@ async function onPaginationAction(event){
 	totalRecords.value = getOffersResult.pagination.total;
 }
 
-function onOfferListActions(event){
-	if(event.action === "openOffer"){
-		router.push(`/offer/details/${event.offerNumber}`);
-	}
+function openOfferDetails(offerNumber){
+	router.push(`/offer/details/${offerNumber}`);
 }
+
 </script>
 
 
 <template>
 	<PageContainer>
-		<template #header>
-			Angebots Liste
-		</template>
-
 		<div class="offer-list" v-if="!isInitializing">
 			<OfferList class="offer-list-data-table"
 				:items="items"
-				@action="onOfferListActions"
+				@action="openOfferDetails($event.offerNumber)"
 			/>
 
-			<OfferListCards class="offer-list-cards"
-				:items="items"
-			/>
+			<div class="offer-list-cards">
+				<OfferCard
+					v-for="offer in items" :key="offer.offerNumber"
+					:offer="offer"
+					@action="openOfferDetails($event.offerNumber)"
+				/>
+			</div>
 
 			<Paginator
 				:rows="PAGINATION_LIMIT"
@@ -93,12 +92,15 @@ function onOfferListActions(event){
 }
 
 .offer-list-cards {
+	width: 100%;
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(200px, 400px));
+	grid-template-rows: repeat(auto-fit, minmax(200px, max-content));
+	justify-items: center;
 	gap: var(--space-md);
 }
 
-@media (min-width: 1548px) {
+@media (min-width: 1586px) {
 	.offer-list-data-table {
 		display: block;
 	}

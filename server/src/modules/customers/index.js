@@ -6,17 +6,25 @@ const {authUser} = require("../../middlewares");
 router.get(
     "/",
     authUser,
-    controller.getCustomers,
+    controller.getCustomers
 );
 
 router.post(
     "/",
-    controller.createCustomer,
+    authUser,
+    controller.createCustomer
 );
 
 router.patch(
     "/",
-    controller.updateCustomer,
+    authUser,
+    controller.updateCustomer
+);
+
+router.get(
+    "/get-customer-template",
+    authUser,
+    controller.getCustomerTemplate
 );
 
 

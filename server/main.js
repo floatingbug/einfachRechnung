@@ -13,6 +13,8 @@ const invoiceRoutes = require("./src/modules/invoice");
 const customersRoutes = require("./src/modules/customers");
 const settingsRoutes = require("./src/modules/settings");
 const offerRoutes = require("./src/modules/offer");
+require("./src/jobs/expireOffersJob");
+
 
 async function start() {
     await connect();

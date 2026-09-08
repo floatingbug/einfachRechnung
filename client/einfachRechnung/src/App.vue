@@ -8,8 +8,6 @@ import Toast from "primevue/toast";
 		<Toast position="top-right" />
 	</Teleport>
 
-	<div class="test"></div>
-
 	<RouterView />
 </template>
 

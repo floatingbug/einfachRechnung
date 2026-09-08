@@ -5,6 +5,7 @@ import Column from "primevue/column";
 import InputText from "primevue/inputtext";
 import Select from "primevue/select";
 import { FilterMatchMode } from "@primevue/core/api";
+import {formatCurrency} from "@/shared/helpers";
 
 defineProps({
 	items: {
@@ -21,6 +22,7 @@ const offerStatusMap = {
 	sent: "Gesendet",
 	accepted: "Angenommen",
 	rejected: "Abgelehnt",
+	expired: "Abgelaufen",
 };
 
 // --- table setup ---
@@ -40,6 +42,10 @@ const statuses = [
 	{
 		label: "Abgelehnt",
 		value: "rejected",
+	},
+	{
+		label: "Abgelaufen",
+		value: "expired",
 	},
 ];
 
@@ -141,7 +147,11 @@ function onRowClick(event) {
 			field="totals.totalGross"
 			header="Gesamtsumme (Brutto)"
 			sortable
-		/>
+		>
+			<template #body="{data}">
+				{{formatCurrency(data.totals.totalGross)}}
+			</template>
+		</Column>
 
 		<Column
 			field="status"

@@ -14,12 +14,15 @@ import {
 	TotalsList,
 	ItemsList,
 	PageContainer,
+	SelectOfferStatus,
 } from "@/shared/components";
 
 import { DocumentDetailsLayout } from "@/shared/layouts";
+import {useInvoiceStore} from "@/features/invoice/store";
 
 
 const offerStore = useOfferStore();
+const invoiceStore = useInvoiceStore();
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
@@ -105,7 +108,7 @@ function onOfferDetailsAction(event) {
 			router.push(`/offer/edit/${offerNumber}`);
 			break;
 
-		case "showPdf":
+		case "viewPdf":
 			showPdf();
 			break;
 
@@ -113,11 +116,11 @@ function onOfferDetailsAction(event) {
 			downloadPdf();
 			break;
 
-		case "sendMail":
+		case "send":
 			sendOffer();
 			break;
 
-		case "convert":
+		case "convertToInvoice":
 			convertToInvoice();
 			break;
 
@@ -173,10 +176,34 @@ async function convertToInvoice() {
 		});
 	}
 	catch(error) {
+		if(error.response.status === 409){
+			return getInvoiceById({
+				invoiceId: offerStore.offer.invoiceId,
+			})
+		}
+
 		toast.add({
 			severity: "error",
 			summary: "Fehler",
 			detail: error.response.data.message,
+			life: 5000,
+		});
+	}
+}
+
+async function getInvoiceById({invoiceId}){
+	try {
+		const invoice = await invoiceStore.getInvoiceById({
+			invoiceId,
+		})
+
+		router.push(`/invoice/${invoice.invoiceNumber}`)
+	}
+	catch {
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "Rechnung existiert bereits.",
 			life: 5000,
 		});
 	}
@@ -276,6 +303,22 @@ async function deleteOffer() {
 		});
 	}
 }
+
+async function updateStatus(event){
+	try { await offerStore.updateStatus({
+			newStatus: event,
+		});
+	}
+	catch (error) {
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: error.response.data.message,
+			life: 5000,
+		});
+	}
+}
+
 </script>
 
 
@@ -285,9 +328,10 @@ async function deleteOffer() {
 
 			<template #actions>
 				<OfferDetailsActions
-					:isDeleteable="offer.status === 'draft'"
+					:possibleActions="offer.possibleActions"
 					@action="onOfferDetailsAction"
 				/>
+
 			</template>
 
 
@@ -296,11 +340,22 @@ async function deleteOffer() {
 					v-if="customer"
 					:customer="customer"
 				/>
+
 			</template>
 
+			<template #status>
+				<h2>Angebot Status</h2>
+
+				<SelectOfferStatus
+					v-model="offer.status"
+					:options="offer.possibleStatus"
+					@update:modelValue="updateStatus"
+				/>
+
+				<Divider />
+			</template>
 
 			<template #documentData>
-				<Divider />
 
 				<h2>Angebotsdaten</h2>
 
@@ -335,7 +390,7 @@ async function deleteOffer() {
 			</template>
 
 
-			<template #totals>
+			<template #totals v-if="offer.totals">
 				<h2>Preisübersicht</h2>
 
 				<TotalsList

@@ -10,4 +10,4 @@ const useModuleStore = defineStore("storeId", {
 });
 
 
-export {useModuleStore};
+export default useModuleStore;
