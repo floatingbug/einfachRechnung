@@ -5,7 +5,7 @@ async function getInvoices({query}){
 	const {data} = await http.get(`/invoices`, { params: query });
 
 	return {
-		items: data.items,
+		invoices: data.invoices,
 		pagination: data.pagination,
 	};
 }

@@ -1,6 +1,10 @@
-import {getCustomerTemplate} from "./getCustomerTemplate.js";
+import {createCustomer} from "./createCustomer.js";
+import {getCustomers} from "./getCustomers.js";
+import {getCustomerById} from "./getCustomerById.js";
 
 
 export const actions = {
-	getCustomerTemplate,
+	createCustomer,
+	getCustomers,
+	getCustomerById,
 };

@@ -1,10 +1,10 @@
 import {http} from "@/shared/api";
 
 
-export async function getCustomerTemplate(){
+export async function getCustomerById({customerId}){
 	const {data} = await http.get(
-		"/customers/get-customer-template"
+		`/customers/${customerId}`
 	);
 
 	return data;
-};
+}

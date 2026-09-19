@@ -1,12 +1,21 @@
 <script setup>
-import Card from "primevue/card";
+import {ref} from "vue";
+import {Badge, Card} from "primevue";
 
-defineProps({
+
+const props = defineProps({
 	customer: {
 		type: Object,
 		required: true,
 	},
 });
+
+
+const customerType = ref(
+	props.customer.customerType === "company" ?
+		"Firma" :
+		"Privat"
+)
 
 const salutations = {
 	male: "Herr",
@@ -18,14 +27,20 @@ const salutations = {
 <template>
 	<Card class="customer-card">
 		<template #title>
-			Kunde
+			<div class="customer-card__title">
+				Kunde
+				<Badge
+					:value="customerType"
+					severity="secondary"
+				/>
+			</div>
 		</template>
 
 		<template #content>
 			<div class="customer-card__content">
 				<template v-if="customer.customerType === 'company'">
 					<div class="customer-card__name">
-						{{ customer.customerName}}
+						{{ customer.companyName}}
 					</div>
 
 					<div
@@ -40,7 +55,8 @@ const salutations = {
 				<template v-else>
 					<div class="customer-card__name">
 						{{ salutations[customer.salutation] }}
-						{{ customer.customerName}}
+						{{ customer.firstName}}
+						{{ customer.lastName}}
 					</div>
 				</template>
 
@@ -76,6 +92,11 @@ const salutations = {
 <style scoped lang="scss">
 .customer-card {
 	height: 100%;
+}
+
+.customer-card__title {
+	display: flex;
+	gap: var(--space-md);
 }
 
 .customer-card__content {

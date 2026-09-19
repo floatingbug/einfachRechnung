@@ -21,5 +21,7 @@ module.exports = (invoice) => {
 		note: invoice.note,
 
 		status: invoice.status,
+
+        bank: invoice.bank,
 	};
 };

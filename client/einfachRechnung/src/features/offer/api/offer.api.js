@@ -1,9 +1,9 @@
 import http from "@/shared/api/http.client.js";
 
 
-async function getOffers({limit, page}){
+async function getOffers({query}){
 	const {data} = await http.get(
-		`/offers?limit=${limit}&page=${page}`
+		query
 	);
 
 	return data;

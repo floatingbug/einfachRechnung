@@ -1,0 +1,9 @@
+:root {
+	--font-color: var(--p-text-color);
+	--font-color-muted: var(--p-text-muted-color);
+	--font-color-primary: var(--p-primary-color);
+
+	--font-color-success: var(--p-green-600);
+	--font-color-warning: var(--p-orange-600);
+	--font-color-danger: var(--p-red-600);
+}

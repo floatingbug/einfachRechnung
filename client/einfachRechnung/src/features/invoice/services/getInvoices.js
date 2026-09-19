@@ -1,24 +1,28 @@
 import {invoiceApi} from "../api";
 import { mapInvoiceDtosToEntities } from "../mappers";
 
-export async function getInvoices(params){
+export async function getInvoices({page, limit, customerName, status, customerId}){
 
 	const query = new URLSearchParams({
-		limit: params.limit || 10,
-		page: params.page || 1,
+		limit: limit || 10,
+		page: page || 1,
 	});
 
-	if (params.customerName){
-		query.append("customerName", params.customerName);
+	if (customerName){
+		query.append("customerName", customerName);
 	}
 
-	if (params.status){
-		query.append("status", params.status);
+	if (status){
+		query.append("status", status);
+	}
+
+	if(customerId){
+		query.append("customerId", customerId);
 	}
 
 	const result = await invoiceApi.getInvoices({ query });
 
-	if(!result.items){
+	if(!result.invoices){
 		return {
 			invoices: [],
 			pagination: null,
@@ -26,7 +30,7 @@ export async function getInvoices(params){
 	}
 
 	return {
-		invoices: mapInvoiceDtosToEntities(result.items),
+		invoices: mapInvoiceDtosToEntities(result.invoices),
 		pagination: result.pagination,
 	};
 }

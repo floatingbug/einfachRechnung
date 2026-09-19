@@ -2,15 +2,18 @@ const {getDb, ObjectId} = require("../../../db/mongo");
 const DEFAULT_LIMIT = 10;
 const DEFAULT_PAGE = 1;
 
-module.exports = async (params) => {
+module.exports = async ({userId, limit, page, customerId}) => {
 	const db = getDb();
-    const limit = params.limit ?? DEFAULT_LIMIT;
-    const page = params.page ?? DEFAULT_PAGE;
-    const userId = params.userId;
+    limit = limit ?? DEFAULT_LIMIT;
+    page = page ?? DEFAULT_PAGE;
 	
     const filter = {
         userId: new ObjectId(userId),
     };
+
+    if(customerId){
+        filter.customerId = new ObjectId(customerId);
+    }
 
 	const skip = (page - 1) * limit;
 

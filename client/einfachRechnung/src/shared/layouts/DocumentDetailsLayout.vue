@@ -90,7 +90,7 @@
 	width: 100%;
 	max-width: 200px;
 
-	justify-self: start;
+	justify-self: end;
 
 	display: flex;
 	flex-direction: column;

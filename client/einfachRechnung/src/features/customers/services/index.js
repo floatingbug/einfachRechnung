@@ -1,5 +1,9 @@
-import { getCustomerTemplate } from "./getCustomerTemplate.js";
+import { getCustomerById } from "./getCustomerById.js";
+import {createCustomer} from "./createCustomer.js";
+import {getCustomers} from "./getCustomers.js";
 
-export const services = {
-	getCustomerTemplate,
+export default {
+	createCustomer,
+	getCustomers,
+	getCustomerById,
 };

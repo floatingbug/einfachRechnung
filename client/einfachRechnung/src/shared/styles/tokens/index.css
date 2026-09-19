@@ -4,5 +4,6 @@
 @import './base/_radius.css';
 @import './base/_shadow.css';
 @import './base/_z-index.css';
+@import "./base/_font-color.css";
 
 @import './semantic/index.css';

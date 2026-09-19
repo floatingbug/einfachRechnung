@@ -1,12 +1,18 @@
 <script setup>
-import {ref, watch} from "vue";
+import {ref} from "vue";
 import Select from "primevue/select";
 
 
-const emit = defineEmits([ "newCountryCode" ]);
+defineProps({
+	modelValue: {
+		type: String,
+	}
+});
 
 
-const selectedCountryCode = ref("DE");
+const emit = defineEmits([ "update:modelValue" ]);
+
+
 const countryCodes = ref([
 	{
 		label: "Deutschland",
@@ -18,21 +24,17 @@ const countryCodes = ref([
 	},
 ]);
 
-
-watch(selectedCountryCode, () => {
-	emit("newCountryCode", selectedCountryCode.value);
-})
-
 </script>
 
 
 <template>
 	<div class="select-country">
 		<Select
-			v-model="selectedCountryCode"
+			:modelValue="modelValue"
 			:options="countryCodes"
 			optionLabel="label"
 			optionValue="value"
+			@update:modelValue="emit('update:modelValue', $event)"
 		/>
 	</div>
 </template>

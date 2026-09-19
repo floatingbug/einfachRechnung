@@ -1,22 +1,32 @@
 <script setup>
-import {onMounted} from "vue";
+import {ref} from "vue";
+import {useRouter} from "vue-router";
 import { PageContainer } from '@/shared/components';
 import { useCustomersStore } from '../../store';
 import {CreateCustomerForm} from "../components";
+import {createCustomerRequest} from "../../entities";
 
 
 const customersStore = useCustomersStore();
+const router = useRouter();
+const errors = ref();
+const customer = ref(
+	createCustomerRequest()
+);
 
 
-onMounted(async () => {
+async function saveCustomer(){
 	try {
-		await customersStore.getCustomerTemplate();
-		console.log(customersStore.customer);
+		await customersStore.createCustomer({
+			customer: customer.value,
+		});
+
+		router.push("/customers/list")
 	}
-	catch{
-		console.log("Error. Reload")
+	catch (error) {
+		errors.value = error.response.data.error;
 	}
-});
+}
 
 </script>
 
@@ -24,7 +34,9 @@ onMounted(async () => {
 <template>
 	<PageContainer>
 		<CreateCustomerForm
-			v-model="customersStore.customer"
+			v-model="customer"
+			@saveCustomer="saveCustomer"
+			:errors="errors"
 		/>
 	</PageContainer>
 </template>

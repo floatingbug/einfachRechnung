@@ -1,5 +1,5 @@
 const getOfferTemplate = require("./getOfferTemplate");
-const saveOffer = require("./saveOffer");
+const saveOffer = require("./saveOffer/saveOffer");
 const getOffers = require("./getOffers");
 const getOfferByOfferNumber = require("./getOfferByOfferNumber");
 const updateOffer = require("./updateOffer");

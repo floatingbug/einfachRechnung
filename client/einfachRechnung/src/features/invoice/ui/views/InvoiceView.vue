@@ -247,7 +247,6 @@ function formatInvoiceStatus(status) {
 				/>
 			</template>
 
-
 			<!-- Rechnungsdaten -->
 			<template #documentData>
 

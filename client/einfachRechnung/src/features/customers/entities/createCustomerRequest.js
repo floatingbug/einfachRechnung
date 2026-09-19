@@ -1,7 +1,7 @@
-module.exports = async() => {
-    const customerTemplate = {
+export default () => {
+    const createCustomerRequest = {
         customerType: "",
-        customerName: "",
+        companyName: "",
         contactPerson: "",
         firstName: "",
         lastName: "",
@@ -9,7 +9,7 @@ module.exports = async() => {
         city: "",
         postalCode: "",
         email: "",
-        countryCode: "",
+        countryCode: "DE",
         phone: "",
         vatId: "",
         bank: {
@@ -19,5 +19,5 @@ module.exports = async() => {
         }
     };
 
-    return customerTemplate;
+    return createCustomerRequest;
 }

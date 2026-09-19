@@ -1,7 +1,7 @@
-const settingsModels = require("../../settings/models");
-const offerModels = require("../models");
-const customerModels = require("../../customers/models");
-const {ObjectId} = require("../../../db/mongo");
+const settingsModels = require("../../../settings/models");
+const offerModels = require("../../models");
+const customerModels = require("../../../customers/models");
+const {ObjectId} = require("../../../../db/mongo");
 
 
 module.exports = async ({userId, offer}) => {
