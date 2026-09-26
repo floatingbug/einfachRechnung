@@ -45,6 +45,10 @@ function onSubmit(){
 			/>
 		</div>
 
+		<div class="allready-has-account">
+			Already have an account? click on <router-link to="/auth/sign-in">Sign-in</router-link>
+		</div>
+
 		<div class="form-actions">
 			<Button
 				type="submit"

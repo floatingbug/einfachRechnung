@@ -37,6 +37,10 @@ function onSubmit(){
 			/>
 		</div>
 
+		<div class="no-account">
+			Don't have an account? click on <router-link to="/auth/sign-up">Sign-up</router-link>
+		</div>
+
 		<div class="form-actions">
 			<Button
 				type="submit"

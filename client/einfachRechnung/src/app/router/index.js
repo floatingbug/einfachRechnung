@@ -36,7 +36,6 @@ router.beforeEach(async (to) => {
         return true;
     }
     catch(error) {
-		console.log("--->", error.response.data);
         authStore.signOut();
 
         return {
