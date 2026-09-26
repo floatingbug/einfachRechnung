@@ -32,8 +32,8 @@ async function getPdf({invoiceNumber}){
 	return data;
 }
 
-async function cancelInvoice({invoiceId}){
-	const {data} = await http.patch(`/invoices/cancel/${invoiceId}`);
+async function cancelInvoice({invoiceNumber}){
+	const {data} = await http.patch(`/invoices/cancel/${invoiceNumber}`);
 	return data;
 }
 

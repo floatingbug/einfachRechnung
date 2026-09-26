@@ -1,12 +1,16 @@
 const { ObjectId } = require("mongodb");
 const { getDb } = require("../../../db/mongo");
 
-module.exports = async ({ invoiceId, status }) => {
+module.exports = async ({ invoiceNumber, invoiceId, status }) => {
 	const db = getDb();
 
-	const filter = {
-		_id: new ObjectId(invoiceId),
-	};
+	const filter = {};
+    if(invoiceNumber){
+        filter.invoiceNumber = invoiceNumber;
+    }
+    else{
+        filter.invoiceId = invoiceId;
+    }
 
 	const updateDocument = {
 		$set: {

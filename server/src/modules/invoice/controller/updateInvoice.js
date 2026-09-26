@@ -7,8 +7,6 @@ module.exports = catchAsync(async (req, res, next) => {
     const invoiceDraft = req.body;
     const userId = req.user.id;
 
-    console.log(invoiceNumber, invoiceDraft)
-
     const invoice = await services.updateInvoice({
         userId,
         invoiceNumber,

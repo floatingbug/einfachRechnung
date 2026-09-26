@@ -3,6 +3,7 @@ import {
 	CreateCustomerView,
 	CustomersListView,
 	CustomerDetailsView,
+    EditCustomerView,
 } from "../ui/views";
 
 export default [
@@ -25,14 +26,21 @@ export default [
 				path: "create",
 				component: CreateCustomerView,
 				meta: {
-					breadcrumb: "Kunde anlegen",
+					breadcrumb: "Anlegen",
 				},
 			},
 			{
 				path: ":customerId",
 				component: CustomerDetailsView,
 				meta: {
-					breadcrumb: "Kunden Details",
+					breadcrumb: "Details",
+				},
+			},
+			{
+				path: "edit/:customerId",
+				component: EditCustomerView,
+				meta: {
+					breadcrumb: "Bearbeiten",
 				},
 			},
 		],

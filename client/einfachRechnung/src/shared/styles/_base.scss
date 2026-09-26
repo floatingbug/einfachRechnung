@@ -97,7 +97,23 @@ form {
 		flex: 1;
 	}
 	.item-value {
-		flex: 1;
+		flex: 1 0 1;
 		color: var(--text-color-muted);
 	}
+}
+
+.card {
+    width: 100%;
+}
+
+.card--interactive {
+	cursor: pointer;
+	transition:
+		transform 0.15s ease,
+		box-shadow 0.15s ease;
+}
+
+.card--interactive:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px var(--p-primary-color);
 }

@@ -19,7 +19,6 @@ router.get(
 router.post(
     "/",
     authUser,
-    validator.validateCustomer,
     controller.createCustomer
 );
 

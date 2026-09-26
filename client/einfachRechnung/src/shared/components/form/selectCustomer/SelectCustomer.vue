@@ -41,7 +41,7 @@ watch(customerId, () => {
 		:options="customerOptions"
 		optionLabel="label"
 		optionValue="customerId"
-		placeholder="Kunde Auswählen"
+		placeholder="Kunde"
 		filter
 		showClear
 		fluid

@@ -108,11 +108,13 @@ async function cancelInvoice() {
 
 		await loadInvoice();
 	}
-	catch {
+	catch (error){
+		console.log(error.response.data.message)
+
 		toast.add({
 			severity: "error",
 			summary: "Fehler",
-			detail: "Rechnung konnte nicht storniert werden.",
+			detail: error.response.data.message,
 			life: 5000,
 		});
 	}
@@ -232,7 +234,7 @@ function formatInvoiceStatus(status) {
 			<!-- Aktionen -->
 			<template #actions>
 				<InvoiceDetailsActions
-					class="invoice-details-actions"
+					:status="invoice.status"
 					@action="onInvoiceDetailsAction"
 				/>
 			</template>
@@ -462,17 +464,6 @@ function formatInvoiceStatus(status) {
 
 
 <style scoped lang="scss">
-.invoice-details-actions {
-	width: 100%;
-	max-width: 200px;
-
-	justify-self: start;
-
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-sm);
-}
-
 .customer-card {
 	width: 100%;
 	max-width: 380px;

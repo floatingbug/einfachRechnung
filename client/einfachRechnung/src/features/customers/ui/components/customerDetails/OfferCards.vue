@@ -4,27 +4,27 @@ import {formatCurrency} from "@/shared/helpers"
 
 
 defineProps({
-	invoices: {
+	offers: {
 		type: Array,
 		default: () => [],
 	}
 });
 
 
-const emit = defineEmits([ "invoiceSelected" ]);
+const emit = defineEmits([ "offerSelected" ]);
 
 </script>
 
 
 <template>
-	<div class="invoice-cards">
+	<div class="offer-cards">
 		<Card class="card card--interactive"
-			v-for="(item, index) in invoices"
+			v-for="(item, index) in offers"
 			:key="index"
-			@click="emit('invoiceSelected', item.invoiceNumber)"
+			@click="emit('offerSelected', item.offerNumber)"
 		>
 			<template #title>
-				{{item.invoiceNumber}}
+				{{item.offerNumber}}
 			</template>
 
 			<template #subtitle>
@@ -39,7 +39,7 @@ const emit = defineEmits([ "invoiceSelected" ]);
 						</div>
 
 						<div class="item-value">
-							{{item.invoiceDate}}
+							{{item.offerDate.toLocaleDateString()}}
 						</div>
 					</div>
 
@@ -49,7 +49,7 @@ const emit = defineEmits([ "invoiceSelected" ]);
 						</div>
 
 						<div class="item-value">
-							{{item.dueDate}}
+							{{item.validUntil.toLocaleDateString()}}
 						</div>
 					</div>
 
@@ -59,7 +59,7 @@ const emit = defineEmits([ "invoiceSelected" ]);
 						</div>
 
 						<div class="item-value">
-							{{formatCurrency(item.grossTotal)}}
+							{{formatCurrency(item.totals.totalGross)}}
 						</div>
 					</div>
 
@@ -80,7 +80,7 @@ const emit = defineEmits([ "invoiceSelected" ]);
 
 
 <style lang="scss" scoped>
-.invoice-cards {
+.offer-cards {
 	width: 100%;
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

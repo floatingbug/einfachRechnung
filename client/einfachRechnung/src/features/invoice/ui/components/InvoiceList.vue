@@ -206,7 +206,7 @@ function onRowClick(event){
 	</DataTable>
 
 	<div class="invoice-list-cards">
-		<Card v-for="item in items" class="list-card"
+		<Card v-for="item in items" class="card card--interactive"
 			:key="item.id ?? item.invoiceNumber"
 			@click="onRowClick({ data: item })"
 			@keydown.enter="onRowClick({ data: item })"
@@ -275,13 +275,10 @@ function onRowClick(event){
 
 .invoice-list-cards {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 	grid-template-rows: repeat(auto-fit, minmax(200px, 305px));
+	justify-items: center;
 	gap: var(--space-md);
-}
-
-.list-card {
-	max-width: 500px;
 }
 
 .card-content {

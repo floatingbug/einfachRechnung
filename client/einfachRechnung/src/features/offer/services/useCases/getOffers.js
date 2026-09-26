@@ -16,7 +16,7 @@ export async function getOffers({limit, page, customerId}){
 	}
 
 	const getOffersResult = await offerApi.getOffers({
-		query: `/offers/${params.toString()}`,
+		query: `/offers/?${params.toString()}`,
 	});
 
 

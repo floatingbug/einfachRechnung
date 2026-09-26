@@ -7,25 +7,30 @@ function createError(status, message){
 	return error;
 }
 
-module.exports = async ({ invoiceId }) => {
-	const invoice = await model.getInvoiceById({ invoiceId });
+module.exports = async ({userId, invoiceNumber }) => {
+	const invoice = await model.getInvoiceByInvoiceNumber({
+        invoiceNumber,
+        userId,
+    });
 
 	if (!invoice) {
-		throw createError(404, "Invoice not found");
+		throw createError(404, "Rechnung nicht gefunden.");
 	}
 
 	if (invoice.paymentStatus === "paid") {
-		throw createError(400, "Paid invoices cannot be cancelled");
+		throw createError(400, "Bezahlte Rechnungen können nicht Stoniert werden.");
 	}
 
 	if (invoice.status === "cancelled") {
-		return invoice;
+		throw createError(400, "Rechnungen bereits Stoniert.");
 	}
 
 	await model.updateInvoiceStatus({
-		invoiceId,
+		invoiceNumber,
 		status: "cancelled",
 	});
 
-	return model.getInvoiceById({ invoiceId });
+	return model.getInvoiceByInvoiceNumber({ 
+        invoiceNumber,
+    });
 };

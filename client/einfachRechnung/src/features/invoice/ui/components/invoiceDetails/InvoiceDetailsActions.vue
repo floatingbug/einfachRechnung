@@ -1,6 +1,14 @@
 <script setup>
-import {ref} from "vue";
+import {ref, onMounted} from "vue";
 import TieredMenu from "primevue/tieredmenu";
+
+
+const props = defineProps({
+	status: {
+		type: String,
+		required: true,
+	}
+});
 
 
 const emit = defineEmits(["action"]);
@@ -8,24 +16,48 @@ const emit = defineEmits(["action"]);
 
 const menu = ref(null);
 
-const items = [
-	{
+const itemsMap = {
+	showPdf: {
 		label: "PDF anzeigen",
+		severity: "secondary",
 		command: () => emit("action", {action: "showPdf"}),
 	},
-	{
+	downloadPdf: {
 		label: "PDF herunterladen",
+		severity: "secondary",
 		command: () => emit("action", {action: "downloadPdf"}),
 	},
-	{
+	sendEmail: {
 		label: "Per E-Mail senden",
+		severity: "secondary",
 		command: () => emit("action", {action: "sendMail"}),
 	},
-	{
+	cancel: {
 		label: "Stornieren",
+		severity: "danger",
 		command: () => emit("action", {action: "cancel"}),
 	},
-];
+};
+
+const items = ref([]);
+const isEditable = ref();
+
+
+onMounted(() => {
+	isEditable.value = props.status !== "sent" && props.status !== "cancelled";
+
+	switch(props.status){
+		case "cancelled":
+			items.value = [
+				itemsMap.showPdf,
+				itemsMap.downloadPdf,
+			];
+		break;
+
+		default:
+			items.value = Object.values(itemsMap);
+	}
+})
 
 
 function toggle(event) {
@@ -38,15 +70,23 @@ function toggle(event) {
 	<div class="actions">
 
 		<div class="action-buttons-mobile">
-			<Button
+			<Button v-if="isEditable"
 				label="Bearbeiten"
 				severity="secondary"
 				@click="emit('action', {action: 'edit'})"
 			/>
 
-			<Button
+			<Button v-if="items.length > 0 && isEditable"
 				label="Weitere Aktionen"
 				@click="toggle"
+			/>
+
+			<Button v-else
+				v-for="(item, index) in items"
+				:key="index"
+				:label="item.label"
+				:severity="item.severity"
+				@click="item.command"
 			/>
 
 			<TieredMenu
@@ -54,41 +94,25 @@ function toggle(event) {
 				ref="menu"
 				popup
 			/>
+
 		</div>
 
 
 		<div class="action-buttons-desktop">
-			<Button
+			<Button v-if="isEditable"
 				label="Bearbeiten"
 				severity="secondary"
 				@click="emit('action', {action: 'edit'})"
 			/>
 
 			<Button
-				label="PDF anzeigen"
-				severity="secondary"
-				@click="emit('action', {action: 'showPdf'})"
-			/>
-
-			<Button
-				label="PDF herunterladen"
-				severity="secondary"
-				@click="emit('action', {action: 'downloadPdf'})"
-			/>
-
-			<Button
-				label="Per E-Mail senden"
-				severity="secondary"
-				@click="emit('action', {action: 'sendMail'})"
-			/>
-
-			<Button
-				label="Stornieren"
-				severity="danger"
-				@click="emit('action', {action: 'cancel'})"
+				v-for="(item, index) in items"
+				:key="index"
+				:label="item.label"
+				:severity="item.severity"
+				@click="item.command"
 			/>
 		</div>
-
 	</div>
 </template>
 

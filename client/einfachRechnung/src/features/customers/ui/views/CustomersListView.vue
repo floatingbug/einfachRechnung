@@ -12,7 +12,12 @@ const customers = ref();
 
 
 onMounted(async () => {
-	customers.value = await customersStore.getCustomers();
+	try {
+		customers.value = await customersStore.getCustomers();
+
+	} catch (error) {
+		console.log("--->", error.response.data);
+	}
 })
 
 </script>

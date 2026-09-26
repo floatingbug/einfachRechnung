@@ -25,7 +25,7 @@ const salutations = {
 </script>
 
 <template>
-	<Card class="customer-card">
+	<Card class="card">
 		<template #title>
 			<div class="customer-card__title">
 				Kunde
@@ -34,55 +34,104 @@ const salutations = {
 					severity="secondary"
 				/>
 			</div>
+
+			<Divider />
 		</template>
 
+
 		<template #content>
-			<div class="customer-card__content">
-				<template v-if="customer.customerType === 'company'">
-					<div class="customer-card__name">
-						{{ customer.companyName}}
-					</div>
+			<div class="content-container">
+				<div class="customer-company" v-if="customer.customerType === 'company'">
+					<div class="item-group-1-column">
+						<div class="item">
+							<div class="item-label">
+								Firma
+							</div>
 
-					<div
-						v-if="customer.contactPerson"
-						class="customer-card__contact"
-					>
-						<span>Ansprechpartner: </span>
-						{{ customer.contactPerson }}
-					</div>
-				</template>
+							<div class="item-value">
+								{{ customer.companyName}}
+							</div>
+						</div>
 
-				<template v-else>
-					<div class="customer-card__name">
-						{{ salutations[customer.salutation] }}
-						{{ customer.firstName}}
-						{{ customer.lastName}}
-					</div>
-				</template>
+						<div class="item">
+							<div class="item-label">
+								Ansprechpartner
+							</div>
 
-				<div class="customer-card__address">
-					<div>{{ customer.street }}</div>
-					<div>
-						{{ customer.postalCode }}
-						{{ customer.city }}
+							<div class="item-value">
+								{{ customer.contactPerson }}
+							</div>
+						</div>
 					</div>
 				</div>
 
-				<div class="customer-card__contact-data">
-					<div v-if="customer.email">
-						{{ customer.email }}
-					</div>
+				<div class="customer-private" v-else >
+					<div class="item-group-1-column">
+						<div class="item">
+							<div class="item-label">
+								Name
+							</div>
 
-					<div v-if="customer.phone">
-						{{ customer.phone }}
+							<div class="item-value">
+								{{ salutations[customer.salutation] }}
+								{{ customer.firstName}}
+								{{ customer.lastName}}
+							</div>
+						</div>
 					</div>
 				</div>
 
-				<div
-					v-if="customer.customerType === 'company' && customer.vatId"
-					class="customer-card__vat"
-				>
-					USt-IdNr.: {{ customer.vatId }}
+				<div class="item-group-1-column">
+					<div class="item">
+						<div class="item-label">
+							Straße
+						</div>
+
+						<div class="item-value">
+							{{ customer.street }}
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="item-label">
+							Postleitzahl Wohnort
+						</div>
+
+						<div class="item-value">
+							{{ customer.postalCode }}
+							{{ customer.city }}
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="item-label">
+							E-Mail
+						</div>
+
+						<div class="item-value">
+							{{ customer.email }}
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="item-label">
+							Telefon
+						</div>
+
+						<div class="item-value">
+							{{ customer.phone }}
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="item-label">
+							StIdNr.
+						</div>
+
+						<div class="item-value">
+							{{ customer.vatId }}
+						</div>
+					</div>
 				</div>
 			</div>
 		</template>
@@ -94,35 +143,9 @@ const salutations = {
 	height: 100%;
 }
 
-.customer-card__title {
+.content-container {
 	display: flex;
+	flex-direction: column;
 	gap: var(--space-md);
-}
-
-.customer-card__content {
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
-}
-
-.customer-card__name {
-	font-size: 1.1rem;
-	font-weight: 600;
-}
-
-.customer-card__contact {
-	color: var(--text-color-secondary);
-}
-
-.customer-card__address,
-.customer-card__contact-data {
-	display: flex;
-	flex-direction: column;
-	gap: .25rem;
-}
-
-.customer-card__vat {
-	color: var(--text-color-secondary);
-	font-size: .9rem;
 }
 </style>

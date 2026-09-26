@@ -6,5 +6,7 @@ export async function getCustomerById({customerId}){
 		customerId
 	});
 
+	this.customer = customer;
+
 	return customer;
 }

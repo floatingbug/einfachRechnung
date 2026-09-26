@@ -88,9 +88,9 @@ const customerTypeOptions = ref([
 
 <template>
 	<PageContainer>
-		<form>
+		<section class="first-section">
 			<div class="select-customer-type">
-				<label for="customerType">Kundentyp auswählen</label>
+				<h2>Kundentyp Auswählen</h2>
 
 				<Select
 					:modelValue="modelValue.customerType"
@@ -98,19 +98,20 @@ const customerTypeOptions = ref([
 					:options="customerTypeOptions"
 					optionLabel="label"
 					optionValue="value"
+					placeholder="Kundentyp"
 				/>
-
-				<Message
-					v-for="error in localErrors.customerType"
-					:key="error"
-					severity="error"
-				>
-					{{ error }}
-				</Message>
 			</div>
 
-			<Divider />
+			<Message
+				v-for="error in localErrors.customerType"
+				:key="error"
+				severity="error"
+			>
+				{{ error }}
+			</Message>
+		</section>
 
+		<form v-if="modelValue.customerType">
 			<section>
 				<h2>Kunde</h2>
 
@@ -400,11 +401,16 @@ const customerTypeOptions = ref([
 
 
 <style lang="scss" scoped>
+.first-section {
+	width: 100%;
+	max-width: 1024px;
+}
+
 .select-customer-type {
 	max-width: 420px;
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xs);
+	gap: var(--space-xl);
 }
 
 .form-action-buttons {

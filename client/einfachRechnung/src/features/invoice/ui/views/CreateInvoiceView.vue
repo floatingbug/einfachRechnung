@@ -80,7 +80,7 @@ async function createInvoice(){
 						<Button
 							label="Kunde anlegen"
 							severity="secondary"
-							@click="router.push('/customer/create')"
+							@click="router.push('/customers/create')"
 						/>
 					</div>
 				</div>

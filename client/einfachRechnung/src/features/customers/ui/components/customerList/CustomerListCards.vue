@@ -17,7 +17,7 @@ const emit = defineEmits([ "customerSelected" ]);
 
 <template>
 	<div class="customer-list-cards">
-		<CustomerCard class="customer-card"
+		<CustomerCard class="card--interactive"
 			v-for="customer in customers"
 			:key="customer._id"
 			:customer="customer"
@@ -32,11 +32,14 @@ const emit = defineEmits([ "customerSelected" ]);
 .customer-list-cards {
 	width: 100%;
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(300px, 400px));
+	grid-template-columns: minmax(240px, 480px);
+	justify-content: center;
+	align-items: stretch;
 	gap: var(--space-md);
-}
 
-.customer-card {
-	cursor: pointer;
+	@media(width >= 1167px) {
+		grid-template-columns: repeat(auto-fill, minmax(340px, 400px));
+		justify-content: start;
+	}
 }
 </style>

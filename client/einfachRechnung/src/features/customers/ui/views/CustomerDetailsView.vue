@@ -10,6 +10,7 @@ import {
 	OffersTable,
 	InvoicesTable,
 	InvoiceCards,
+	OfferCards,
 	CustomerContact,
 	CustomerAddress,
 	} from "../components";
@@ -67,6 +68,7 @@ onMounted(async () => {
 					<Button
 						label="Bearbeiten"
 						severity="secondary"
+						@click="router.push(`/customers/edit/${customer._id}`)"
 					/>
 
 					<Button
@@ -95,17 +97,22 @@ onMounted(async () => {
 				<section>
 					<h2>Angebote</h2>
 
+					<OfferCards
+						:offers="offers"
+						@offerSelected="router.push(`/offer/details/${$event}`)"
+					/>
+
 					<OffersTable class="offer-table"
 						:offers="offers"
 						@offerSelected="router.push(`/offer/details/${$event}`)"
 					/>
-				</section>
 
-				<Paginator v-if="offers.length > 0"
-					:rows="10"
-					:totalRecords="totalOffersCount"
-					:rowsPerPageOptions="[10, 20, 50, 100]"
-				/>
+					<Paginator v-if="offers.length > 10"
+						:rows="10"
+						:totalRecords="totalOffersCount"
+						:rowsPerPageOptions="[10, 20, 50, 100]"
+					/>
+				</section>
 
 				<Divider />
 
@@ -122,7 +129,7 @@ onMounted(async () => {
 						@invoiceSelected="router.push(`/invoice/${$event}`)"
 					/>
 
-					<Paginator v-if="invoices.length > 0"
+					<Paginator v-if="invoices.length > 10"
 						:rows="10"
 						:totalRecords="totalInvoicesCount"
 						:rowsPerPageOptions="[10, 20, 50, 100]"

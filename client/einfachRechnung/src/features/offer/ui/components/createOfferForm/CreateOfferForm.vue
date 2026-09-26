@@ -76,6 +76,7 @@ async function saveOffer(){
 
 					<Button class="add-customer"
 						label="Kunde hinzufügen"
+						@click="router.push('/customers/create')"
 					/>
 				</div>
 

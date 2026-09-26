@@ -5,6 +5,7 @@ import calculateInvoiceTotals from "./calculateInvoiceTotals.js";
 import { getInvoiceByInvoiceNumber } from "./getInvoiceByInvoiceNumber.js";
 import { updateInvoice } from "./updateInvoice.js";
 import {getPdf} from "./getPdf";
+import { cancelInvoice } from "./cancelInvoice.js";
 
 
 export const services = {
@@ -12,6 +13,7 @@ export const services = {
 	getInvoiceById,
 	createInvoice,
 	calculateInvoiceTotals,
+	cancelInvoice,
 	getInvoiceByInvoiceNumber,
 	updateInvoice,
 	getPdf,

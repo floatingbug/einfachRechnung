@@ -4,7 +4,7 @@ import {actions} from "./actions";
 
 const useCustomersStore = defineStore("storeId", {
 	state: () => ({
-		customer: {},
+		customer: null,
 	}),
 
 	actions,
