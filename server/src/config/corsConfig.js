@@ -1,6 +1,6 @@
 module.exports = {
     production: {
-        origin: ["https://example.com", "https://app.example.com"],
+        origin: ["https://einfach-rechnung-eight.vercel.app"],
         methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
         allowedHeaders: ["Content-Type", "Authorization"],
         credentials: true
