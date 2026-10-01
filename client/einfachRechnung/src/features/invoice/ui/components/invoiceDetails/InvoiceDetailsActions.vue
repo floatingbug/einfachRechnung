@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted} from "vue";
+import {ref, computed,} from "vue";
 import TieredMenu from "primevue/tieredmenu";
 
 
@@ -34,28 +34,31 @@ const itemsMap = {
 	},
 	cancel: {
 		label: "Stornieren",
-		severity: "danger",
+		severity: "warn",
 		command: () => emit("action", {action: "cancel"}),
+	},
+	delete: {
+		label: "Löschen",
+		severity: "danger",
+		command: () => emit("action", {action: "delete"}),
 	},
 };
 
-const items = ref([]);
-const isEditable = ref();
 
+const isEditable = computed(() => {
+	return props.status !== "sent" && props.status !== "cancelled";
+})
 
-onMounted(() => {
-	isEditable.value = props.status !== "sent" && props.status !== "cancelled";
-
+const items = computed(() => {
 	switch(props.status){
 		case "cancelled":
-			items.value = [
+			return  [
 				itemsMap.showPdf,
 				itemsMap.downloadPdf,
 			];
-		break;
 
 		default:
-			items.value = Object.values(itemsMap);
+			return Object.values(itemsMap);
 	}
 })
 

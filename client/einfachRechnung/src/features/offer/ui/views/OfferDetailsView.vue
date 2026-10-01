@@ -62,8 +62,6 @@ async function loadOffer() {
 		offer.value = await offerStore.getOfferByOfferNumber({
 			offerNumber,
 		});
-
-		console.log(offer.value);
 	}
 	catch {
 		offer.value = null;
@@ -311,7 +309,9 @@ async function updateStatus(event){
 			newStatus: event,
 		});
 
-		offer.value.possibleStatus = result.allowedChanges
+		await loadOffer();
+		//offer.value.possibleStatus = result.allowedChanges
+		console.log(offer.value.possibleActions);
 
 		toast.add({
 			severity: "info",

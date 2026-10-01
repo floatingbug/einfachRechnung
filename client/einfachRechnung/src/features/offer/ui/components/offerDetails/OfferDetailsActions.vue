@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import TieredMenu from 'primevue/tieredmenu';
 
 
@@ -48,11 +48,13 @@ const actionMap = {
     },
 };
 
-const items = props.possibleActions.map(action => ({
-    label: actionMap[action].label,
-	severity: actionMap[action].severity,
-    command: () => emit("action", {action}),
-}));
+const items = computed(() => {
+	return props.possibleActions.map(action => ({
+		label: actionMap[action].label,
+		severity: actionMap[action].severity,
+		command: () => emit("action", {action}),
+	}));
+})
 
 
 function toggle(event){

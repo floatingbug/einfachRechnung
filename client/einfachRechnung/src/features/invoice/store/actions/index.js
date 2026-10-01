@@ -5,6 +5,8 @@ import {getInvoiceByInvoiceNumber} from "./getInvoiceByInvoiceNumber.js";
 import { updateInvoice } from "./updateInvoice.js";
 import {getPdf} from "./getPdf.js";
 import {cancelInvoice} from "./cancelInvoice.js";
+import {deleteInvoice} from "./deleteInvoice.js";
+
 
 export const actions = {
 	getInvoices,
@@ -14,4 +16,5 @@ export const actions = {
 	getInvoiceByInvoiceNumber,
 	updateInvoice,
 	getPdf,
+	deleteInvoice,
 };

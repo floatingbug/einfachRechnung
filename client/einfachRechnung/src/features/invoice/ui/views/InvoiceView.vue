@@ -65,6 +65,10 @@ function onInvoiceDetailsAction(event) {
 		case "cancel":
 			cancelInvoice();
 			break;
+
+		case "delete":
+			deleteInvoice();
+			break;
 	}
 }
 
@@ -162,6 +166,28 @@ async function downloadPdf() {
 			severity: "error",
 			summary: "Fehler",
 			detail: "PDF konnte nicht heruntergeladen werden.",
+			life: 5000,
+		});
+	}
+}
+
+async function deleteInvoice(){
+	try {
+		await invoiceStore.deleteInvoice();
+		//router.push("/invoice");
+
+		toast.add({
+			severity: "info",
+			summary: "Gelöscht",
+			detail: "Rechnung wurde gelöscht.",
+			life: 5000,
+		});
+	}
+	catch {
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: "Rechnung konnte nicht gelöscht werden.",
 			life: 5000,
 		});
 	}
