@@ -371,7 +371,7 @@ const customerTypeOptions = ref([
 
 				<div class="input-group">
 					<div class="input">
-						<label for="vatId">StIdNr.</label>
+						<label for="vatId">USt-IdNr.</label>
 
 						<InputText
 							:modelValue="modelValue.vatId"

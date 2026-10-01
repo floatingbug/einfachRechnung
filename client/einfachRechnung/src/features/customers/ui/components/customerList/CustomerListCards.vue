@@ -21,7 +21,7 @@ const emit = defineEmits([ "customerSelected" ]);
 			v-for="customer in customers"
 			:key="customer._id"
 			:customer="customer"
-			@click="emit('customerSelected', customer._id)"
+			@click="emit('customerSelected', customer.id)"
 		/>
 
 	</div>

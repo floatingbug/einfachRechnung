@@ -23,6 +23,13 @@ module.exports = async ({
 		});
 	}
 
+    if(!customer){
+        const error = new Error("Kunde nicht gefunden");
+        error.status = 404;
+
+        throw error;
+    }
+
 	const normalizedCustomer =
 		mapCustomerToInvoiceCustomer(customer);
 

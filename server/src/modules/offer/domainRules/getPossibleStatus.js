@@ -11,7 +11,7 @@ module.exports = ({status}) => {
                 "sent",
                 "accepted",
                 "rejected",
-                "canceled",
+                "cancelled",
             ];
        
         case "accepted":
@@ -29,9 +29,9 @@ module.exports = ({status}) => {
                 "expired",
             ];
 
-        case "canceled":
+        case "cancelled":
             return [
-                "canceled",
+                "cancelled",
             ];
 
         default:

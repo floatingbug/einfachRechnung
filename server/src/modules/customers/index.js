@@ -19,10 +19,11 @@ router.get(
 router.post(
     "/",
     authUser,
+    validator.validateCustomer,
     controller.createCustomer
 );
 
-router.patch(
+router.put(
     "/",
     authUser,
     controller.updateCustomer

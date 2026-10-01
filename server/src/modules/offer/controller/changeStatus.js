@@ -12,8 +12,6 @@ module.exports = catchAsync(async (req, res, next) => {
         status: req.body.newStatus,
     });
 
-    res.json({
-        offerNumber,
-    })
+    res.json(result)
 });
 

@@ -4,6 +4,7 @@ const createError = require("./createError");
 const roundCurrency = require("./roundCurrency");
 const calculateTotals = require("./calculateTotals");
 const buildInvoiceNumber = require("./buildInvoiceNumber");
+const calculateOpenAmount = require("./calculateOpenAmount");
 
 
 module.exports = {
@@ -13,4 +14,5 @@ module.exports = {
     createError,
     calculateTotals,
     buildInvoiceNumber,
+    calculateOpenAmount,
 };

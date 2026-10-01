@@ -62,6 +62,8 @@ async function loadOffer() {
 		offer.value = await offerStore.getOfferByOfferNumber({
 			offerNumber,
 		});
+
+		console.log(offer.value);
 	}
 	catch {
 		offer.value = null;
@@ -257,12 +259,11 @@ async function downloadPdf() {
 	}
 }
 
-
 async function deleteOffer() {
-	if(!offer.value.state === "draft"){
+	if (offer.value.status !== "draft") {
 		toast.add({
 			severity: "error",
-			summary: 'Nur Angebote mit dem Status "Entwurf" können gelöscht werden.',
+			summary: "Nur Entwürfe können gelöscht werden.",
 			life: 5000,
 		});
 
@@ -305,8 +306,18 @@ async function deleteOffer() {
 }
 
 async function updateStatus(event){
-	try { await offerStore.updateStatus({
+	try {
+		const result = await offerStore.updateStatus({
 			newStatus: event,
+		});
+
+		offer.value.possibleStatus = result.allowedChanges
+
+		toast.add({
+			severity: "info",
+			summary: "Geändert",
+			detail: "Status wurde geändert",
+			life: 5000,
 		});
 	}
 	catch (error) {
@@ -343,7 +354,7 @@ async function updateStatus(event){
 
 			</template>
 
-			<template #status>
+			<template #status v-if="offer.possibleStatus.length > 0">
 				<h2>Angebot Status</h2>
 
 				<SelectOfferStatus

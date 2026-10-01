@@ -1,5 +1,5 @@
 const models = require("../../models");
-const {validateStatusChange} = require("./modules");
+const {validateStatusChange} = require("./validate");
 
 
 module.exports = async ({userId, offerNumber, status}) => {
@@ -20,7 +20,7 @@ module.exports = async ({userId, offerNumber, status}) => {
         newStatus: status,
     });
 
-    if(!validStatusChange){
+    if(!validStatusChange.success){
         const error = new Error(
             `Statusübergang von ${offer.status} zu ${status} ist nicht erlaubt.`,
         );
@@ -47,5 +47,6 @@ module.exports = async ({userId, offerNumber, status}) => {
     return {
         success: true,
         message: "Status wurde geändert.",
+        allowedChanges: validStatusChange.allowedChanges,
     };
 };

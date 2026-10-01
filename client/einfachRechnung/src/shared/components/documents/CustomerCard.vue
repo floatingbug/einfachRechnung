@@ -74,8 +74,7 @@ const salutations = {
 
 							<div class="item-value">
 								{{ salutations[customer.salutation] }}
-								{{ customer.firstName}}
-								{{ customer.lastName}}
+								{{ customer.customerName}}
 							</div>
 						</div>
 					</div>

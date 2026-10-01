@@ -1,5 +1,6 @@
 const STATUS_TRANSITIONS = {
     draft: [
+        "draft",
         "sent",
         "expired",
         "cancelled",
@@ -10,15 +11,16 @@ const STATUS_TRANSITIONS = {
         "rejected",
         "expired",
         "cancelled",
+        "sent",
     ],
 
-    accepted: [],
+    accepted: ["accepted"],
 
-    rejected: [],
+    rejected: ["rejected"],
 
-    expired: [],
+    expired: ["expired"],
 
-    cancelled: [],
+    cancelled: ["cancelled"],
 };
 
 
@@ -29,5 +31,8 @@ module.exports = ({currentStatus, newStatus}) => {
         return false;
     }
 
-    return allowedStatus.includes(newStatus);
+    return {
+        success: allowedStatus.includes(newStatus),
+        allowedChanges: STATUS_TRANSITIONS[newStatus],
+    }
 };

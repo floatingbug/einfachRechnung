@@ -1,4 +1,5 @@
 module.exports = function mapCustomerToInvoiceCustomer(customer) {
+    console.log(customer);
 	const normalizedCustomer = {
 		bank: customer.bank ?? {},
 		city: customer.city ?? "",

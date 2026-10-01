@@ -42,6 +42,14 @@ module.exports = async ({ name, email, password }) => {
         emailTokenHash,
         emailTokenExpiresAt,
         createdAt: new Date(),
+        subscription: {
+            plan: "free",
+            status: "active",
+            currentPeriodStart: "...",
+            currentPeriodEnd: "...",
+            provider: "stripe",
+            providerSubscriptionId: "...",
+        }
     };
 
     const result = await signUpModels.create({ user });

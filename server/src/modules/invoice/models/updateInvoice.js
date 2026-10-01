@@ -1,7 +1,7 @@
 const {getDb, ObjectId} = require("../../../db/mongo");
 
 
-module.exports = async ({userId, invoiceNumber, invoiceDraft}) => {
+module.exports = async ({userId, invoiceNumber, invoice}) => {
     const db = getDb();
     const filter = {
         userId: new ObjectId(userId),
@@ -9,7 +9,7 @@ module.exports = async ({userId, invoiceNumber, invoiceDraft}) => {
     };
     const updateDoc = {
         $set: {
-            ...invoiceDraft,
+            ...invoice,
         },
     };
 

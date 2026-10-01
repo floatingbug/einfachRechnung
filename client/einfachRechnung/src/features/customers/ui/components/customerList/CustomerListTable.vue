@@ -85,7 +85,7 @@ const customerRows = computed(() => {
 			},
 		}"
 
-		@row-click="emit('customerSelected', $event.data._id)"
+		@row-click="emit('customerSelected', $event.data.id)"
 	>
 		<Column
 			field="customerName"

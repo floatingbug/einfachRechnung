@@ -21,7 +21,7 @@ async function saveCustomer(){
 			customer: customer.value,
 		});
 
-		router.push("/customers/list")
+		router.push("/customers")
 	}
 	catch (error) {
 		errors.value = error.response.data.error;

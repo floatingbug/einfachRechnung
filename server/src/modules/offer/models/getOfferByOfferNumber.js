@@ -8,7 +8,7 @@ module.exports = async ({userId, offerNumber}) => {
         offerNumber,
     };
 
-    const offer = db.collection("offers")
+    const offer = await db.collection("offers")
         .findOne(filter);
 
     return offer;

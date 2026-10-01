@@ -1,54 +1,89 @@
 <script setup>
-import {onMounted} from "vue";
+import {onMounted, onUnmounted} from "vue";
 import {useRoute} from "vue-router"
 import { useCustomersStore } from "../../store";
 import { PageContainer } from "@/shared/components";
-import {
-	SelectCustomerType
-} from "@/shared/components";
+import {EditCustomerForm} from "../components";
+import { useToast } from 'primevue/usetoast';
 
 
 const route = useRoute();
 const customersStore = useCustomersStore();
+const toast = useToast();
 
 
 onMounted(async () => {
+	getCustomer();
+});
+
+onUnmounted(() => {
+	customersStore.customer = null;
+});
+
+
+//helpers
+async function getCustomer(){
 	if(!customersStore.customer){
 		try {
 			await customersStore.getCustomerById({
 				customerId: route.params.customerId,
 			})
+
 		}
 		catch (error) {
-			console.log(error.response.data.message);
+			toast.add(
+				{
+					severity: "error",
+					summary: 'Fehler.',
+					detail: error.response.data.errors,
+					life: 5000
+				}
+			);
 		}
 	}
+}
 
-	console.log(customersStore.customer);
-});
+
+//handler
+async function updateCustomer(){
+	try {
+		await customersStore.updateCustomer();
+
+		toast.add(
+			{
+				severity: "info",
+				summary: 'Geändert.',
+				detail: "Kunde wurde geändert.",
+				life: 5000
+			}
+		);
+	} catch (error) {
+		toast.add(
+			{
+				severity: "error",
+				summary: 'Fehler.',
+				detail: error.response.data.errors,
+				life: 5000
+			}
+		);
+
+	}
+}
 
 </script>
 
 
 <template>
 	<PageContainer>
-		<form v-if="customersStore.customer">
-			<section>
-				<div class="input-group">
-					<div class="input">
-						<label for="customerType">Kundentyp</label>
-
-						<SelectCustomerType
-							v-model="customersStore.customer.customerType"
-						/>
-					</div>
-				</div>
-			</section>
-		</form>
+		<EditCustomerForm
+			:customer="customersStore.customer"
+			@update:customer="customersStore.customer[$event.field] = $event.value"
+			@submit="updateCustomer"
+			@cancel="getCustomer"
+		/>
 	</PageContainer>
 </template>
 
 
 <style lang="scss" scoped>
-
 </style>

@@ -13,6 +13,11 @@ const slots = useSlots();
 		</h1>
 
 		<slot></slot>
+
+		<div class="paginator">
+			<slot name="paginator">
+			</slot>
+		</div>
 	</div>
 </template>
 
@@ -29,5 +34,10 @@ const slots = useSlots();
 
 h1 {
 	margin-bottom: var(--space-xl2);
+}
+
+.paginator {
+	width: 100%;
+	margin-top: var(--space-xl);
 }
 </style>

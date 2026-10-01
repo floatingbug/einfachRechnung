@@ -136,6 +136,43 @@ module.exports = (req, res, next) => {
 		}
 	}
 
+	// --------------------------------------------------
+	// not alowed in field in customerType
+	// --------------------------------------------------
+
+    if(customerType === "company"){
+        if(typeof firstName === "string"){
+			addError(
+				errors,
+				"firstName",
+				"firstName ist bei customerType: company nicht erlaubt."
+			);
+        }
+        if(typeof lastName === "string"){
+			addError(
+				errors,
+				"lastname",
+				"lastName ist bei customerType: company nicht erlaubt."
+			);
+        }
+    }
+    if(customerType === "private"){
+        if(typeof companyName === "string"){
+			addError(
+				errors,
+				"companyName",
+				"companyName ist bei customerType: private nicht erlaubt."
+			);
+        }
+        if(typeof contactPerson === "streing"){
+			addError(
+				errors,
+				"contactPerson",
+				"contactPerson ist bei customerType: private nicht erlaubt."
+			);
+        }
+    }
+
 
 	// --------------------------------------------------
 	// companyName
@@ -161,13 +198,6 @@ module.exports = (req, res, next) => {
 			}
 		}
 	}
-	else if (companyName !== undefined) {
-		addError(
-			errors,
-			"companyName",
-			"Dieses Feld ist bei privaten Kunden nicht erlaubt."
-		);
-	}
 
 
 	// --------------------------------------------------
@@ -192,14 +222,6 @@ module.exports = (req, res, next) => {
 					"Die Kontaktperson muss zwischen 1 und 200 Zeichen enthalten."
 				);
 			}
-		}
-
-		if (customerType !== "company") {
-			addError(
-				errors,
-				"contactPerson",
-				"Dieses Feld ist nur bei Firmenkunden erlaubt."
-			);
 		}
 	}
 
@@ -228,6 +250,7 @@ module.exports = (req, res, next) => {
 			}
 		}
 	}
+
 
 
 	// --------------------------------------------------

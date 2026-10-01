@@ -4,6 +4,7 @@ const rateLimitConfig = require("./rateLimitConfig");
 const corsConfig = require("./corsConfig");
 const coolDownConfig = require("./coolDownConfig");
 const authConfig = require("./authConfig");
+const subscriptionConfig = require("./subscriptionConfig");
 
 dotenv.config();
 
@@ -47,4 +48,7 @@ module.exports = {
     corsConfig,
     coolDownConfig,
     authConfig,
+
+    // Subscriptions
+    subscriptionConfig,
 };

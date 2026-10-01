@@ -16,19 +16,20 @@ const customerOptions = computed(() => {
 			customer.customerType === "private"
 				? `${customer.firstName} ${customer.lastName}`.trim()
 				: customer.companyName,
-		customerId: customer._id,
+		customerId: customer.id,
 	}));
 });
 
 
 onMounted(async () => {
-	customers.value = await customersStore.getCustomers()
+	const result = await customersStore.getCustomers()
+	customers.value = result.customers;
 })
 
 
 watch(customerId, () => {
 	const selectedCustomer = customers.value.find(
-		(customer) => customer._id === customerId.value,
+		(customer) => customer.id === customerId.value,
 	)
 
 	emit('customerSelected', selectedCustomer)

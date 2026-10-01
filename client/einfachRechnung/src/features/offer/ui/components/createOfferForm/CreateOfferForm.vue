@@ -45,7 +45,7 @@ onMounted(async () => {
 
 function onCustomerSelected(event){
 	customer.value = event;
-	offer.value.customerId = customer.value._id;
+	offer.value.customerId = customer.value.id;
 }
 
 async function saveOffer(){

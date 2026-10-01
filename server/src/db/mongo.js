@@ -10,8 +10,13 @@ async function connect() {
     }
 
     client = new MongoClient(config.mongoUri);
+    console.log(`connecting to ${config.mongoUri} ...`)
 
-    await client.connect();
+    try {
+        await client.connect();
+    } catch (error) {
+        console.log(error);
+    }
 
     db = client.db(config.dbName);
 

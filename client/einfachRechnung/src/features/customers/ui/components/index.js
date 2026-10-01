@@ -7,3 +7,4 @@ export {default as CustomerAddress} from "./customerDetails/CustomerAddress.vue"
 export {default as InvoicesTable} from "./customerDetails/InvoicesTable.vue";
 export {default as InvoiceCards} from "./customerDetails/InvoiceCards.vue";
 export {default as OfferCards} from "./customerDetails/OfferCards.vue";
+export {default as EditCustomerForm} from "./editCustomer/EditCustomerForm.vue";

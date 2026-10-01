@@ -48,6 +48,8 @@ onMounted(async () => {
 
 	totalInvoicesCount.value = getInvoicesResult.pagination.totalPages;
 	invoices.value = getInvoicesResult.invoices;
+
+	console.log(customer.value);
 })
 
 </script>
@@ -68,7 +70,7 @@ onMounted(async () => {
 					<Button
 						label="Bearbeiten"
 						severity="secondary"
-						@click="router.push(`/customers/edit/${customer._id}`)"
+						@click="router.push(`/customers/edit/${customer.id}`)"
 					/>
 
 					<Button

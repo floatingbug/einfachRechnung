@@ -1,5 +1,6 @@
 <script setup>
-import {Select} from "primevue";
+import { computed } from "vue";
+import { Select } from "primevue";
 
 
 const props = defineProps({
@@ -14,7 +15,7 @@ const props = defineProps({
 });
 
 
-const emit = defineEmits([ "update:modelValue" ]);
+const emit = defineEmits(["update:modelValue"]);
 
 
 const optionsMap = {
@@ -34,9 +35,9 @@ const optionsMap = {
 		label: "Abgelehnt",
 		value: "rejected",
 	},
-	canceled: {
-		label: "Stoniert",
-		value: "canceled",
+	cancelled: {
+		label: "Storniert",
+		value: "cancelled",
 	},
 	expired: {
 		label: "Abgelaufen",
@@ -44,20 +45,21 @@ const optionsMap = {
 	}
 };
 
-const options = props.options
-	.map(
-		action => ({
-			label: optionsMap[action].label,
-			value: optionsMap[action].value,
-		})
-	);
 
+const options = computed(() => {
+console.log(props.options)
+	return props.options.map((status) => ({
+		label: optionsMap[status].label,
+		value: optionsMap[status].value,
+	}));
+});
 </script>
 
 
 <template>
 	<div>
-		<Select v-if="options.length > 1"
+		<Select
+			v-if="options.length > 1"
 			:modelValue="modelValue"
 			@update:modelValue="emit('update:modelValue', $event)"
 			:options="options"
@@ -66,11 +68,11 @@ const options = props.options
 		/>
 
 		<div v-else>
-			{{options[0].label}}
+			{{ options[0]?.label }}
 		</div>
 	</div>
 </template>
 
-<style lang="scss" scoped>
 
+<style lang="scss" scoped>
 </style>

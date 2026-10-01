@@ -6,5 +6,5 @@ module.exports = async ({customer}) => {
         customer,
     });
 
-    return customer;
+    return result;
 };

@@ -38,7 +38,7 @@ async function createInvoice(){
 	try {
 		const invoiceNumber = await invoiceStore.createInvoice({
 			invoice: invoice.value,
-			customerId: selectedCustomer.value._id,
+			customerId: selectedCustomer.value.id,
 		});
 
 		router.push(`/invoice/${invoiceNumber}`)
@@ -122,7 +122,7 @@ async function createInvoice(){
 						</div>
 
 						<div class="item-value">
-							{{selectedCustomer.name}}
+							{{selectedCustomer.firstName}} {{selectedCustomer.lastName}}
 						</div>
 					</div>
 				</div>

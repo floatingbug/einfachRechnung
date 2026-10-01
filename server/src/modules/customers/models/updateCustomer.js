@@ -7,7 +7,7 @@ module.exports = async ({ customer }) => {
         _id: new ObjectId(customer.id),
     };
 
-    const { id, ...customerDoc } = customer;
+    const { id, userId, ...customerDoc } = customer;
 
     const doc = {
         $set: customerDoc,
