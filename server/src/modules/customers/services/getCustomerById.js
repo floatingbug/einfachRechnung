@@ -12,7 +12,6 @@ module.exports = async ({ customerId }) => {
 
   const { _id: id, ...customerData } = customer;
 
-  console.log(customerData);
 
   return { id, ...customerData };
 };
