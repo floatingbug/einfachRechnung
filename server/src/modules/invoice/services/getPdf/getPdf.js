@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
-const {createInvoicePdf} = require("./modules");
+const { createInvoicePdf } = require("./modules");
 
 const models = require("../../models");
 
@@ -9,151 +9,151 @@ const models = require("../../models");
 const DOCUMENTS_PATH = path.resolve("storage/documents");
 
 
-module.exports = async ({userId, invoiceNumber}) => {
-    // Invoice laden
-    const invoice = await models.getInvoiceByInvoiceNumber({
-        userId,
-        invoiceNumber,
+module.exports = async ({ userId, invoiceNumber }) => {
+  // Invoice laden
+  const invoice = await models.getInvoiceByInvoiceNumber({
+    userId,
+    invoiceNumber,
+  });
+
+  if (!invoice) {
+    const error = new Error("Invoice not found.");
+    error.status = 404;
+
+    throw error;
+  }
+
+  // Hash des aktuellen Invoice-Inhalts erstellen
+  const contentHash = createContentHash(invoice);
+
+  // Zugehöriges PDF-Dokument laden
+  let document = await models.getDocumentByInvoiceId({
+    userId,
+    invoiceId: invoice._id,
+    type: "pdf",
+  });
+
+  // Speicherort der PDF bestimmen
+  const storageKey = document?.storageKey
+    ?? createStorageKey({
+      userId,
+      invoiceId: invoice._id,
     });
 
-    if(!invoice){
-        const error = new Error("Invoice not found.");
-        error.status = 404;
+  const filePath = path.join(
+    DOCUMENTS_PATH,
+    storageKey,
+  );
 
-        throw error;
+  // Prüfen, ob die PDF physisch existiert
+  const pdfExists = await fileExists(filePath);
+
+  // Prüfen, ob die vorhandene PDF aktuell ist
+  const pdfIsCurrent =
+    document &&
+    document.contentHash === contentHash &&
+    pdfExists;
+
+  // PDF fehlt oder ist veraltet
+  if (!pdfIsCurrent) {
+    const pdfBuffer = await createPdf({
+      invoice,
+    });
+
+    await savePdf({
+      filePath,
+      pdfBuffer,
+    });
+
+    // Dokument existiert bereits
+    if (document) {
+      document = await models.updateDocument({
+        documentId: document._id,
+        contentHash,
+        storageKey,
+      });
     }
-
-    // Hash des aktuellen Invoice-Inhalts erstellen
-    const contentHash = createContentHash(invoice);
-
-    // Zugehöriges PDF-Dokument laden
-    let document = await models.getDocumentByInvoiceId({
+    // Dokument existiert noch nicht
+    else {
+      document = await models.createDocument({
         userId,
         invoiceId: invoice._id,
-    });
-
-    // Speicherort der PDF bestimmen
-    const storageKey = document?.storageKey
-        ?? createStorageKey({
-            userId,
-            invoiceId: invoice._id,
-        });
-
-    const filePath = path.join(
-        DOCUMENTS_PATH,
+        type: "pdf",
         storageKey,
-    );
-
-    // Prüfen, ob die PDF physisch existiert
-    const pdfExists = await fileExists(filePath);
-
-    // Prüfen, ob die vorhandene PDF aktuell ist
-    const pdfIsCurrent =
-        document &&
-        document.contentHash === contentHash &&
-        pdfExists;
-
-    // PDF fehlt oder ist veraltet
-    if(!pdfIsCurrent){
-        const pdfBuffer = await createPdf({
-            invoice,
-        });
-
-        await savePdf({
-            filePath,
-            pdfBuffer,
-        });
-
-        // Dokument existiert bereits
-        if(document){
-            document = await models.updateDocument({
-                documentId: document._id,
-                contentHash,
-                storageKey,
-            });
-        }
-        // Dokument existiert noch nicht
-        else{
-            document = await models.createDocument({
-                userId,
-                invoiceId: invoice._id,
-                type: "pdf",
-                storageKey,
-                contentHash,
-            });
-        }
+        contentHash,
+      });
     }
+  }
 
-    // PDF als Stream zurückgeben
-    return fs.createReadStream(filePath);
+  // PDF als Stream zurückgeben
+  return fs.createReadStream(filePath);
 };
 
 
-function createContentHash(invoice){
-    const pdfContent = {
-        invoiceId: invoice._id,
-        invoiceDate: invoice.invoiceDate,
-        dueDate: invoice.dueDate,
-        customerSnapshot: invoice.customerSnapshot,
-        items: invoice.items,
-        totals: invoice.totals,
-        notes: invoice.notes,
-    };
+function createContentHash(invoice) {
+  const pdfContent = {
+    invoiceId: invoice._id,
+    invoiceDate: invoice.invoiceDate,
+    dueDate: invoice.dueDate,
+    customerSnapshot: invoice.customerSnapshot,
+    items: invoice.items,
+    totals: invoice.totals,
+    notes: invoice.notes,
+  };
 
-    return crypto
-        .createHash("sha256")
-        .update(JSON.stringify(pdfContent))
-        .digest("hex");
+  return crypto
+    .createHash("sha256")
+    .update(JSON.stringify(pdfContent))
+    .digest("hex");
 }
 
 
-function createStorageKey({userId, invoiceId}){
-    return path.join(
-        "invoices",
-        userId.toString(),
-        invoiceId.toString(),
-        "invoice.pdf",
-    );
+function createStorageKey({ userId, invoiceId }) {
+  return path.join(
+    "invoices",
+    userId.toString(),
+    `${invoiceId.toString()}.pdf`,
+  );
 }
 
 
-async function fileExists(filePath){
-    try{
-        await fs.promises.access(
-            filePath,
-            fs.constants.F_OK,
-        );
-
-        return true;
-    }
-    catch{
-        return false;
-    }
-}
-
-
-async function savePdf({filePath, pdfBuffer}){
-    await fs.promises.mkdir(
-        path.dirname(filePath),
-        {
-            recursive: true,
-        },
+async function fileExists(filePath) {
+  try {
+    await fs.promises.access(
+      filePath,
+      fs.constants.F_OK,
     );
 
-    await fs.promises.writeFile(
-        filePath,
-        pdfBuffer,
-    );
+    return true;
+  }
+  catch {
+    return false;
+  }
 }
 
 
-async function createPdf({invoice}){
-    try{
-        return await createInvoicePdf({
-            invoice,
-        });
-    }
-    catch(error){
-        throw new Error("Fehler beim Erzeugen der PDF.");
-    }
+async function savePdf({ filePath, pdfBuffer }) {
+  await fs.promises.mkdir(
+    path.dirname(filePath),
+    {
+      recursive: true,
+    },
+  );
+
+  await fs.promises.writeFile(
+    filePath,
+    pdfBuffer,
+  );
+}
+
+
+async function createPdf({ invoice }) {
+  try {
+    return await createInvoicePdf({
+      invoice,
+    });
+  }
+  catch (error) {
+    throw new Error("Fehler beim Erzeugen der PDF.");
+  }
 }

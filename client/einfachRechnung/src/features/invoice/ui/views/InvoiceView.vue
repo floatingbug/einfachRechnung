@@ -174,7 +174,7 @@ async function downloadPdf() {
 async function deleteInvoice(){
 	try {
 		await invoiceStore.deleteInvoice();
-		//router.push("/invoice");
+		router.push("/invoice");
 
 		toast.add({
 			severity: "info",

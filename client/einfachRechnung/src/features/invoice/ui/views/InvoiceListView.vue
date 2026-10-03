@@ -53,8 +53,6 @@ function onInvoiceListActions(event){
 				@action="onInvoiceListActions"
 			/>
 
-			{{invoiceStore.pagination}}
-
 			<Paginator v-if="invoiceStore.pagination?.total > 10"
 				:rows="PAGINATION_LIMIT"
 				:totalRecords="invoiceStore.pagination.total"

@@ -9,51 +9,57 @@ router.post("/", authUser, controller.createInvoice);
 router.get("/", authUser, controller.getInvoices);
 
 router.get(
-	"/by-invoice-number/:invoiceNumber",
-	authUser,
-	controller.getInvoiceByInvoiceNumber
+  "/by-invoice-number/:invoiceNumber",
+  authUser,
+  controller.getInvoiceByInvoiceNumber
 );
 
 router.get(
-	"/:invoiceId",
-    authUser,
-	controller.getInvoiceById
+  "/:invoiceId",
+  authUser,
+  controller.getInvoiceById
 );
 
 router.patch(
-    "/:invoiceNumber",
-    authUser,
-    controller.updateInvoice
+  "/:invoiceNumber",
+  authUser,
+  controller.updateInvoice
 );
 
 router.patch(
-	"/send/:invoiceNumber",
-    authUser,
-	controller.sendInvoice
+  "/send/:invoiceNumber",
+  authUser,
+  controller.sendInvoice
 );
 
 router.patch(
-	"/cancel/:invoiceNumber",
-    authUser,
-	controller.cancelInvoice
+  "/cancel/:invoiceNumber",
+  authUser,
+  controller.cancelInvoice
 );
 
 router.post(
-	"/payments/:invoiceNmber",
-    authUser,
-	controller.addPaymentToInvoice
+  "/payments/:invoiceNmber",
+  authUser,
+  controller.addPaymentToInvoice
 );
 
 router.get(
-	"/export-xrechnung/:invoiceNumber",
-    authUser,
-	controller.exportXInvoice
+  "/export-xrechnung/:invoiceNumber",
+  authUser,
+  controller.exportXInvoice
 );
 
 router.get(
-    "/pdf/:invoiceNumber",
-    authUser,
-    controller.getPdf
+  "/pdf/:invoiceNumber",
+  authUser,
+  controller.getPdf
+);
+
+router.delete(
+  "/:invoiceNumber",
+  authUser,
+  controller.deleteInvoice
 );
 
 

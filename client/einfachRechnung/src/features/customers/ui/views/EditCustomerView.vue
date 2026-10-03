@@ -12,7 +12,7 @@ const customersStore = useCustomersStore();
 const toast = useToast();
 
 
-onMounted(async () => {
+onMounted(() => {
 	getCustomer();
 });
 
@@ -28,7 +28,6 @@ async function getCustomer(){
 			await customersStore.getCustomerById({
 				customerId: route.params.customerId,
 			})
-
 		}
 		catch (error) {
 			toast.add(

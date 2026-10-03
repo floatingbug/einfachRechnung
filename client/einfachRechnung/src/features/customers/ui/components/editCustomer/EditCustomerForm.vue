@@ -90,6 +90,94 @@ function updateCustomer(field, value) {
 						@update:modelValue="updateCustomer('city', $event)"
 					/>
 				</div>
+
+				<div class="input">
+					<label for="postalCode">Postleitzahl</label>
+
+					<InputText
+						:modelValue="customer.postalCode"
+						@update:modelValue="updateCustomer('postalCode', $event)"
+					/>
+				</div>
+
+				<div class="input">
+					<label for="email">E-Mail</label>
+
+					<InputText
+						:modelValue="customer.email"
+						@update:modelValue="updateCustomer('email', $event)"
+					/>
+				</div>
+
+				<div class="input">
+					<label for="phone">Telefon</label>
+
+					<InputText
+						:modelValue="customer.phone"
+						@update:modelValue="updateCustomer('phone', $event)"
+					/>
+				</div>
+
+				<div class="input">
+					<label for="countryCode">Ländercode</label>
+
+					<InputText
+						:modelValue="customer.countryCode"
+						@update:modelValue="updateCustomer('countryCode', $event)"
+					/>
+				</div>
+			</div>
+		</section>
+
+		<Divider />
+
+		<section>
+			<h2>Bankverbindung</h2>
+
+			<div class="input-group">
+				<div class="input">
+					<label for="bankName">Bankname</label>
+
+					<InputText
+						:modelValue="customer.bank.bankName"
+						@update:modelValue="updateCustomer('bankName', $event)"
+					/>
+				</div>
+
+				<div class="input">
+					<label for="iban">IBAN</label>
+
+					<InputText
+						:modelValue="customer.bank.iban"
+						@update:modelValue="updateCustomer('iban', $event)"
+					/>
+				</div>
+
+				<div class="input">
+					<label for="bic">BIC</label>
+
+					<InputText
+						:modelValue="customer.bank.bic"
+						@update:modelValue="updateCustomer('bic', $event)"
+					/>
+				</div>
+			</div>
+		</section>
+
+		<Divider />
+
+		<section>
+			<h2>Steuer</h2>
+
+			<div class="input-group">
+				<div class="input">
+					<label for="vatId">StIdNr.</label>
+
+					<InputText
+						:modelValue="customer.vatId"
+						@update:modelValue="updateCustomer('vatId', $event)"
+					/>
+				</div>
 			</div>
 		</section>
 

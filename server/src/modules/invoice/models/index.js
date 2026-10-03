@@ -3,23 +3,27 @@ const getInvoiceById = require("./getInvoiceById");
 const getInvoices = require("./getInvoices");
 const addPaymentToInvoice = require("./addPaymentToInvoice");
 const updateInvoiceStatus = require("./updateInvoiceStatus");
-const getInvoiceByInvoiceNumber = require("./getInvoiceByInvoiceNumber");
 const updateInvoice = require("./updateInvoice");
+const getInvoiceByInvoiceNumber = require("./getInvoiceByInvoiceNumber");
 const getDocumentByInvoiceId = require("./getDocumentByInvoiceId");
 const updateDocument = require("./updateDocument");
 const createDocument = require("./createDocument");
+const deleteDocument = require("./deleteDocument");
+const deleteInvoice = require("./deleteInvoice");
 
 
 module.exports = {
-	createInvoice,
-    getInvoiceById,
-    getInvoices,
-	addPaymentToInvoice,
-	updateInvoiceStatus,
-    getInvoiceByInvoiceNumber,
-    updateInvoice,
-    
-    getDocumentByInvoiceId,
-    updateDocument,
-    createDocument,
+  createInvoice,
+  getInvoiceById,
+  getInvoices,
+  addPaymentToInvoice,
+  updateInvoiceStatus,
+  getInvoiceByInvoiceNumber,
+  deleteDocument,
+  updateInvoice,
+  deleteInvoice,
+
+  getDocumentByInvoiceId,
+  updateDocument,
+  createDocument,
 };

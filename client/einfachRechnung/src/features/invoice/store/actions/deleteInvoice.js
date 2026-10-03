@@ -1,8 +1,8 @@
-import {services} from "../services";
+import { services } from "../../services";
 
 
-export async function deleteInvoice(){
+export async function deleteInvoice() {
 	await services.deleteInvoice({
-		invoiceId: this.invoice.id,
+		invoiceNumber: this.invoice.invoiceNumber,
 	});
 }

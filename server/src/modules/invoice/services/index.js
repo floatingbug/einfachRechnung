@@ -8,17 +8,19 @@ const exportXInvoice = require("./exportXInvoice");
 const getInvoiceByInvoiceNumber = require("./getInvoiceByInvoiceNumber");
 const updateInvoice = require("./updateInvoice");
 const getPdf = require("./getPdf/getPdf");
+const deleteInvoice = require("./deleteInvoice/deleteInvoice");
 
 
 module.exports = {
-	createInvoice,
-	getInvoiceById,
-	getInvoices,
-	addPaymentToInvoice,
-	sendInvoice,
-	cancelInvoice,
-	exportXInvoice,
-    getInvoiceByInvoiceNumber,
-    updateInvoice,
-    getPdf,
+  createInvoice,
+  getInvoiceById,
+  getInvoices,
+  addPaymentToInvoice,
+  sendInvoice,
+  cancelInvoice,
+  exportXInvoice,
+  getInvoiceByInvoiceNumber,
+  updateInvoice,
+  getPdf,
+  deleteInvoice,
 };
