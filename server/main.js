@@ -17,36 +17,37 @@ require("./src/jobs/expireOffersJob");
 
 
 async function start() {
-    await connect();
+  await connect();
 
-    const app = express();
+  const app = express();
 
-    app.use(express.json(config.jsonConfig));
-    app.use(express.urlencoded(config.urlencodedConfig));
-    app.use(cookieParser());
+  app.set("trust proxy", 1);
+  app.use(express.json(config.jsonConfig));
+  app.use(express.urlencoded(config.urlencodedConfig));
+  app.use(cookieParser());
 
-    if(config.env === "production"){
-        app.use(helmet(config.helmetConfig));
-        app.use(cors(config.corsConfig.production));
-        app.use(rateLimit(config.rateLimitConfig.global));
-    }
-    else{
-        app.use(cors(config.corsConfig.develop));
-    }
+  if (config.env === "production") {
+    app.use(helmet(config.helmetConfig));
+    app.use(cors(config.corsConfig.production));
+    app.use(rateLimit(config.rateLimitConfig.global));
+  }
+  else {
+    app.use(cors(config.corsConfig.develop));
+  }
 
-    app.use('/auth', authRoutes);
-    app.use('/users', userRoutes);
-    app.use('/account', accountRoutes);
-    app.use('/invoices', invoiceRoutes);
-    app.use("/settings", settingsRoutes);
-    app.use("/customers", customersRoutes);
-    app.use("/offers", offerRoutes);
+  app.use('/auth', authRoutes);
+  app.use('/users', userRoutes);
+  app.use('/account', accountRoutes);
+  app.use('/invoices', invoiceRoutes);
+  app.use("/settings", settingsRoutes);
+  app.use("/customers", customersRoutes);
+  app.use("/offers", offerRoutes);
 
-    app.use(errorMiddleware);
+  app.use(errorMiddleware);
 
-    app.listen(config.port, () => {
-        console.log(`Server running on port ${config.port}`);
-    });
+  app.listen(config.port, () => {
+    console.log(`Server running on port ${config.port}`);
+  });
 }
 
 start();
