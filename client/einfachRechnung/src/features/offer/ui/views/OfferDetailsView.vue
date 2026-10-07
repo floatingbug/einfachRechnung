@@ -28,6 +28,7 @@ const router = useRouter();
 const toast = useToast();
 
 const offer = ref(null);
+const isLoading = ref(false);
 
 const customer = computed(() => {
 	if (!offer.value) {
@@ -132,6 +133,8 @@ function onOfferDetailsAction(event) {
 
 
 async function sendOffer() {
+	isLoading.value = true;
+
 	try {
 		await offerStore.sendOffer({
 			offerNumber: offer.value.offerNumber,
@@ -152,6 +155,9 @@ async function sendOffer() {
 			detail: "Angebot konnte nicht versendet werden.",
 			life: 5000,
 		});
+	}
+	finally{
+		isLoading.value = false;
 	}
 }
 
@@ -305,13 +311,11 @@ async function deleteOffer() {
 
 async function updateStatus(event){
 	try {
-		const result = await offerStore.updateStatus({
+		await offerStore.updateStatus({
 			newStatus: event,
 		});
 
 		await loadOffer();
-		//offer.value.possibleStatus = result.allowedChanges
-		console.log(offer.value.possibleActions);
 
 		toast.add({
 			severity: "info",
@@ -334,7 +338,9 @@ async function updateStatus(event){
 
 
 <template>
-	<PageContainer>
+	<PageContainer
+		:isLoading="isLoading"
+	>
 		<DocumentDetailsLayout v-if="offer">
 
 			<template #actions>

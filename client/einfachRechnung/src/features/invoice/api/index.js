@@ -47,6 +47,14 @@ async function sendReminder({ invoiceId }) {
 	return data;
 }
 
+async function sendInvoiceByEmail({params}){
+	const {data} = await http.get(
+		`/invoices/send-by-email/${params}`
+	);
+
+	return data;
+}
+
 async function getInvoiceByInvoiceNumber({ invoiceNumber }) {
 	const { data } = await http.get(
 		`/invoices/by-invoice-number/${invoiceNumber}`
@@ -84,4 +92,5 @@ export const invoiceApi = {
 	getInvoiceByInvoiceNumber,
 	updateInvoice,
 	deleteInvoice,
+	sendInvoiceByEmail,
 };

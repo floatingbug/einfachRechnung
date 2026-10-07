@@ -12,19 +12,23 @@ const createOfferPdf = require("./createOfferPdf");
 
 const convertToInvoice = require("./convertToInvoice");
 
+const sendOfferByEmail = require("./sendOfferByEmail");
+
 
 module.exports = {
-    getOfferTemplate,
-    saveOffer,
-    getOffers,
-    getOfferByOfferNumber,
-    updateOffer,
-    deleteOffer,
-    changeStatus,
-    expireOffers,
+  getOfferTemplate,
+  saveOffer,
+  getOffers,
+  getOfferByOfferNumber,
+  updateOffer,
+  deleteOffer,
+  changeStatus,
+  expireOffers,
 
-    getPdf,
-    createOfferPdf,
+  getPdf,
+  createOfferPdf,
 
-    convertToInvoice,
+  convertToInvoice,
+
+  sendOfferByEmail,
 };

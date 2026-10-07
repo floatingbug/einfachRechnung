@@ -7,18 +7,21 @@ const getPdf = require("./getPdf");
 const deleteOffer = require("./deleteOffer");
 const convertToInvoice = require("./convertToInvoice");
 const changeStatus = require("./changeStatus");
+const sendOfferByEmail = require("./sendOfferByEmail");
 
 
 module.exports = {
-    getOfferTemplate,
-    saveOffer,
-    getOffers,
-    getOfferByOfferNumber,
-    updateOffer,
-    deleteOffer,
-    changeStatus,
+  getOfferTemplate,
+  saveOffer,
+  getOffers,
+  getOfferByOfferNumber,
+  updateOffer,
+  deleteOffer,
+  changeStatus,
 
-    getPdf,
+  sendOfferByEmail,
 
-    convertToInvoice,
+  getPdf,
+
+  convertToInvoice,
 };

@@ -62,5 +62,11 @@ router.delete(
   controller.deleteInvoice
 );
 
+router.get(
+  "/send-by-email/:invoiceNumber",
+  authUser,
+  controller.sendInvoiceByEmail
+);
+
 
 module.exports = router;

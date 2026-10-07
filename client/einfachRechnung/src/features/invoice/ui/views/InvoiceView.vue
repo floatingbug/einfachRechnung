@@ -24,6 +24,7 @@ const toast = useToast();
 
 const invoice = ref(null);
 const customer = ref(null);
+const isLoading = ref(false);
 
 
 // --- lifecycle ---
@@ -59,7 +60,7 @@ function onInvoiceDetailsAction(event) {
 			break;
 
 		case "sendMail":
-			sendInvoice();
+			sendInvoiceByEmail();
 			break;
 
 		case "cancel":
@@ -171,6 +172,35 @@ async function downloadPdf() {
 	}
 }
 
+async function sendInvoiceByEmail(){
+	try {
+		isLoading.value = true;
+
+		await invoiceStore.sendInvoiceByEmail({
+			invoiceNumber: invoice.value.invoiceNumber,
+		});
+
+		await loadInvoice();
+
+		toast.add({
+			severity: "success",
+			summary: "Rechnung wurde versendet.",
+			life: 5000,
+		});
+	}
+	catch (error) {
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail: error.response.data.error,
+			life: 5000,
+		});
+	}
+	finally{
+		isLoading.value = false;
+	}
+}
+
 async function deleteInvoice(){
 	try {
 		await invoiceStore.deleteInvoice();
@@ -254,7 +284,9 @@ function formatInvoiceStatus(status) {
 
 
 <template>
-	<PageContainer>
+	<PageContainer
+		:isLoading="isLoading"
+	>
 		<DocumentDetailsLayout v-if="invoice">
 
 			<!-- Aktionen -->

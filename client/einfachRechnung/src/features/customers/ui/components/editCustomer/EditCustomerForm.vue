@@ -140,7 +140,7 @@ function updateCustomer(field, value) {
 
 					<InputText
 						:modelValue="customer.bank.bankName"
-						@update:modelValue="updateCustomer('bankName', $event)"
+						@update:modelValue="updateCustomer('bank.bankName', $event)"
 					/>
 				</div>
 
@@ -149,7 +149,7 @@ function updateCustomer(field, value) {
 
 					<InputText
 						:modelValue="customer.bank.iban"
-						@update:modelValue="updateCustomer('iban', $event)"
+						@update:modelValue="updateCustomer('bank.iban', $event)"
 					/>
 				</div>
 
@@ -158,7 +158,7 @@ function updateCustomer(field, value) {
 
 					<InputText
 						:modelValue="customer.bank.bic"
-						@update:modelValue="updateCustomer('bic', $event)"
+						@update:modelValue="updateCustomer('bank.bic', $event)"
 					/>
 				</div>
 			</div>

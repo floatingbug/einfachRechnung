@@ -42,6 +42,17 @@ async function getCustomer(){
 	}
 }
 
+function updateCustomerField({ field, value }) {
+	if (field.startsWith("bank.")) {
+		const bankField = field.replace("bank.", "");
+
+		customersStore.customer.bank[bankField] = value;
+		return;
+	}
+
+	customersStore.customer[field] = value;
+}
+
 
 //handler
 async function updateCustomer(){
@@ -76,7 +87,7 @@ async function updateCustomer(){
 	<PageContainer>
 		<EditCustomerForm
 			:customer="customersStore.customer"
-			@update:customer="customersStore.customer[$event.field] = $event.value"
+			@update:customer="updateCustomerField"
 			@submit="updateCustomer"
 			@cancel="getCustomer"
 		/>

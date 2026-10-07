@@ -7,6 +7,7 @@ import { updateInvoice } from "./updateInvoice.js";
 import {getPdf} from "./getPdf";
 import { cancelInvoice } from "./cancelInvoice.js";
 import { deleteInvoice } from "./deleteInvoice.js";
+import { sendInvoiceByEmail } from "./sendInvoiceByEmail.js";
 
 
 export const services = {
@@ -19,4 +20,5 @@ export const services = {
 	updateInvoice,
 	getPdf,
 	deleteInvoice,
+	sendInvoiceByEmail,
 };

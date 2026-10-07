@@ -48,8 +48,6 @@ onMounted(async () => {
 
 	totalInvoicesCount.value = getInvoicesResult.pagination.totalPages;
 	invoices.value = getInvoicesResult.invoices;
-
-	console.log(customer.value);
 })
 
 </script>

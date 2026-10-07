@@ -17,6 +17,11 @@ const emit = defineEmits(["action"]);
 const menu = ref(null);
 
 const itemsMap = {
+	addPayment: {
+		label: "Zahlung hinzufügen",
+		severity: "secondary",
+		command: () => emit("action", {action: "addPayment"}),
+	},
 	showPdf: {
 		label: "PDF anzeigen",
 		severity: "secondary",
@@ -26,6 +31,11 @@ const itemsMap = {
 		label: "PDF herunterladen",
 		severity: "secondary",
 		command: () => emit("action", {action: "downloadPdf"}),
+	},
+	downloadXInvoice: {
+		label: "XRechnung herunterladen",
+		severity: "secondary",
+		command: () => emit("action", {action: "downloadXInvoice"}),
 	},
 	sendEmail: {
 		label: "Per E-Mail senden",
@@ -55,6 +65,15 @@ const items = computed(() => {
 			return  [
 				itemsMap.showPdf,
 				itemsMap.downloadPdf,
+			];
+		case "sent":
+			return [
+				itemsMap.addPayment,
+				itemsMap.showPdf,
+				itemsMap.downloadPdf,
+				itemsMap.downloadXInvoice,
+				itemsMap.sendEmail,
+				itemsMap.cancel,
 			];
 
 		default:

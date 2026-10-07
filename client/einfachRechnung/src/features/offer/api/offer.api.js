@@ -64,7 +64,7 @@ async function deleteOffer({offerNumber}){
 }
 
 async function sendOffer({offerNumber}){
-	const {data} = await http.post(`/offers/${offerNumber}/send`);
+	const {data} = await http.get(`/offers/send-by-email/${offerNumber}`);
 
 	return data;
 }
