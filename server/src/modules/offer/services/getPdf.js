@@ -73,10 +73,12 @@ module.exports = async ({ userId, offerNumber }) => {
         storageKey,
       });
     }
+
     // Dokument existiert noch nicht
     else {
       document = await models.createDocument({
         userId,
+        customerId: offer.customerId,
         offerId: offer._id,
         type: "pdf",
         storageKey,

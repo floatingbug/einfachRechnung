@@ -1,0 +1,8 @@
+import services from "../../services";
+
+
+export async function {{name}}({{{argsObj}}}) {
+	const result = await services.{{name}}({{{argsObj}}});
+
+	return result;
+}

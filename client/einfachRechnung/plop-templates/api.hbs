@@ -1,0 +1,10 @@
+import { http } from "@/shared/api";
+
+
+export async function {{name}}({{{argsObj}}}) {
+	const { data } = await http.{{method}}(
+		{{{requestArgs}}}
+	);
+
+	return data;
+}

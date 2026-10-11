@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, onUnmounted} from "vue";
+import {ref, onMounted, onUnmounted} from "vue";
 import {useRoute} from "vue-router"
 import { useCustomersStore } from "../../store";
 import { PageContainer } from "@/shared/components";
@@ -10,10 +10,13 @@ import { useToast } from 'primevue/usetoast';
 const route = useRoute();
 const customersStore = useCustomersStore();
 const toast = useToast();
+const isLoading = ref(false);
 
 
 onMounted(() => {
+	isLoading.value = true;
 	getCustomer();
+	isLoading.value = false;
 });
 
 onUnmounted(() => {
@@ -84,7 +87,9 @@ async function updateCustomer(){
 
 
 <template>
-	<PageContainer>
+	<PageContainer
+		:isLoading="isLoading"
+	>
 		<EditCustomerForm
 			:customer="customersStore.customer"
 			@update:customer="updateCustomerField"

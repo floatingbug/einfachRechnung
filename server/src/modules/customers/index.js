@@ -1,32 +1,38 @@
 const router = require("express").Router();
 const controller = require("./controller");
-const {authUser} = require("../../middlewares");
+const { authUser } = require("../../middlewares");
 const validator = require("./middlewares/validator");
 
 
 router.get(
-    "/",
-    authUser,
-    controller.getCustomers
+  "/",
+  authUser,
+  controller.getCustomers
 );
 
 router.get(
-    "/:customerId",
-    authUser,
-    controller.getCustomerById
+  "/:customerId",
+  authUser,
+  controller.getCustomerById
 );
 
 router.post(
-    "/",
-    authUser,
-    validator.validateCustomer,
-    controller.createCustomer
+  "/",
+  authUser,
+  validator.validateCustomer,
+  controller.createCustomer
 );
 
 router.put(
-    "/",
-    authUser,
-    controller.updateCustomer
+  "/",
+  authUser,
+  controller.updateCustomer
+);
+
+router.delete(
+  "/:customerId",
+  authUser,
+  controller.deleteCustomer
 );
 
 

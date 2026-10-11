@@ -1,5 +1,5 @@
-import {defineStore} from "pinia";
-import {actions} from "./actions";
+import { defineStore } from "pinia";
+import actions from "./actions";
 
 
 const useCustomersStore = defineStore("storeId", {

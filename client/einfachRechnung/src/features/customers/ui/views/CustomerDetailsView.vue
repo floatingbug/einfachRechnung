@@ -15,7 +15,8 @@ import {
 	CustomerAddress,
 	} from "../components";
 import {
-	Paginator
+	Paginator,
+	useToast,
 } from "primevue";
 
 const customersStore = useCustomersStore();
@@ -23,38 +24,79 @@ const offersStore = useOfferStore();
 const invoicesStore = useInvoiceStore();
 const route = useRoute();
 const router = useRouter();
+const toast = useToast();
+
 const customer = ref();
 const offers = ref([]);
 const invoices = ref([]);
 const totalInvoicesCount = ref();
 const totalOffersCount = ref();
+const isLoading = ref(false);
 
 
 onMounted(async () => {
-	customer.value = await customersStore.getCustomerById({
-		customerId: route.params.customerId,
-	});
+	isLoading.value = true;
 
-	const getOffersResult = await offersStore.getOffers({
-		customerId: customer.value.customerId,
-	});
+	try{
+		customer.value = await customersStore.getCustomerById({
+			customerId: route.params.customerId,
+		});
 
-	totalOffersCount.value = getOffersResult.pagination.totalPages;
-	offers.value = getOffersResult.items;
+		const getOffersResult = await offersStore.getOffers({
+			customerId: customer.value.customerId,
+		});
 
-	const getInvoicesResult = await invoicesStore.getInvoices({
-		customerId: customer.value._id,
-	});
+		totalOffersCount.value = getOffersResult.pagination.totalPages;
+		offers.value = getOffersResult.items;
 
-	totalInvoicesCount.value = getInvoicesResult.pagination.totalPages;
-	invoices.value = getInvoicesResult.invoices;
+		const getInvoicesResult = await invoicesStore.getInvoices({
+			customerId: customer.value._id,
+		});
+
+		totalInvoicesCount.value = getInvoicesResult.pagination.totalPages;
+		invoices.value = getInvoicesResult.invoices;
+	}
+	finally{
+		isLoading.value = false;
+	}
 })
+
+async function deleteCustomer(){
+	isLoading.value = true;
+
+	try{
+		await customersStore.deleteCustomer({
+			customerId: customer.value.id,
+		});
+
+		router.push("/customers")
+
+		toast.add({
+			summary: "Kunde wurde entfernt.",
+			life: 5000,
+		});
+	}
+	catch(error){
+		if(error.response?.data?.message){
+			toast.add({
+				summary: "Kunde nicht entfernt.",
+				detail: error.response.data.message,
+				life: 5000,
+			});
+		}
+	}
+	finally{
+		isLoading.value = false;
+	}
+}
 
 </script>
 
 
 <template>
-	<PageContainer v-if="customer">
+	<PageContainer v-if="customer"
+		:isLoading="isLoading"
+	>
 		<DocumentDetailsLayout>
 			<!-- Kunde -->
 			<template #customer>
@@ -74,6 +116,7 @@ onMounted(async () => {
 					<Button
 						label="Löschen"
 						severity="danger"
+						@click="deleteCustomer"
 					/>
 			</template>
 

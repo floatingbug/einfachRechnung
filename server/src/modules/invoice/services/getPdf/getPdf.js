@@ -77,6 +77,7 @@ module.exports = async ({ userId, invoiceNumber }) => {
     else {
       document = await models.createDocument({
         userId,
+        customerId: invoice.customerId,
         invoiceId: invoice._id,
         type: "pdf",
         storageKey,
