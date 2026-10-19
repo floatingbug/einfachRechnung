@@ -1,26 +1,26 @@
 const models = require("../models");
 
 
-module.exports = async ({userId, page, limit}) => {
-    const result = await models.getCustomers({
-        userId,
-        page,
-        limit,
-    });
+module.exports = async ({ userId, queries }) => {
 
-    const customers = result.customers.map(
-        customer => {
-            const {_id: id, ...customerData} = customer;
+  const result = await models.getCustomers({
+    userId,
+    queries,
+  });
 
-            return {
-                id,
-                ...customerData,
-            }
-        }
-    );
+  const customers = result.customers.map(
+    customer => {
+      const { _id: id, ...customerData } = customer;
 
-    return {
-        customers,
-        pagination: result.pagination,
-    };
+      return {
+        id,
+        ...customerData,
+      }
+    }
+  );
+
+  return {
+    customers,
+    pagination: result.pagination,
+  };
 };

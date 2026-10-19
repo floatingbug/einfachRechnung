@@ -4,22 +4,25 @@ import {useOfferStore} from "../../store";
 import {OfferList, OfferCard} from "../components";
 import Paginator from 'primevue/paginator';
 import {useRouter} from "vue-router";
-import {PageContainer} from "@/shared/components";
+import {PageContainer, Filter} from "@/shared/components";
+import {offerItems} from "../items"
 
 
 const router = useRouter();
 const offerStore = useOfferStore();
 const isInitializing = ref(true);
-const PAGINATION_LIMIT = 10;
 const totalRecords = ref();
 const items = ref([]);
+let activeFilters = {};
+let currPage = 0;
+let currLimit = 10;
 
 
 onMounted(async () => {
 	try{
 		const getOffersResult = await offerStore.getOffers({
-			limit: PAGINATION_LIMIT,
-			page: 1,
+			limit: currLimit,
+			page: currPage,
 		});
 
 		items.value = getOffersResult.items;
@@ -34,9 +37,13 @@ onMounted(async () => {
 
 // --- event handler ---
 async function onPaginationAction(event){
+	currLimit = event.rows;
+	currPage = event.page;
+
 	const getOffersResult = await offerStore.getOffers({
-		limit: event.rows,
-		page: event.page +1,
+		limit: currLimit,
+		page: currPage,
+		filter: activeFilters,
 	});
 
 	items.value = getOffersResult.items;
@@ -47,12 +54,45 @@ function openOfferDetails(offerNumber){
 	router.push(`/offer/details/${offerNumber}`);
 }
 
+async function onUpdateFilter({field, value}){
+	const item = offerItems.value.find(item => item.field === field);
+
+	item.value = value;
+
+	activeFilters = offerItems.value
+		.filter(item => item.value && item.field)
+		.map(item => {
+			return {
+				field: item.field,
+				value: item.value,
+			};
+		});
+
+	currPage = 0;
+
+	console.log(activeFilters);
+
+	const getOffersResult = await offerStore.getOffers({
+		limit: currLimit,
+		page: currPage,
+		filter: activeFilters,
+	});
+
+	items.value = getOffersResult.items;
+	totalRecords.value = getOffersResult.pagination.total;
+}
+
 </script>
 
 
 <template>
 	<PageContainer>
 		<div class="offer-list" v-if="!isInitializing">
+			<Filter
+				:items="offerItems"
+				@update:filter="onUpdateFilter({field: $event.field, value: $event.value})"
+			/>
+
 			<OfferList class="offer-list-data-table"
 				:items="items"
 				@action="openOfferDetails($event.offerNumber)"
@@ -66,7 +106,7 @@ function openOfferDetails(offerNumber){
 				/>
 			</div>
 
-			<Paginator
+			<Paginator v-if="items.length >= 10"
 				:rows="PAGINATION_LIMIT"
 				:totalRecords="totalRecords"
 				:rowsPerPageOptions="[10, 20, 50, 100]"
@@ -81,10 +121,8 @@ function openOfferDetails(offerNumber){
 .offer-list {
 	width: 100%;
 	min-width: 0;
-	height: 100%;
 	display: grid;
 	grid-template-rows: 1fr auto;
-	row-gap: var(--space-xl2);
 }
 
 .offer-list-data-table {
@@ -94,10 +132,10 @@ function openOfferDetails(offerNumber){
 .offer-list-cards {
 	width: 100%;
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 400px));
-	grid-template-rows: repeat(auto-fit, minmax(200px, max-content));
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	justify-items: center;
 	gap: var(--space-md);
+	margin: var(--space-xl) 0 var(--space-xl) 0;
 }
 
 @media (min-width: 1586px) {

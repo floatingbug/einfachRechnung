@@ -17,6 +17,7 @@ const items = getItems({ router });
 
 function isActive(item) {
 	const destinations = {
+		dashboard: "/",
 		invoiceList: "/invoice",
 		invoiceCreate: "/invoice/create",
 		customerList: "/customer",
@@ -24,9 +25,6 @@ function isActive(item) {
 		offerList: "/offer/list",
 		createOffer: "/offer/create",
 		offerToInvoice: "/offer/convert",
-		paymentList: "/payment",
-		openInvoices: "/payment/open",
-		dunning: "/payment/dunning",
 		companySettings: "/settings/company",
 		offerSettings: "/settings/offer",
 		invoiceSettings: "/settings/invoice",

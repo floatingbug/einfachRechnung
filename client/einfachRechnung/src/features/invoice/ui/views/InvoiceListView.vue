@@ -1,67 +1,115 @@
 <script setup>
-import {ref, onMounted} from "vue";
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import Paginator from "primevue/paginator";
+
 import useInvoiceStore from "../../store/useInvoiceStore.js";
-import {InvoiceList} from "../components";
-import Paginator from 'primevue/paginator';
-import {useRouter} from "vue-router";
-import {PageContainer} from "@/shared/components";
-import {createTableItems} from "../items/";
+import { InvoiceList } from "../components";
+import { PageContainer, Filter } from "@/shared/components";
+import { createTableItems, filterItems } from "../items/";
+
 
 const router = useRouter();
 const invoiceStore = useInvoiceStore();
-const tableItems = ref();
+
+const tableItems = ref([]);
 const isInitializing = ref(true);
-const PAGINATION_LIMIT = 10;
+
+const currLimit = ref(10);
+const currPage = ref(0);
+const activeFilters = ref([]);
 
 
 onMounted(async () => {
-	try{
-		await invoiceStore.getInvoices({limit: PAGINATION_LIMIT});
-		tableItems.value = createTableItems(invoiceStore.invoices);
-	}
-	catch {
-		invoiceStore.invoices = [];
-	}
+    try {
+        await invoiceStore.getInvoices({
+            limit: currLimit.value,
+            page: currPage.value,
+        });
 
-
-	isInitializing.value = false;
+        tableItems.value = createTableItems(invoiceStore.invoices);
+    } catch {
+        invoiceStore.invoices = [];
+        tableItems.value = [];
+    } finally {
+        isInitializing.value = false;
+    }
 });
 
-// --- event handler ---
-async function onPaginationAction(event){
-	await invoiceStore.getInvoices({
-		limit: event.rows,
-		page: event.page +1,
-	});
 
-	tableItems.value = createTableItems(invoiceStore.invoices);
+async function loadInvoices() {
+    await invoiceStore.getInvoices({
+        limit: currLimit.value,
+        page: currPage.value,
+        filter: activeFilters.value,
+    });
+
+    tableItems.value = createTableItems(invoiceStore.invoices);
 }
 
-function onInvoiceListActions(event){
-	if(event.action === "openInvoice"){
-		router.push({name: "invoice-details", params: {invoiceNumber: event.invoiceNumber}});
-	}
+async function onPaginationAction(event) {
+    currLimit.value = event.rows;
+    currPage.value = event.page;
+
+    await loadInvoices();
+}
+
+function onInvoiceListActions(event) {
+    if (event.action === "openInvoice") {
+        router.push({
+            name: "invoice-details",
+            params: {
+                invoiceNumber: event.invoiceNumber,
+            },
+        });
+    }
+}
+
+async function onUpdateFilter({ field, value }) {
+    const item = filterItems.value.find(
+        (item) => item.field === field
+    );
+
+    if (!item) return;
+
+    item.value = value;
+
+    activeFilters.value = filterItems.value
+        .filter((item) => item.value !== "" && item.value != null)
+        .map(({ field, value }) => ({
+            field,
+            value,
+        }));
+
+    currPage.value = 0;
+
+    await loadInvoices();
 }
 </script>
 
-
 <template>
-	<PageContainer>
-		<div class="invoice-list" v-if="!isInitializing">
-			<InvoiceList
-				:items="tableItems"
-				@action="onInvoiceListActions"
-			/>
+    <PageContainer>
+        <Filter
+            :items="filterItems"
+            @update:filter="onUpdateFilter"
+        />
 
-			<Paginator v-if="invoiceStore.pagination?.total > 10"
-				:rows="PAGINATION_LIMIT"
-				:totalRecords="invoiceStore.pagination.total"
-				:rowsPerPageOptions="[10, 20, 50, 100]"
-				@page="onPaginationAction"
-			/>
+        <div v-if="!isInitializing" class="invoice-list">
+            <InvoiceList
+                :items="tableItems"
+                @action="onInvoiceListActions"
+            />
 
-		</div>
-	</PageContainer>
+            <Paginator
+                v-if="invoiceStore.pagination?.total > currLimit"
+                :first="currPage * currLimit"
+                :rows="currLimit"
+                :totalRecords="invoiceStore.pagination.total"
+                :rowsPerPageOptions="[10, 20, 50, 100]"
+                @page="onPaginationAction"
+            />
+        </div>
+    </PageContainer>
 </template>
 
 

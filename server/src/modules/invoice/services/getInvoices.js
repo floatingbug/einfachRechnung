@@ -1,19 +1,20 @@
 const model = require("../models");
-const {mapToClientInvoices} = require("../mappers");
+const { mapToClientInvoices } = require("../mappers");
 
 
-module.exports = async ({userId, limit, page, customerId}) => {
-	const result = await model.getInvoices({
-        userId,
-        limit,
-        page,
-        customerId,
-    });
+module.exports = async ({ userId, limit, page, customerId, filterString }) => {
+  const result = await model.getInvoices({
+    userId,
+    limit,
+    page,
+    customerId,
+    filterString,
+  });
 
-    const invoices = mapToClientInvoices(result.items);
+  const invoices = mapToClientInvoices(result.items);
 
-    return {
-        invoices,
-        pagination: result.pagination,
-    };
+  return {
+    invoices,
+    pagination: result.pagination,
+  };
 };

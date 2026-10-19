@@ -1,5 +1,5 @@
 import {AppLayout} from "@/app/layouts";
-import OverviewView from "../views/OverviewView.vue";
+import OverviewView from "../ui/views/OverviewView.vue";
 
 
 export default [

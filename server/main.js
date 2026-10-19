@@ -13,6 +13,7 @@ const invoiceRoutes = require("./src/modules/invoice");
 const customersRoutes = require("./src/modules/customers");
 const settingsRoutes = require("./src/modules/settings");
 const offerRoutes = require("./src/modules/offer");
+const dashboardRoutes = require("./src/modules/dashboard");
 require("./src/jobs/expireOffersJob");
 
 
@@ -42,6 +43,7 @@ async function start() {
   app.use("/settings", settingsRoutes);
   app.use("/customers", customersRoutes);
   app.use("/offers", offerRoutes);
+  app.use("/dashboard", dashboardRoutes);
 
   app.use(errorMiddleware);
 

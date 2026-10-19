@@ -2,28 +2,28 @@ const { catchAsync } = require("../../../utils");
 const services = require("../services");
 
 module.exports = catchAsync(async (req, res) => {
-    const type = req.params?.type ?? "company";
+  const type = req.params?.type ?? "company";
 
-    const allowedTypes = [
-        "company",
-        "email",
-        "invoice",
-        "tax",
-        "offer",
-    ];
+  const allowedTypes = [
+    "company",
+    "email",
+    "invoice",
+    "tax",
+    "offer",
+  ];
 
-    if (!allowedTypes.includes(type)) {
-        return res.status(400).json({
-            message: "Invalid settings type.",
-        });
-    }
-
-    const settings = await services.getSettings({
-        type,
-        userId: req.user.id,
+  if (!allowedTypes.includes(type)) {
+    return res.status(400).json({
+      message: "Invalid settings type.",
     });
+  }
 
-    res.json({
-        ...settings,
-    });
+  const settings = await services.getSettings({
+    type,
+    userId: req.user.id,
+  });
+
+  res.json({
+    ...settings,
+  });
 });

@@ -36,53 +36,53 @@ function openOffer(){
 
 
 			<template #content>
-				<div class="item-group-1-column">
-					<div class="item">
+				<div class="content-items">
+					<div class="content-item">
 						<div class="item-label">
 							Kunde
 						</div>
 
-						<div class="item-value">
+						<div class="content-item__value">
 							{{offer.customerName}}
 						</div>
 					</div>
 
-					<div class="item">
+					<div class="content-item">
 						<div class="item-label">
 							Angebotsdatum
 						</div>
 
-						<div class="item-value">
+						<div class="content-item__value">
 							{{offer.offerDate.toLocaleDateString()}}
 						</div>
 					</div>
 
-					<div class="item">
+					<div class="content-item">
 						<div class="item-label">
 							Gültig bis
 						</div>
 
-						<div class="item-value">
+						<div class="content-item__value">
 							{{offer.validUntil.toLocaleDateString()}}
 						</div>
 					</div>
 
-					<div class="item">
+					<div class="content-item">
 						<div class="item-label">
 							Summer brutto
 						</div>
 
-						<div class="item-value">
+						<div class="content-item__value">
 							{{formatCurrency(offer.totals.totalGross)}}
 						</div>
 					</div>
 
-					<div class="item">
+					<div class="content-item">
 						<div class="item-label">
 							Status
 						</div>
 
-						<div class="item-value">
+						<div class="content-item__value">
 							{{offer.status}}
 						</div>
 					</div>
@@ -101,7 +101,18 @@ function openOffer(){
 	height: 100%;
 }
 
-.item {
+.content-items {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+}
+
+.content-item {
+	display: flex;
 	justify-content: space-between;
+}
+
+.content-item__value {
+	color: var(--text-color-muted);
 }
 </style>

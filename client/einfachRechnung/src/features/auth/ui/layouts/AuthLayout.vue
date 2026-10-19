@@ -1,6 +1,17 @@
 <script setup>
 import Card from "primevue/card";
+import ProgressSpinner from 'primevue/progressspinner';
 import {Logo} from "@/shared/components";
+
+
+defineProps(
+	{
+		isLoading: {
+			type: Boolean,
+			default: false,
+		},
+	},
+);
 
 </script>
 
@@ -22,6 +33,12 @@ import {Logo} from "@/shared/components";
 			</Card>
 		</div>
 	</div>
+
+	<Teleport to="body" v-if="isLoading">
+		<div class="progress-spinner">
+			<ProgressSpinner aria-label="loading" />
+		</div>
+	</Teleport>
 </template>
 
 
@@ -42,5 +59,18 @@ import {Logo} from "@/shared/components";
 
 .form {
 	margin-top: var(--space-xl2);
+}
+
+.progress-spinner {
+	width: 100%;
+	height: 100dvh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: var(--modal-bg-color);
+	z-index: var(--z-modal);
 }
 </style>

@@ -1,4 +1,5 @@
 <script setup>
+import {ref} from "vue";
 import {useRouter} from "vue-router";
 import {useAuthStore} from "../../store";
 import {AuthLayout} from "../layouts";
@@ -10,8 +11,13 @@ const authStore = useAuthStore();
 const router = useRouter();
 const toast = useToast();
 
+const errors = ref();
+const isLoading = ref(false);
+
 
 async function onSubmit(event){
+	isLoading.value = true;
+
 	try{
 		await authStore.signUp({
 			credentials: event,
@@ -19,8 +25,26 @@ async function onSubmit(event){
 
 		router.push("/auth/verify-email");
 	}
-	catch {
-		toast.add({severity: "error", summary: "Registrierung fehlgeschlagen", detail: "Bitte versuchen Sie es erneut.", life: 5000});
+	catch(error) {
+		if(error.response?.data?.inputErrors){
+			errors.value = error.response.data.inputErrors;
+		}
+		else if(error.response?.data?.message){
+			errors.value = {
+				otherError: error.response.data.message,
+			};
+		}
+		else{
+			toast.add({
+				severity: "error",
+				summary: "Registrierung fehlgeschlagen",
+				detail: "Bitte versuchen Sie es erneut.",
+				life: 5000,
+			});
+		}
+	}
+	finally{
+		isLoading.value = false;
 	}
 }
 
@@ -28,13 +52,17 @@ async function onSubmit(event){
 
 
 <template>
-	<AuthLayout>
+	<AuthLayout
+		:isLoading="isLoading"
+	>
 		<template #header>
 			Registrierung
 		</template>
 
 		<template #form>
 			<SignUpForm
+				:errors="errors"
+				@clearError="errors[$event] = []; errors.otherError = ''"
 				@submit="onSubmit"
 			/>
 		</template>

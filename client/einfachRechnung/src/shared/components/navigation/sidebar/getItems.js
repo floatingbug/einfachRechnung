@@ -5,14 +5,14 @@ export default function getItems({router}){
 	const invoiceItems = items.getInvoiceItems({router});
 	const customerItems = items.getCustomersItems({router});
 	const offerItems = items.getOfferItems({router});
-	const paymentItems = items.getPaymentItems({router});
 	const settingItems = items.getSettingsItems({router});
+	const dashboardItems = items.getDashboardItems({router});
 
 	return [
-		invoiceItems,
+		dashboardItems,
 		customerItems,
+		invoiceItems,
 		offerItems,
-		paymentItems,
 		settingItems,
 	];
 };

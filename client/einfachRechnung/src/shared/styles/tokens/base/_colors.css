@@ -1,0 +1,11 @@
+:root {
+	--color-surface-1: var(--p-surface-100);
+}
+
+@media(prefers-color-scheme: dark){
+	:root {
+		--color-surface-1: var(--p-surface-800);
+		--color-surface-2: var(--p-surface-900);
+		--color-surface-3: var(--p-surface-950);
+	}
+}

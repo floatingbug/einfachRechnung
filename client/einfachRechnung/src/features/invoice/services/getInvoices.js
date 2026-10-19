@@ -1,36 +1,56 @@
-import {invoiceApi} from "../api";
+import { invoiceApi } from "../api";
 import { mapInvoiceDtosToEntities } from "../mappers";
 
-export async function getInvoices({page, limit, customerName, status, customerId}){
 
-	const query = new URLSearchParams({
-		limit: limit || 10,
-		page: page || 1,
-	});
+export async function getInvoices({
+    page,
+    limit,
+    customerName,
+    status,
+    customerId,
+    filter,
+} = {}) {
+    const query = new URLSearchParams();
 
-	if (customerName){
-		query.append("customerName", customerName);
-	}
+    if (limit != null) {
+        query.append("limit", String(limit));
+    }
 
-	if (status){
-		query.append("status", status);
-	}
+    if (page != null) {
+        query.append("page", String(page));
+    }
 
-	if(customerId){
-		query.append("customerId", customerId);
-	}
+    if (customerName) {
+        query.append("customerName", customerName);
+    }
 
-	const result = await invoiceApi.getInvoices({ query });
+    if (status) {
+        query.append("status", status);
+    }
 
-	if(!result.invoices){
-		return {
-			invoices: [],
-			pagination: null,
-		};
-	}
+    if (customerId) {
+        query.append("customerId", customerId);
+    }
 
-	return {
-		invoices: mapInvoiceDtosToEntities(result.invoices),
-		pagination: result.pagination,
-	};
+    if (filter?.length) {
+        const filterString = filter
+            .map(({ field, value }) => `${field}:${value}`)
+            .join(",");
+
+        query.append("filter", filterString);
+    }
+
+    const result = await invoiceApi.getInvoices({ query });
+
+    if (!result.invoices) {
+        return {
+            invoices: [],
+            pagination: null,
+        };
+    }
+
+    return {
+        invoices: mapInvoiceDtosToEntities(result.invoices),
+        pagination: result.pagination,
+    };
 }

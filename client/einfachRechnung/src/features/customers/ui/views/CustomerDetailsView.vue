@@ -72,6 +72,7 @@ async function deleteCustomer(){
 		router.push("/customers")
 
 		toast.add({
+			severity: "info",
 			summary: "Kunde wurde entfernt.",
 			life: 5000,
 		});
@@ -79,6 +80,7 @@ async function deleteCustomer(){
 	catch(error){
 		if(error.response?.data?.message){
 			toast.add({
+				serverity: "warn",
 				summary: "Kunde nicht entfernt.",
 				detail: error.response.data.message,
 				life: 5000,

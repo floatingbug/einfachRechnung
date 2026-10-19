@@ -1,31 +1,44 @@
 const validator = require("validator");
 
 function validateSignUp(req, res, next) {
-    const { name, email, password } = req.body;
+  const { name, email, password } = req.body;
+  const errors = {};
 
-    // Name
-    if (!name || validator.isEmpty(name.trim())) {
-        return res.status(400).json({ message: "Name is required" });
-    }
 
-    // Email
-    if (!email || !validator.isEmail(email)) {
-        return res.status(400).json({ message: "Invalid email" });
-    }
+  // Name
+  if (!name || validator.isEmpty(name.trim())) {
+    errors.name = [
+      "Name wird benötigt."
+    ];
+  }
 
-    // Password basic length check
-    if (!password || !validator.isLength(password, { min: 8 })) {
-        return res.status(400).json({ message: "Password must be at least 8 characters long" });
-    }
+  // Email
+  if (!email || !validator.isEmail(email)) {
+    errors.email = [
+      "Ungültige E-Mail Adresse."
+    ];
+  }
 
-    // Password: uppercase, lowercase, number — NO special char required
-    if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password)) {
-        return res.status(400).json({
-            message: "Password must include uppercase, lowercase, and at least one number"
-        });
-    }
+  // Password basic length check
+  if (!password || !validator.isLength(password, { min: 8 })) {
+    errors.password = [
+      "Das Password muss mindestens 8 Zeichen lang sein."
+    ];
+  }
 
-    next();
+  // Password: uppercase, lowercase, number — NO special char required
+  if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password)) {
+    errors.password = [
+      ...errors.password,
+      "Das Password muss mindestens aus einem Großbuchstabe und Kleinbuchstaben und mindestens einer Zahl bestehen."
+    ];
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return res.status(400).json({ inputErrors: errors });
+  }
+
+  next();
 }
 
 module.exports = validateSignUp;

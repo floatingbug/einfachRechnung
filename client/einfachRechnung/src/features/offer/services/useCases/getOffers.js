@@ -1,18 +1,26 @@
-import {offerApi} from "../../api";
-import {mapDtoToOfferEntities} from "../../mappers";
+import { offerApi } from "../../api";
+import { mapDtoToOfferEntities } from "../../mappers";
 
 
-export async function getOffers({limit, page, customerId}){
+export async function getOffers({ limit, page, customerId, filter }) {
 	const params = new URLSearchParams();
+	let filterString;
 
-	if(limit){
+	if (limit) {
 		params.set("limit", limit);
 	}
-	if(page){
+	if (page) {
 		params.set("page", page);
 	}
-	if(customerId){
+	if (customerId) {
 		params.set("customerId", customerId);
+	}
+	if (filter) {
+		filterString = filter
+			.map(f => `${f.field}:${f.value}`)
+			.join(",");
+
+		params.set("filter", filterString);
 	}
 
 	const getOffersResult = await offerApi.getOffers({

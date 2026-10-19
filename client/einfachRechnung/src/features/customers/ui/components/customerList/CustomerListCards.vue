@@ -32,14 +32,9 @@ const emit = defineEmits([ "customerSelected" ]);
 .customer-list-cards {
 	width: 100%;
 	display: grid;
-	grid-template-columns: minmax(240px, 480px);
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	justify-content: center;
 	align-items: stretch;
 	gap: var(--space-md);
-
-	@media(width >= 1167px) {
-		grid-template-columns: repeat(auto-fill, minmax(340px, 400px));
-		justify-content: start;
-	}
 }
 </style>

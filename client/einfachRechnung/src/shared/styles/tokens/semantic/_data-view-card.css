@@ -1,0 +1,10 @@
+:root {
+	--data-view-card-border-color: var(--p-surface-200);
+	--data-view-card-border-radius: var(--radius-md);
+}
+
+@media(prefers-color-scheme: dark){
+	:root{
+		--data-view-card-border-color: var(--p-surface-500);
+	}
+}

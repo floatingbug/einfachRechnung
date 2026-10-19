@@ -1,190 +1,140 @@
+
 <script setup>
 import { computed, ref } from "vue";
-import { FilterMatchMode } from "@primevue/core/api";
 import {
-	DataTable,
-	Column,
-	InputText,
+    DataTable,
+    Column,
 } from "primevue";
 
-
 const props = defineProps({
-	customers: {
-		type: Array,
-		default: () => [],
-	},
+    customers: {
+        type: Array,
+        default: () => [],
+    },
 });
 
+const emit = defineEmits([
+    "customerSelected",
+    "update:sort",
+]);
 
-const emit = defineEmits([ "customerSelected" ]);
-
-
-const filters = ref({
-	customerName: {
-		value: null,
-		matchMode: FilterMatchMode.CONTAINS,
-	},
-	email: {
-		value: null,
-		matchMode: FilterMatchMode.CONTAINS,
-	},
-	phone: {
-		value: null,
-		matchMode: FilterMatchMode.CONTAINS,
-	},
-	city: {
-		value: null,
-		matchMode: FilterMatchMode.CONTAINS,
-	},
-});
-
+const sortField = ref("createdAd");
+const sortOrder = ref(-1);
 
 const customerRows = computed(() => {
-	return props.customers.map((customer) => {
-		const isCompany = customer.customerType === "company";
+    return props.customers.map((customer) => {
+        const isCompany = customer.customerType === "company";
 
-		const customerName = isCompany
-			? customer.companyName ?? ""
-			: `${customer.firstName ?? ""} ${customer.lastName ?? ""}`.trim();
+        const customerName = isCompany
+            ? customer.companyName ?? ""
+            : `${customer.firstName ?? ""} ${customer.lastName ?? ""}`.trim();
 
-		const customerSortName = isCompany
-			? customer.companyName ?? ""
-			: customer.lastName ?? "";
+        const customerSortName = isCompany
+            ? customer.companyName ?? ""
+            : customer.lastName ?? "";
 
-		const contactName = isCompany
-			? customer.contactPerson ?? ""
-			: `${customer.firstName ?? ""} ${customer.lastName ?? ""}`.trim();
+        const contactName = isCompany
+            ? customer.contactPerson ?? ""
+            : `${customer.firstName ?? ""} ${customer.lastName ?? ""}`.trim();
 
-		return {
-			...customer,
-			customerName,
-			customerSortName,
-			contactName,
-		};
-	});
+        return {
+            ...customer,
+            customerName,
+            customerSortName,
+            contactName,
+        };
+    });
 });
+
+function onSort(event) {
+    sortField.value = event.sortField;
+    sortOrder.value = event.sortOrder;
+
+    emit("update:sort", {
+        sortField: sortField.value,
+        sortOrder: sortOrder.value,
+    });
+}
 </script>
 
-
 <template>
-	<DataTable
-		class="customer-list-data-table"
-		v-model:filters="filters"
-		:value="customerRows"
-		size="large"
-		filterDisplay="row"
-		dataKey="id"
-		rowHover
-		sortMode="single"
-		removableSort
-		:pt="{
-			bodyRow: {
-				style: {
-					cursor: 'pointer',
-				},
-			},
-		}"
+    <DataTable
+        class="customer-list-data-table"
+        :value="customerRows"
+        :sortField="sortField"
+        :sortOrder="sortOrder"
+        lazy
+        size="large"
+        dataKey="id"
+        rowHover
+        sortMode="single"
+        removableSort
+        :pt="{
+            bodyRow: {
+                style: {
+                    cursor: 'pointer',
+                },
+            },
+        }"
+        @sort="onSort"
+        @row-click="emit('customerSelected', $event.data.id)"
+    >
+        <Column
+            field="customerName"
+            sortField="customerName"
+            header="Kunde"
+            sortable
+        >
+            <template #body="{ data }">
+                {{ data.customerName || "-" }}
+            </template>
+        </Column>
 
-		@row-click="emit('customerSelected', $event.data.id)"
-	>
-		<Column
-			field="customerName"
-			sortField="customerSortName"
-			header="Kunde"
-			sortable
-			filter
-		>
-			<template #body="{ data }">
-				{{ data.customerName || "-" }}
-			</template>
+        <Column
+            field="contactName"
+            header="Kontakt"
+			sortField="contactPerson"
+            sortable
+        >
+            <template #body="{ data }">
+                {{ data.contactName || "-" }}
+            </template>
+        </Column>
 
-			<template #filter="{ filterModel, filterCallback }">
-				<InputText
-					v-model="filterModel.value"
-					type="text"
-					placeholder="Suchen"
-					@input="filterCallback()"
-				/>
-			</template>
-		</Column>
+        <Column
+            field="email"
+            header="E-Mail"
+        >
+            <template #body="{ data }">
+                {{ data.email || "-" }}
+            </template>
+        </Column>
 
-		<Column
-			field="contactName"
-			header="Kontakt"
-			sortable
-		>
-			<template #body="{ data }">
-				{{ data.contactName || "-" }}
-			</template>
-		</Column>
+        <Column
+            field="phone"
+            header="Telefon"
+        >
+            <template #body="{ data }">
+                {{ data.phone || "-" }}
+            </template>
+        </Column>
 
-		<Column
-			field="email"
-			header="E-Mail"
-			sortable
-			filter
-		>
-			<template #body="{ data }">
-				{{ data.email || "-" }}
-			</template>
-
-			<template #filter="{ filterModel, filterCallback }">
-				<InputText
-					v-model="filterModel.value"
-					type="text"
-					placeholder="Suchen"
-					@input="filterCallback()"
-				/>
-			</template>
-		</Column>
-
-		<Column
-			field="phone"
-			header="Telefon"
-			sortable
-			filter
-		>
-			<template #body="{ data }">
-				{{ data.phone || "-" }}
-			</template>
-
-			<template #filter="{ filterModel, filterCallback }">
-				<InputText
-					v-model="filterModel.value"
-					type="text"
-					placeholder="Suchen"
-					@input="filterCallback()"
-				/>
-			</template>
-		</Column>
-
-		<Column
-			field="city"
-			header="Ort"
-			sortable
-			filter
-		>
-			<template #body="{ data }">
-				{{ data.city || "-" }}
-			</template>
-
-			<template #filter="{ filterModel, filterCallback }">
-				<InputText
-					v-model="filterModel.value"
-					type="text"
-					placeholder="Suchen"
-					@input="filterCallback()"
-				/>
-			</template>
-		</Column>
-	</DataTable>
+        <Column
+            field="city"
+            header="Ort"
+            sortable
+        >
+            <template #body="{ data }">
+                {{ data.city || "-" }}
+            </template>
+        </Column>
+    </DataTable>
 </template>
-
 
 <style lang="scss" scoped>
 .customer-list-data-table {
-	width: 100%;
-	min-width: 0;
-	border: 1px solid var(--table-border-color);
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--table-border-color);
 }
 </style>
