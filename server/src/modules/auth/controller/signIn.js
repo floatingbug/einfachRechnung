@@ -3,6 +3,7 @@ const service = require("../../auth/services");
 const config = require('../../../config');
 
 module.exports = catchAsync(async (req, res) => {
+  console.log("test");
   const { nameOrEmail, password } = req.body;
 
   const result = await service.signIn({ nameOrEmail, password });

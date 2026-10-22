@@ -1,8 +1,6 @@
 const model = require("../models");
-
-function roundCurrency(value){
-	return Math.round((value + Number.EPSILON) * 100) / 100;
-}
+const { mapToClientInvoice } = require("../mappers");
+const { roundCurrency } = require("../../../utils");
 
 function createError(status, message){
 	const error = new Error(message);
@@ -23,26 +21,15 @@ function getPaymentStatus(paidAmount, grossTotal){
 	return "paid";
 }
 
-function getInvoiceStatus({ currentStatus }){
-	if (currentStatus === "cancelled") {
-		return "cancelled";
-	}
-
-	if (currentStatus === "draft") {
-		return "draft";
-	}
-
-	return "sent";
-}
-
 module.exports = async ({
+	userId,
 	invoiceId,
 	amount,
 	paidAt,
 	method,
 	reference,
 }) => {
-	const invoice = await model.getInvoiceById({ invoiceId });
+	const invoice = await model.getInvoiceById({ invoiceId, userId });
 
 	if (!invoice) {
 		throw createError(404, "Invoice not found");
@@ -56,14 +43,27 @@ module.exports = async ({
 		throw createError(400, "Draft invoices cannot receive payments");
 	}
 
-	const nextPaidAmount = roundCurrency(invoice.paidAmount + amount);
+	const grossTotal = Number(invoice.totals?.totalGross ?? 0);
+	const currentPaidAmount = Number(invoice.payment?.paidAmount ?? 0);
+	const currentOpenAmount = Number(
+		invoice.payment?.openAmount ?? grossTotal - currentPaidAmount
+	);
 
-	if (nextPaidAmount > invoice.grossTotal) {
-		throw createError(400, "Paid amount cannot exceed grossTotal");
+	if (!Number.isFinite(amount) || amount <= 0) {
+		throw createError(400, "Payment amount must be greater than zero");
 	}
 
+	if (amount > currentOpenAmount) {
+		throw createError(400, "Payment amount cannot exceed the open amount");
+	}
+
+	const paymentAmount = roundCurrency(amount);
+	const nextPaidAmount = roundCurrency(currentPaidAmount + paymentAmount);
+	const nextOpenAmount = roundCurrency(Math.max(0, grossTotal - nextPaidAmount));
+	const paymentStatus = getPaymentStatus(nextPaidAmount, grossTotal);
+
 	const payment = {
-		amount: roundCurrency(amount),
+		amount: paymentAmount,
 		paidAt,
 		method: method || "",
 		reference: reference || "",
@@ -73,21 +73,11 @@ module.exports = async ({
 		invoiceId,
 		payment,
 		paidAmount: nextPaidAmount,
-		openAmount: roundCurrency(invoice.grossTotal - nextPaidAmount),
-		paymentStatus: getPaymentStatus(nextPaidAmount, invoice.grossTotal),
+		openAmount: nextOpenAmount,
+		paymentStatus,
 	});
 
-	const nextStatus = getInvoiceStatus({
-		currentStatus: invoice.status,
-		dueDate: invoice.dueDate,
-		paidAmount: nextPaidAmount,
-		grossTotal: invoice.grossTotal,
-	});
+	const updatedInvoice = await model.getInvoiceById({ invoiceId, userId });
 
-	await model.updateInvoiceStatus({
-		invoiceId,
-		status: nextStatus,
-	});
-
-	return model.getInvoiceById({ invoiceId });
+	return mapToClientInvoice(updatedInvoice);
 };

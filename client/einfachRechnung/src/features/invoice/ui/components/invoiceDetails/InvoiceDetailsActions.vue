@@ -7,7 +7,15 @@ const props = defineProps({
 	status: {
 		type: String,
 		required: true,
-	}
+	},
+	paymentStatus: {
+		type: String,
+		default: "",
+	},
+	openAmount: {
+		type: Number,
+		default: 0,
+	},
 });
 
 
@@ -59,6 +67,12 @@ const isEditable = computed(() => {
 	return props.status !== "sent" && props.status !== "cancelled";
 })
 
+const canAddPayment = computed(() => {
+	return props.status === "sent" &&
+		props.paymentStatus !== "paid" &&
+		props.openAmount > 0;
+})
+
 const items = computed(() => {
 	switch(props.status){
 		case "cancelled":
@@ -68,7 +82,7 @@ const items = computed(() => {
 			];
 		case "sent":
 			return [
-				itemsMap.addPayment,
+				...(canAddPayment.value ? [itemsMap.addPayment] : []),
 				itemsMap.showPdf,
 				itemsMap.downloadPdf,
 				itemsMap.downloadXInvoice,
@@ -77,7 +91,9 @@ const items = computed(() => {
 			];
 
 		default:
-			return Object.values(itemsMap);
+			return Object.values(itemsMap).filter(item => {
+				return item !== itemsMap.addPayment || canAddPayment.value;
+			});
 	}
 })
 

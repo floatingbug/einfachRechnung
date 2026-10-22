@@ -1,4 +1,3 @@
-```vue
 <script setup>
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
@@ -18,6 +17,7 @@ const emit = defineEmits(["action"]);
 const paymentStatusMap = {
 	unpaid: "Unbezahlt",
 	partial: "Teilzahlung",
+	partially_paid: "Teilzahlung",
 	paid: "Bezahlt",
 };
 
@@ -25,6 +25,7 @@ const invoiceStatusMap = {
 	draft: "Entwurf",
 	sent: "Gesendet",
 	cancelled: "Storniert",
+	paid: "Bezahlt",
 };
 
 // --- event handler ---
@@ -221,4 +222,3 @@ function onRowClick(event) {
 	}
 }
 </style>
-```

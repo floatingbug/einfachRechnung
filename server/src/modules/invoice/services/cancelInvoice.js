@@ -17,7 +17,7 @@ module.exports = async ({userId, invoiceNumber }) => {
 		throw createError(404, "Rechnung nicht gefunden.");
 	}
 
-	if (invoice.paymentStatus === "paid") {
+	if (invoice.payment?.status === "paid") {
 		throw createError(400, "Bezahlte Rechnungen können nicht Stoniert werden.");
 	}
 

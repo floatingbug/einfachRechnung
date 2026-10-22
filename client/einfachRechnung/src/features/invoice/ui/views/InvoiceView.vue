@@ -11,10 +11,15 @@ import {
 } from "@/shared/components";
 import {DocumentDetailsLayout} from "@/shared/layouts";
 import {
+	AddPaymentDialog,
 	InvoiceDetailsActions,
 	InvoiceDetailsSummary,
 } from "../components";
-import {formatCurrency} from "@/shared/helpers";
+import {
+	formatCurrency,
+	formatPaymentMethod,
+	formatPaymentStatus,
+} from "@/shared/helpers";
 
 
 const invoiceStore = useInvoiceStore();
@@ -25,6 +30,7 @@ const toast = useToast();
 const invoice = ref(null);
 const customer = ref(null);
 const isLoading = ref(false);
+const isPaymentDialogVisible = ref(false);
 
 
 // --- lifecycle ---
@@ -51,6 +57,10 @@ function onInvoiceDetailsAction(event) {
 			router.push(`/invoice/edit/${invoiceNumber}`);
 			break;
 
+		case "addPayment":
+			isPaymentDialogVisible.value = true;
+			break;
+
 		case "showPdf":
 			showPdf();
 			break;
@@ -70,31 +80,6 @@ function onInvoiceDetailsAction(event) {
 		case "delete":
 			deleteInvoice();
 			break;
-	}
-}
-
-
-async function sendInvoice() {
-	try {
-		await invoiceStore.sendInvoice({
-			invoiceNumber: invoice.value.invoiceNumber,
-		});
-
-		toast.add({
-			severity: "success",
-			summary: "Rechnung versendet",
-			life: 5000,
-		});
-
-		await loadInvoice();
-	}
-	catch {
-		toast.add({
-			severity: "error",
-			summary: "Fehler",
-			detail: "Rechnung konnte nicht versendet werden.",
-			life: 5000,
-		});
 	}
 }
 
@@ -201,6 +186,42 @@ async function sendInvoiceByEmail(){
 	}
 }
 
+async function savePayment(payment){
+	try {
+		isLoading.value = true;
+
+		await invoiceStore.registerPayment({
+			invoiceId: invoice.value.id,
+			payment,
+		});
+
+		await loadInvoice();
+
+		isPaymentDialogVisible.value = false;
+
+		toast.add({
+			severity: "success",
+			summary: "Zahlung erfasst",
+			life: 5000,
+		});
+	}
+	catch (error) {
+		const detail = error.response?.data?.error?.message ??
+			error.response?.data?.error ??
+			"Zahlung konnte nicht gespeichert werden.";
+
+		toast.add({
+			severity: "error",
+			summary: "Fehler",
+			detail,
+			life: 5000,
+		});
+	}
+	finally {
+		isLoading.value = false;
+	}
+}
+
 async function deleteInvoice(){
 	try {
 		await invoiceStore.deleteInvoice();
@@ -247,38 +268,31 @@ async function loadInvoice() {
 	}
 }
 
-function formatPaymentMethod(method) {
-	const methods = {
-		bank_transfer: "Überweisung",
-		cash: "Barzahlung",
-		card: "Kartenzahlung",
-		direct_debit: "Lastschrift",
-	};
-
-	return methods[method] ?? method;
-}
-
-
-function formatPaymentStatus(status) {
-	const statuses = {
-		unpaid: "Unbezahlt",
-		partially_paid: "Teilbezahlt",
-		paid: "Bezahlt",
-	};
-
-	return statuses[status] ?? status;
-}
-
-
 function formatInvoiceStatus(status) {
 	const statuses = {
 		draft: "Entwurf",
+		sent: "Versendet",
 		open: "Offen",
 		cancelled: "Storniert",
 		paid: "Bezahlt",
 	};
 
 	return statuses[status] ?? status;
+}
+
+
+function formatDate(value) {
+	if (!value) {
+		return "";
+	}
+
+	const date = new Date(value);
+
+	if (Number.isNaN(date.getTime())) {
+		return value;
+	}
+
+	return date.toLocaleDateString("de-DE");
 }
 </script>
 
@@ -293,6 +307,8 @@ function formatInvoiceStatus(status) {
 			<template #actions>
 				<InvoiceDetailsActions
 					:status="invoice.status"
+					:paymentStatus="invoice.payment.status"
+					:openAmount="invoice.payment.openAmount"
 					@action="onInvoiceDetailsAction"
 				/>
 			</template>
@@ -413,14 +429,29 @@ function formatInvoiceStatus(status) {
 					<div
 						v-for="(payment, index) in invoice.payment.payments"
 						:key="payment.id ?? index"
-						class="item"
+						class="payment-list-item"
 					>
-						<div class="item-label">
-							{{ payment.date }}
+						<div class="item">
+							<div class="item-label">
+								{{ formatDate(payment.paidAt) }}
+							</div>
+
+							<div class="item-value">
+								{{ formatCurrency(payment.amount) }}
+							</div>
 						</div>
 
-						<div class="item-value">
-							{{ formatCurrency(payment.amount) }}
+						<div
+							v-if="payment.method || payment.reference"
+							class="payment-meta"
+						>
+							<span v-if="payment.method">
+								{{ formatPaymentMethod(payment.method) }}
+							</span>
+
+							<span v-if="payment.reference">
+								{{ payment.reference }}
+							</span>
 						</div>
 					</div>
 				</div>
@@ -517,6 +548,14 @@ function formatInvoiceStatus(status) {
 				</div>
 			</template>
 		</DocumentDetailsLayout>
+
+		<AddPaymentDialog
+			v-if="invoice"
+			:visible="isPaymentDialogVisible"
+			:invoice="invoice"
+			@close="isPaymentDialogVisible = false"
+			@submit="savePayment"
+		/>
 	</PageContainer>
 </template>
 
@@ -538,6 +577,19 @@ function formatInvoiceStatus(status) {
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-md);
+}
+
+.payment-list-item {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+}
+
+.payment-meta {
+	display: flex;
+	gap: var(--space-md);
+	color: var(--text-color-muted);
+	font-size: var(--font-size-sm);
 }
 
 .history {

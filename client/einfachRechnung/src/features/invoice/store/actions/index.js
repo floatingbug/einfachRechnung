@@ -7,6 +7,7 @@ import {getPdf} from "./getPdf.js";
 import {cancelInvoice} from "./cancelInvoice.js";
 import {deleteInvoice} from "./deleteInvoice.js";
 import {sendInvoiceByEmail} from "./sendInvoiceByEmail.js";
+import {registerPayment} from "./registerPayment.js";
 
 
 export const actions = {
@@ -19,4 +20,5 @@ export const actions = {
 	getPdf,
 	deleteInvoice,
 	sendInvoiceByEmail,
+	registerPayment,
 };

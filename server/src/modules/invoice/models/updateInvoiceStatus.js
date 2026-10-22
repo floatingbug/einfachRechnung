@@ -9,7 +9,7 @@ module.exports = async ({ invoiceNumber, invoiceId, status }) => {
         filter.invoiceNumber = invoiceNumber;
     }
     else{
-        filter.invoiceId = invoiceId;
+        filter._id = new ObjectId(invoiceId);
     }
 
 	const updateDocument = {

@@ -50,8 +50,8 @@ export default function mapInvoiceDtoToEntity(dto = {}){
 		invoice.reminders = [];
 	}
 
-	if(Array.isArray(dto.payments)){
-		invoice.payments = dto.payments;
+	if(Array.isArray(dto.payment?.payments)){
+		invoice.payments = dto.payment.payments;
 	}
 	else{
 		invoice.payments = [];
@@ -88,7 +88,8 @@ export default function mapInvoiceDtoToEntity(dto = {}){
 			invoice.customer.contactPerson = dto.customer.contactPerson ?? "";
 		}
 		else{
-			invoice.customer.name = `${dto.customer.firstName} ${dto.customer.lastName}`;
+			const fullName = `${dto.customer.firstName ?? ""} ${dto.customer.lastName ?? ""}`.trim();
+			invoice.customer.name = dto.customer.name ?? fullName;
 		}
 	}
 	else{

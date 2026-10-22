@@ -16,15 +16,15 @@ module.exports = async ({
 
 	const updateDocument = {
 		$push: {
-			payments: {
+			"payment.payments": {
 				...payment,
 				createdAt: new Date(),
 			},
 		},
 		$set: {
-			paidAmount,
-			openAmount,
-			paymentStatus,
+			"payment.paidAmount": paidAmount,
+			"payment.openAmount": openAmount,
+			"payment.status": paymentStatus,
 			updatedAt: new Date(),
 		},
 	};

@@ -1,6 +1,10 @@
 <script setup>
 import {computed} from "vue";
-import {formatCurrency} from "@/shared/helpers";
+import {
+	formatCurrency,
+	formatPaymentMethod,
+	formatPaymentStatus,
+} from "@/shared/helpers";
 
 
 const props = defineProps({
@@ -32,35 +36,13 @@ function formatDate(value) {
 function formatStatus(status) {
 	const statuses = {
 		draft: "Entwurf",
+		sent: "Versendet",
 		open: "Offen",
 		cancelled: "Storniert",
 		paid: "Bezahlt",
 	};
 
 	return statuses[status] ?? status;
-}
-
-
-function formatPaymentStatus(status) {
-	const statuses = {
-		unpaid: "Unbezahlt",
-		partially_paid: "Teilbezahlt",
-		paid: "Bezahlt",
-	};
-
-	return statuses[status] ?? status;
-}
-
-
-function formatPaymentMethod(method) {
-	const methods = {
-		bank_transfer: "Überweisung",
-		cash: "Barzahlung",
-		card: "Kartenzahlung",
-		direct_debit: "Lastschrift",
-	};
-
-	return methods[method] ?? method;
 }
 </script>
 

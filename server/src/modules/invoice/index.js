@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const controller = require("./controller");
+const validator = require("./validator");
 const { authUser } = require("../../middlewares");
 
 
@@ -39,8 +40,9 @@ router.patch(
 );
 
 router.post(
-  "/payments/:invoiceNmber",
+  "/payments/:invoiceId",
   authUser,
+  validator.addPayment,
   controller.addPaymentToInvoice
 );
 

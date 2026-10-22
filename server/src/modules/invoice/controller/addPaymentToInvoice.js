@@ -3,6 +3,7 @@ const services = require("../services");
 
 module.exports = catchAsync(async (req, res) => {
 	const invoice = await services.addPaymentToInvoice({
+		userId: req.user.id,
 		invoiceId: req.params.invoiceId,
 		amount: req.body.amount,
 		paidAt: req.body.paidAt,
