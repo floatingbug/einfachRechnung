@@ -1,53 +1,61 @@
 <script setup>
-import {ref, onMounted} from "vue";
+import {ref, computed, onMounted} from "vue";
 import {useOfferStore} from "../../store";
 import {OfferList, OfferCard} from "../components";
 import Paginator from 'primevue/paginator';
 import {useRouter} from "vue-router";
-import {PageContainer, Filter} from "@/shared/components";
+import {PageContainer, Filter, ListEmptyState, ListErrorState} from "@/shared/components";
 import {offerItems} from "../items"
 
 
 const router = useRouter();
 const offerStore = useOfferStore();
-const isInitializing = ref(true);
-const totalRecords = ref();
+const isLoading = ref(true);
+const error = ref(null);
+const totalRecords = ref(0);
 const items = ref([]);
-let activeFilters = {};
-let currPage = 0;
-let currLimit = 10;
+const currPage = ref(0);
+const currLimit = ref(10);
+let activeFilters = null;
+
+const hasItems = computed(() => items.value.length > 0);
 
 
-onMounted(async () => {
-	try{
+onMounted(() => {
+	loadOffers();
+});
+
+
+async function loadOffers(){
+	isLoading.value = true;
+	error.value = null;
+
+	try {
 		const getOffersResult = await offerStore.getOffers({
-			limit: currLimit,
-			page: currPage,
+			limit: currLimit.value,
+			page: currPage.value,
+			filter: activeFilters,
 		});
 
 		items.value = getOffersResult.items;
 		totalRecords.value = getOffersResult.pagination.total;
 	}
-	catch {
+	catch (err) {
 		items.value = [];
+		totalRecords.value = 0;
+		error.value = err?.message ?? null;
 	}
-
-	isInitializing.value = false;
-});
+	finally {
+		isLoading.value = false;
+	}
+}
 
 // --- event handler ---
 async function onPaginationAction(event){
-	currLimit = event.rows;
-	currPage = event.page;
+	currLimit.value = event.rows;
+	currPage.value = event.page;
 
-	const getOffersResult = await offerStore.getOffers({
-		limit: currLimit,
-		page: currPage,
-		filter: activeFilters,
-	});
-
-	items.value = getOffersResult.items;
-	totalRecords.value = getOffersResult.pagination.total;
+	await loadOffers();
 }
 
 function openOfferDetails(offerNumber){
@@ -68,61 +76,89 @@ async function onUpdateFilter({field, value}){
 			};
 		});
 
-	currPage = 0;
+	currPage.value = 0;
 
-	console.log(activeFilters);
+	await loadOffers();
+}
 
-	const getOffersResult = await offerStore.getOffers({
-		limit: currLimit,
-		page: currPage,
-		filter: activeFilters,
-	});
+// Filter.vue already cleared the inputs, reload without any filter.
+async function onResetFilter(){
+	activeFilters = null;
+	currPage.value = 0;
 
-	items.value = getOffersResult.items;
-	totalRecords.value = getOffersResult.pagination.total;
+	await loadOffers();
 }
 
 </script>
 
 
 <template>
-	<PageContainer>
-		<div class="offer-list" v-if="!isInitializing">
+	<PageContainer :is-loading="isLoading && !hasItems && !error">
+		<ListErrorState
+			v-if="error"
+			:message="error"
+			@retry="loadOffers"
+		/>
+
+		<template v-else>
 			<Filter
 				:items="offerItems"
 				@update:filter="onUpdateFilter({field: $event.field, value: $event.value})"
+				@reset="onResetFilter"
 			/>
 
-			<OfferList class="offer-list-data-table"
-				:items="items"
-				@action="openOfferDetails($event.offerNumber)"
+			<ListEmptyState
+				v-if="!isLoading && !hasItems"
+				class="offer-list-empty"
+				title="Keine Angebote gefunden"
+				message="Erstellen Sie ein neues Angebot oder passen Sie die Filter an."
+				action-label="Neues Angebot"
+				@action="router.push('/offer/create')"
 			/>
 
-			<div class="offer-list-cards">
-				<OfferCard
-					v-for="offer in items" :key="offer.offerNumber"
-					:offer="offer"
+			<div v-else class="offer-list">
+				<OfferList class="offer-list-data-table"
+					:items="items"
+					:loading="isLoading"
 					@action="openOfferDetails($event.offerNumber)"
 				/>
-			</div>
 
-			<Paginator v-if="items.length >= 10"
-				:rows="PAGINATION_LIMIT"
+				<div class="offer-list-cards">
+					<OfferCard
+						v-for="offer in items" :key="offer.offerNumber"
+						:offer="offer"
+						@action="openOfferDetails($event.offerNumber)"
+					/>
+				</div>
+			</div>
+		</template>
+
+		<template #paginator>
+			<Paginator
+				v-if="!error && totalRecords > 0"
+				:first="currPage * currLimit"
+				:rows="currLimit"
 				:totalRecords="totalRecords"
 				:rowsPerPageOptions="[10, 20, 50, 100]"
 				@page="onPaginationAction"
 			/>
-		</div>
+		</template>
 	</PageContainer>
 </template>
 
 
 <style scoped lang="scss">
+@use "@/shared/styles/breakpoints" as bp;
+@use "@/shared/styles/media" as media;
+
 .offer-list {
 	width: 100%;
 	min-width: 0;
-	display: grid;
-	grid-template-rows: 1fr auto;
+	margin-top: var(--space-xl);
+}
+
+.offer-list-empty {
+	margin-top: var(--space-xl);
 }
 
 .offer-list-data-table {
@@ -135,10 +171,9 @@ async function onUpdateFilter({field, value}){
 	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	justify-items: center;
 	gap: var(--space-md);
-	margin: var(--space-xl) 0 var(--space-xl) 0;
 }
 
-@media (min-width: 1586px) {
+@include media.up(bp.$bp-xl) {
 	.offer-list-data-table {
 		display: block;
 	}
@@ -146,6 +181,5 @@ async function onUpdateFilter({field, value}){
 	.offer-list-cards {
 		display: none;
 	}
-
 }
 </style>

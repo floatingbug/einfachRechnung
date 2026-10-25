@@ -15,7 +15,7 @@ export async function getOffers({ limit, page, customerId, filter }) {
 	if (customerId) {
 		params.set("customerId", customerId);
 	}
-	if (filter) {
+	if (filter?.length) {
 		filterString = filter
 			.map(f => `${f.field}:${f.value}`)
 			.join(",");

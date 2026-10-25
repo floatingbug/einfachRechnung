@@ -1,25 +1,27 @@
 <script setup>
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import { StatusTag } from "@/shared/components";
 import { formatCurrency } from "@/shared/helpers";
+import { getOfferStatus } from "../../items/statusItems.js";
 
 defineProps({
 	items: {
 		type: Array,
 		required: true,
 	},
+	loading: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const emit = defineEmits(["action"]);
 
-// --- status mapping (UI labels) ---
-const offerStatusMap = {
-	draft: "Entwurf",
-	sent: "Gesendet",
-	accepted: "Angenommen",
-	rejected: "Abgelehnt",
-	expired: "Abgelaufen",
-};
+// --- helpers ---
+function formatAmount(value) {
+	return value == null ? "-" : formatCurrency(value);
+}
 
 // --- table setup ---
 function onRowClick(event) {
@@ -34,9 +36,11 @@ function onRowClick(event) {
 	<DataTable
 		class="offer-list-data-table"
 		:value="items"
+		:loading="loading"
 		size="large"
 		dataKey="id"
 		rowHover
+		stripedRows
 		:pt="{
 			bodyRow: {
 				style: {
@@ -82,9 +86,10 @@ function onRowClick(event) {
 			field="totals.totalGross"
 			header="Gesamtsumme (Brutto)"
 			sortable
+			align="right"
 		>
 			<template #body="{ data }">
-				{{ formatCurrency(data.totals.totalGross) }}
+				{{ formatAmount(data.totals?.totalGross) }}
 			</template>
 		</Column>
 
@@ -94,7 +99,10 @@ function onRowClick(event) {
 			sortable
 		>
 			<template #body="{ data }">
-				{{ offerStatusMap[data.status] }}
+				<StatusTag
+					:label="getOfferStatus(data.status).label"
+					:severity="getOfferStatus(data.status).severity"
+				/>
 			</template>
 		</Column>
 	</DataTable>

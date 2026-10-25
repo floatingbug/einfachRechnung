@@ -12,18 +12,32 @@ defineProps({
 
 const emit = defineEmits([ "customerSelected" ]);
 
+
+function onKeyActivate(event, customerId){
+	if(event.key !== "Enter" && event.key !== " ") return;
+
+	event.preventDefault();
+	emit("customerSelected", customerId);
+}
+
 </script>
 
 
 <template>
 	<div class="customer-list-cards">
-		<CustomerCard class="card--interactive"
+		<div
+			class="customer-list-cards__item"
 			v-for="customer in customers"
 			:key="customer._id"
-			:customer="customer"
+			role="button"
+			tabindex="0"
 			@click="emit('customerSelected', customer.id)"
-		/>
-
+			@keydown="onKeyActivate($event, customer.id)"
+		>
+			<CustomerCard class="card--interactive"
+				:customer="customer"
+			/>
+		</div>
 	</div>
 </template>
 
@@ -36,5 +50,15 @@ const emit = defineEmits([ "customerSelected" ]);
 	justify-content: center;
 	align-items: stretch;
 	gap: var(--space-md);
+}
+
+.customer-list-cards__item {
+	height: 100%;
+
+	&:focus-visible {
+		outline: 2px solid var(--font-color-primary);
+		outline-offset: 2px;
+		border-radius: var(--radius-md);
+	}
 }
 </style>

@@ -7,7 +7,7 @@ export async function getCustomers({limit, page, sort, filter}){
 		page,
 	});
 
-	if (filter) {
+	if (filter?.length) {
 		const filterQuery = filter
 			.map(f => `${f.field}:${f.value}`)
 			.join(",");

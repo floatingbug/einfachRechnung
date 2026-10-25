@@ -11,6 +11,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    loading: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const emit = defineEmits([
@@ -63,10 +67,12 @@ function onSort(event) {
         :value="customerRows"
         :sortField="sortField"
         :sortOrder="sortOrder"
+        :loading="loading"
         lazy
         size="large"
         dataKey="id"
         rowHover
+        stripedRows
         sortMode="single"
         removableSort
         :pt="{

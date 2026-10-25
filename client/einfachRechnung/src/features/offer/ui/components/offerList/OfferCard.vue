@@ -1,6 +1,8 @@
 <script setup>
 import Card from "primevue/card";
-import {formatCurrency} from "@/shared/helpers";
+import { StatusTag } from "@/shared/components";
+import { formatCurrency } from "@/shared/helpers";
+import { getOfferStatus } from "../../items/statusItems.js";
 
 
 const props = defineProps({
@@ -21,15 +23,33 @@ function openOffer(){
 	})
 }
 
+function onKeydown(event){
+	if(event.key !== "Enter" && event.key !== " ") return;
+
+	event.preventDefault();
+	openOffer();
+}
+
 </script>
 
 <template>
 	<div class="offer-card">
 		<Card
+			class="card--interactive"
+			role="button"
+			tabindex="0"
 			@click="openOffer"
+			@keydown="onKeydown"
 		>
 			<template #title>
-				{{offer.offerNumber}}
+				<div class="offer-card__title">
+					{{offer.offerNumber}}
+
+					<StatusTag
+						:label="getOfferStatus(offer.status).label"
+						:severity="getOfferStatus(offer.status).severity"
+					/>
+				</div>
 
 				<Divider />
 			</template>
@@ -53,7 +73,7 @@ function openOffer(){
 						</div>
 
 						<div class="content-item__value">
-							{{offer.offerDate.toLocaleDateString()}}
+							{{offer.offerDate?.toLocaleDateString("de-DE")}}
 						</div>
 					</div>
 
@@ -63,27 +83,17 @@ function openOffer(){
 						</div>
 
 						<div class="content-item__value">
-							{{offer.validUntil.toLocaleDateString()}}
+							{{offer.validUntil?.toLocaleDateString("de-DE")}}
 						</div>
 					</div>
 
 					<div class="content-item">
 						<div class="item-label">
-							Summer brutto
+							Summe brutto
 						</div>
 
 						<div class="content-item__value">
-							{{formatCurrency(offer.totals.totalGross)}}
-						</div>
-					</div>
-
-					<div class="content-item">
-						<div class="item-label">
-							Status
-						</div>
-
-						<div class="content-item__value">
-							{{offer.status}}
+							{{formatCurrency(offer.totals?.totalGross)}}
 						</div>
 					</div>
 				</div>
@@ -95,10 +105,24 @@ function openOffer(){
 <style scoped lang="scss">
 .offer-card {
 	width: 100%;
+	height: 100%;
 }
 
 .p-card {
 	height: 100%;
+
+	&:focus-visible {
+		outline: 2px solid var(--font-color-primary);
+		outline-offset: 2px;
+	}
+}
+
+.offer-card__title {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--space-md);
 }
 
 .content-items {
@@ -110,9 +134,11 @@ function openOffer(){
 .content-item {
 	display: flex;
 	justify-content: space-between;
+	gap: var(--space-md);
 }
 
 .content-item__value {
 	color: var(--text-color-muted);
+	text-align: right;
 }
 </style>

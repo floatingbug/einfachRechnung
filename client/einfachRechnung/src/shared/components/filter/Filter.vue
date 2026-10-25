@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue";
 import {
 	InputText,
 	Accordion,
@@ -9,23 +10,44 @@ import {
 	InputGroupAddon,
 	FloatLabel,
 	Select,
+	Badge,
 } from "primevue";
 
 import Times from '@primeicons/vue/times';
 
-defineProps({
+const props = defineProps({
 	items:{
 		type: Array,
-		default: [],
+		default: () => [],
 	}
 })
 
 
-const emit = defineEmits([ "update:filter" ]);
+const emit = defineEmits([ "update:filter", "reset" ]);
+
+
+// Number of filters that currently hold a value.
+const activeFilterCount = computed(() => {
+	if(!Array.isArray(props.items)) return 0;
+
+	return props.items.filter(item => item.value !== "" && item.value != null).length;
+});
 
 
 function onUpdateInput({field, value}){
 	emit("update:filter", {field, value});
+}
+
+// Clear every filter input and let the parent reload unfiltered data.
+function onReset(){
+	if(Array.isArray(props.items)){
+		props.items.forEach(item => {
+			item.value = "";
+			item.selectedStatus = null;
+		});
+	}
+
+	emit("reset");
 }
 
 </script>
@@ -35,7 +57,15 @@ function onUpdateInput({field, value}){
 	<Accordion>
 		<AccordionPanel value="0">
 			<AccordionHeader>
-				Filter
+				<span class="filter-header">
+					Filter
+
+					<Badge
+						v-if="activeFilterCount > 0"
+						:value="activeFilterCount"
+						severity="secondary"
+					/>
+				</span>
 			</AccordionHeader>
 
 			<AccordionContent>
@@ -80,6 +110,20 @@ function onUpdateInput({field, value}){
 						/>
 					</div>
 				</div>
+
+				<div
+					v-if="activeFilterCount > 0"
+					class="filter-actions"
+				>
+					<Button
+						label="Zurücksetzen"
+						icon="pi pi-times"
+						severity="secondary"
+						text
+						size="small"
+						@click="onReset"
+					/>
+				</div>
 			</AccordionContent>
 		</AccordionPanel>
 	</Accordion>
@@ -93,6 +137,19 @@ function onUpdateInput({field, value}){
 
 .p-select {
 	display: flex;
+}
+
+.filter-header {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+}
+
+.filter-actions {
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	margin-top: var(--space-md);
 }
 
 .filter-items {

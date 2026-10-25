@@ -1,11 +1,11 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import Paginator from "primevue/paginator";
 
 import useInvoiceStore from "../../store/useInvoiceStore.js";
 import { InvoiceList } from "../components";
-import { PageContainer, Filter } from "@/shared/components";
+import { PageContainer, Filter, ListEmptyState, ListErrorState } from "@/shared/components";
 import { createTableItems, filterItems } from "../items/";
 
 
@@ -13,38 +13,40 @@ const router = useRouter();
 const invoiceStore = useInvoiceStore();
 
 const tableItems = ref([]);
-const isInitializing = ref(true);
+const isLoading = ref(true);
+const error = ref(null);
 
 const currLimit = ref(10);
 const currPage = ref(0);
 const activeFilters = ref([]);
 
+const hasItems = computed(() => tableItems.value.length > 0);
 
-onMounted(async () => {
-    try {
-        await invoiceStore.getInvoices({
-            limit: currLimit.value,
-            page: currPage.value,
-        });
 
-        tableItems.value = createTableItems(invoiceStore.invoices);
-    } catch {
-        invoiceStore.invoices = [];
-        tableItems.value = [];
-    } finally {
-        isInitializing.value = false;
-    }
+onMounted(() => {
+    loadInvoices();
 });
 
 
 async function loadInvoices() {
-    await invoiceStore.getInvoices({
-        limit: currLimit.value,
-        page: currPage.value,
-        filter: activeFilters.value,
-    });
+    isLoading.value = true;
+    error.value = null;
 
-    tableItems.value = createTableItems(invoiceStore.invoices);
+    try {
+        await invoiceStore.getInvoices({
+            limit: currLimit.value,
+            page: currPage.value,
+            filter: activeFilters.value,
+        });
+
+        tableItems.value = createTableItems(invoiceStore.invoices);
+    } catch (err) {
+        invoiceStore.invoices = [];
+        tableItems.value = [];
+        error.value = err?.message ?? null;
+    } finally {
+        isLoading.value = false;
+    }
 }
 
 async function onPaginationAction(event) {
@@ -85,41 +87,70 @@ async function onUpdateFilter({ field, value }) {
 
     await loadInvoices();
 }
+
+// Filter.vue already cleared the inputs, reload without any filter.
+async function onResetFilter() {
+    activeFilters.value = [];
+    currPage.value = 0;
+
+    await loadInvoices();
+}
+
+function openCreateInvoice() {
+    router.push("/invoice/create");
+}
 </script>
 
 <template>
-    <PageContainer>
-        <Filter
-            :items="filterItems"
-            @update:filter="onUpdateFilter"
+    <PageContainer :is-loading="isLoading && !hasItems && !error">
+        <ListErrorState
+            v-if="error"
+            :message="error"
+            @retry="loadInvoices"
         />
 
-        <div v-if="!isInitializing" class="invoice-list">
-            <InvoiceList
-                :items="tableItems"
-                @action="onInvoiceListActions"
+        <template v-else>
+            <Filter
+                :items="filterItems"
+                @update:filter="onUpdateFilter"
+                @reset="onResetFilter"
             />
 
+            <ListEmptyState
+                v-if="!isLoading && !hasItems"
+                class="invoice-list-empty"
+                title="Keine Rechnungen gefunden"
+                message="Erstellen Sie eine neue Rechnung oder passen Sie die Filter an."
+                action-label="Neue Rechnung"
+                @action="openCreateInvoice"
+            />
+
+            <InvoiceList
+                v-else
+                class="invoice-list"
+                :items="tableItems"
+                :loading="isLoading"
+                @action="onInvoiceListActions"
+            />
+        </template>
+
+        <template #paginator>
             <Paginator
-                v-if="invoiceStore.pagination?.total > currLimit"
+                v-if="!error && invoiceStore.pagination?.total > 0"
                 :first="currPage * currLimit"
                 :rows="currLimit"
                 :totalRecords="invoiceStore.pagination.total"
                 :rowsPerPageOptions="[10, 20, 50, 100]"
                 @page="onPaginationAction"
             />
-        </div>
+        </template>
     </PageContainer>
 </template>
 
 
 <style scoped lang="scss">
-.invoice-list {
-	width: 100%;
-	min-width: 0;
-	height: 100%;
-	display: grid;
-	row-gap: var(--space-md);
-	grid-template-rows: 1fr auto;
+.invoice-list,
+.invoice-list-empty {
+    margin-top: var(--space-xl);
 }
 </style>
