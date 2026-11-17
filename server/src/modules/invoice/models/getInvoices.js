@@ -31,8 +31,6 @@ module.exports = async ({ userId, limit, page, customerId, filterString }) => {
     }
   }
 
-  console.log(filter);
-
   const skip = page * limit;
 
   const items = await db.collection("invoices")
