@@ -3,6 +3,7 @@ const settingsModels = require("../../settings/models");
 const customersModels = require("../../customers/models");
 const {mapCustomerToInvoiceCustomer} = require("../mappers");
 const {calculateTotals} = require("../../../utils");
+const createInvoiceNumber = require("./createInvoiceNumber");
 
 
 module.exports = async ({
@@ -96,10 +97,13 @@ module.exports = async ({
     }
 
 	// --- save ---
+	const invoiceNumber = await createInvoiceNumber({ userId });
+
 	const result = await invoiceModels.createInvoice({
 		invoiceDocument,
 		userId,
 		customerId,
+		invoiceNumber,
 	});
 
 	if (!result.insertedId) {

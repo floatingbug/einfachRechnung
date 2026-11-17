@@ -2,6 +2,7 @@ const settingsModels = require("../../../settings/models");
 const offerModels = require("../../models");
 const customerModels = require("../../../customers/models");
 const {ObjectId} = require("../../../../db/mongo");
+const {formatDocumentNumber} = require("../../../../utils");
 
 
 module.exports = async ({userId, offer}) => {
@@ -17,7 +18,7 @@ module.exports = async ({userId, offer}) => {
     });
 
     //create offerNumber
-    const offerNumber = formatOfferNumber({
+    const offerNumber = formatDocumentNumber({
         format: offerSettings.offerNumberFormat,
         prefix: offerSettings.offerPrefix,
         number: nextOfferNumber,
@@ -130,26 +131,6 @@ module.exports = async ({userId, offer}) => {
 
 
     // --- helpers ---
-    function formatOfferNumber({
-        format,
-        prefix = "",
-        number,
-        date = new Date(),
-        numberLength = 5,
-    }) {
-        if (number == null) {
-            throw new Error("number is required");
-        }
-
-        const year = date.getFullYear();
-        const paddedNumber = String(number).padStart(numberLength, "0");
-
-        return format
-            .replaceAll("{prefix}", prefix)
-            .replaceAll("{year}", String(year))
-            .replaceAll("{number}", paddedNumber);
-    }
-
     function calcTotals(offer) {
         function roundMoney(value) {
             return Math.round(value * 100) / 100;

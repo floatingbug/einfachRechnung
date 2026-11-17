@@ -5,6 +5,7 @@ const updateTax = require("./updateTax");
 const updateEmail = require("./updateEmail");
 const updateOffer = require("./updateOffer");
 const incNextOfferNumber = require("./incNextOfferNumber");
+const incNextInvoiceNumber = require("./incNextInvoiceNumber");
 const createDefaultSettings = require("./createDefaultSettings");
 
 
@@ -16,5 +17,6 @@ module.exports = {
     updateEmail,
     updateOffer,
     incNextOfferNumber,
+    incNextInvoiceNumber,
     createDefaultSettings,
 };

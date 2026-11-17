@@ -3,8 +3,8 @@ const logger = require("./logger");
 const createError = require("./createError");
 const roundCurrency = require("./roundCurrency");
 const calculateTotals = require("./calculateTotals");
-const buildInvoiceNumber = require("./buildInvoiceNumber");
 const calculateOpenAmount = require("./calculateOpenAmount");
+const formatDocumentNumber = require("./formatDocumentNumber");
 const handleError = require("./handleError");
 
 
@@ -14,7 +14,7 @@ module.exports = {
   roundCurrency,
   createError,
   calculateTotals,
-  buildInvoiceNumber,
+  formatDocumentNumber,
   calculateOpenAmount,
   handleError,
 };
