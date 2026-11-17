@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {Badge, Card} from "primevue";
 
 
@@ -16,6 +16,12 @@ const customerType = ref(
 		"Firma" :
 		"Privat"
 )
+
+// Snapshots of private customers only carry firstName/lastName.
+const customerName = computed(() => {
+	return props.customer.customerName
+		|| [props.customer.firstName, props.customer.lastName].filter(Boolean).join(" ");
+});
 
 const salutations = {
 	male: "Herr",
@@ -75,7 +81,7 @@ const salutations = {
 
 								<div class="item-value">
 									{{ salutations[customer.salutation] }}
-									{{ customer.customerName}}
+									{{ customerName }}
 								</div>
 							</div>
 						</div>

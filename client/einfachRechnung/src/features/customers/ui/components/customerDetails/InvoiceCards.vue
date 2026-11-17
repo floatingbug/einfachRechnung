@@ -1,6 +1,7 @@
 <script setup>
-import {Card} from "primevue";
-import {formatCurrency} from "@/shared/helpers"
+import {Card, Tag} from "primevue";
+import {formatCurrency, formatDate} from "@/shared/helpers"
+import {getInvoiceStatus} from "@/features/invoice/ui/items/statusItems"
 
 
 defineProps({
@@ -35,11 +36,11 @@ const emit = defineEmits([ "invoiceSelected" ]);
 				<div class="item-group-1-column">
 					<div class="item">
 						<div class="item-label">
-							Erstellt
+							Rechnungsdatum
 						</div>
 
 						<div class="item-value">
-							{{item.invoiceDate}}
+							{{formatDate(item.invoiceDate)}}
 						</div>
 					</div>
 
@@ -49,7 +50,7 @@ const emit = defineEmits([ "invoiceSelected" ]);
 						</div>
 
 						<div class="item-value">
-							{{item.dueDate}}
+							{{formatDate(item.dueDate)}}
 						</div>
 					</div>
 
@@ -69,7 +70,11 @@ const emit = defineEmits([ "invoiceSelected" ]);
 						</div>
 
 						<div class="item-value">
-							{{item.status}}
+							<Tag
+								:value="getInvoiceStatus(item.status).label"
+								:severity="getInvoiceStatus(item.status).severity"
+								rounded
+							/>
 						</div>
 					</div>
 				</div>

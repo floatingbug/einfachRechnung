@@ -1,6 +1,7 @@
 <script setup>
-import {Card} from "primevue";
-import {formatCurrency} from "@/shared/helpers"
+import {Card, Tag} from "primevue";
+import {formatCurrency, formatDate} from "@/shared/helpers"
+import {getOfferStatus} from "@/features/offer/ui/items/statusItems"
 
 
 defineProps({
@@ -35,21 +36,21 @@ const emit = defineEmits([ "offerSelected" ]);
 				<div class="item-group-1-column">
 					<div class="item">
 						<div class="item-label">
-							Erstellt
+							Angebotsdatum
 						</div>
 
 						<div class="item-value">
-							{{item.offerDate.toLocaleDateString()}}
+							{{formatDate(item.offerDate)}}
 						</div>
 					</div>
 
 					<div class="item">
 						<div class="item-label">
-							Fällig bis
+							Gültig bis
 						</div>
 
 						<div class="item-value">
-							{{item.validUntil.toLocaleDateString()}}
+							{{formatDate(item.validUntil)}}
 						</div>
 					</div>
 
@@ -69,7 +70,11 @@ const emit = defineEmits([ "offerSelected" ]);
 						</div>
 
 						<div class="item-value">
-							{{item.status}}
+							<Tag
+								:value="getOfferStatus(item.status).label"
+								:severity="getOfferStatus(item.status).severity"
+								rounded
+							/>
 						</div>
 					</div>
 				</div>

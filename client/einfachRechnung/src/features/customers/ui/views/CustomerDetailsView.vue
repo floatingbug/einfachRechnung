@@ -11,8 +11,6 @@ import {
 	InvoicesTable,
 	InvoiceCards,
 	OfferCards,
-	CustomerContact,
-	CustomerAddress,
 	} from "../components";
 import {
 	Paginator,
@@ -124,22 +122,6 @@ async function deleteCustomer(){
 
 			<template #contentBeforeItems>
 				<section>
-					<h2>Kontaktdaten</h2>
-
-					<div class="contact-address">
-						<CustomerContact class="contact"
-							:customer="customer"
-						/>
-
-						<CustomerAddress class="address"
-							:customer="customer"
-						/>
-					</div>
-				</section>
-
-				<Divider />
-
-				<section>
 					<h2>Angebote</h2>
 
 					<OfferCards
@@ -187,17 +169,6 @@ async function deleteCustomer(){
 
 
 <style lang="scss" scoped>
-.contact-address {
-	display: flex;
-	justify-content: space-between;
-	flex-wrap: wrap;
-	gap: var(--space-xl);
-
-	.contact, .address {
-		flex: 1 1 350px;
-	}
-}
-
 .offer-table {
 	display: none;
 }

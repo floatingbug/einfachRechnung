@@ -80,7 +80,7 @@ async function loadOffer() {
 function createCustomerFromOffer(offer) {
 	return {
 		customerType: offer.customerSnapshot?.customerType ?? "",
-		companyName: offer.companyName ?? "",
+		companyName: offer.customerSnapshot?.companyName ?? offer.customerName ?? "",
 		customerName: offer.customerName ?? "",
 		contactPerson: offer.contactPerson ?? "",
 		street: offer.customerSnapshot?.street ?? "",

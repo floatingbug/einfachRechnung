@@ -3,6 +3,7 @@ import PrimeVue from 'primevue/config'
 import App from './App.vue'
 import router from './app/router'
 import customPreset from './shared/config/primevue/customPreset.js'
+import locale from './shared/config/primevue/locale.de.js'
 import Button from 'primevue/button'
 import ToastService from 'primevue/toastservice'
 import { createPinia } from 'pinia'
@@ -26,6 +27,7 @@ app.use(PrimeVue, {
 	theme: {
 		preset: customPreset,
 	},
+	locale,
 })
 
 app.use(ToastService)

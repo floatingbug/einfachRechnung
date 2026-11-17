@@ -1,6 +1,7 @@
 <script setup>
-import { DataTable, Column } from 'primevue';
-import {formatCurrency} from "@/shared/helpers"
+import { DataTable, Column, Tag } from 'primevue';
+import {formatCurrency, formatDate} from "@/shared/helpers"
+import {getOfferStatus} from "@/features/offer/ui/items/statusItems"
 
 
 defineProps({
@@ -28,35 +29,33 @@ const emit = defineEmits([ "offerSelected" ]);
 				header="Angebotsnummer"
 			/>
 
-			<Column
-				header="Angebotsbegin"
-			>
+			<Column header="Angebotsbeginn">
 				<template #body="{data}">
-					{{data.offerDate.toLocaleDateString()}}
+					{{formatDate(data.offerDate)}}
 				</template>
 			</Column>
 
-			<Column
-				field="validUntil"
-				header="Gültig bis"
-			>
+			<Column header="Gültig bis">
 				<template #body="{data}">
-					{{data.validUntil.toLocaleDateString()}}
+					{{formatDate(data.validUntil)}}
 				</template>
 			</Column>
 
-			<Column
-				header="Betrag"
-			>
+			<Column header="Betrag">
 				<template #body="{data}">
 					{{formatCurrency(data.totals.totalGross)}}
 				</template>
 			</Column>
 
-			<Column
-				field="status"
-				header="Status"
-			/>
+			<Column header="Status">
+				<template #body="{data}">
+					<Tag
+						:value="getOfferStatus(data.status).label"
+						:severity="getOfferStatus(data.status).severity"
+						rounded
+					/>
+				</template>
+			</Column>
 		</DataTable>
 	</div>
 </template>

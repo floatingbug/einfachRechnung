@@ -1,5 +1,7 @@
 <script setup>
-import {DataTable, Column} from "primevue";
+import {DataTable, Column, Tag} from "primevue";
+import {formatCurrency, formatDate} from "@/shared/helpers";
+import {getInvoiceStatus} from "@/features/invoice/ui/items/statusItems";
 
 
 defineProps({
@@ -27,25 +29,33 @@ const emit = defineEmits([ "invoiceSelected" ]);
 				header="Rechnungsnummer"
 			/>
 
-			<Column
-				field="invoiceDate"
-				header="Rechnungsdatum"
-			/>
+			<Column header="Rechnungsdatum">
+				<template #body="{data}">
+					{{formatDate(data.invoiceDate)}}
+				</template>
+			</Column>
 
-			<Column
-				field="dueDate"
-				header="Fällig bis"
-			/>
+			<Column header="Fällig bis">
+				<template #body="{data}">
+					{{formatDate(data.dueDate)}}
+				</template>
+			</Column>
 
-			<Column
-				field="grossTotal"
-				header="Betrag"
-			/>
+			<Column header="Betrag">
+				<template #body="{data}">
+					{{formatCurrency(data.grossTotal)}}
+				</template>
+			</Column>
 
-			<Column
-				field="status"
-				header="status"
-			/>
+			<Column header="Status">
+				<template #body="{data}">
+					<Tag
+						:value="getInvoiceStatus(data.status).label"
+						:severity="getInvoiceStatus(data.status).severity"
+						rounded
+					/>
+				</template>
+			</Column>
 		</DataTable>
 	</div>
 </template>
