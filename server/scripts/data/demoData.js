@@ -1,0 +1,205 @@
+// Static pools for the demo dataset. Kept separate from the generator so the
+// script stays readable and the data is easy to adjust.
+
+const company = {
+    companyName: "Vogel & Söhne Elektrotechnik GmbH",
+    ownerName: "Markus Vogel",
+    email: "info@vogel-elektrotechnik.de",
+    phone: "+49 271 55 44 12",
+    website: "https://www.vogel-elektrotechnik.de",
+    street: "Lindenweg 8",
+    postalCode: "57072",
+    city: "Siegen",
+    countryCode: "DE",
+    vatId: "DE812345678",
+    taxNumber: "342/5678/9012",
+    bank: {
+        bankName: "Sparkasse Siegen",
+        iban: "DE12500105170648489890",
+        bic: "WELADED1SIE",
+    },
+    greeting: "Mit freundlichen Grüßen",
+};
+
+const customers = [
+    {
+        customerType: "company",
+        companyName: "Bäckerei Hoffmann GmbH",
+        contactPerson: "Konrad Hoffmann",
+        street: "Bahnhofstraße 14",
+        postalCode: "36251",
+        city: "Bad Hersfeld",
+        email: "info@baeckerei-hoffmann.de",
+        phone: "+49 6621 304050",
+        vatId: "DE215487963",
+        bank: {
+            bankName: "VR Bank Hersfeld",
+            iban: "DE02345209000012345678",
+            bic: "GENODEF1HFE",
+        },
+    },
+    {
+        customerType: "company",
+        companyName: "Kanzlei Dr. Bergmann",
+        contactPerson: "Dr. Anke Bergmann",
+        street: "Maximilianstraße 22",
+        postalCode: "80539",
+        city: "München",
+        email: "empfang@kanzlei-bergmann.de",
+        phone: "+49 89 2190430",
+        vatId: "DE987654321",
+        bank: {
+            bankName: "Stadtsparkasse München",
+            iban: "DE86700500000001234567",
+            bic: "SSKMDEMMXXX",
+        },
+    },
+    {
+        customerType: "company",
+        companyName: "Hotel Sonnenblick",
+        contactPerson: "Petra Maier",
+        street: "Alpenstraße 3",
+        postalCode: "82467",
+        city: "Garmisch-Partenkirchen",
+        email: "technik@hotel-sonnenblick.de",
+        phone: "+49 8821 73450",
+        vatId: "DE456123789",
+        bank: {
+            bankName: "Kreissparkasse Garmisch",
+            iban: "DE44703500000009876543",
+            bic: "BYLADEM1GAP",
+        },
+    },
+    {
+        customerType: "company",
+        companyName: "Autohaus Wagner",
+        contactPerson: "Dieter Wagner",
+        street: "Industriestraße 41",
+        postalCode: "90402",
+        city: "Nürnberg",
+        email: "service@autohaus-wagner.de",
+        phone: "+49 911 4500120",
+        vatId: "DE741852963",
+        bank: {
+            bankName: "Sparkasse Nürnberg",
+            iban: "DE45760501010002123456",
+            bic: "SSKNDE77XXX",
+        },
+    },
+    {
+        customerType: "company",
+        companyName: "Schreinerei Vogel",
+        contactPerson: "Josef Vogel",
+        street: "Mühlgasse 6",
+        postalCode: "57074",
+        city: "Siegen",
+        email: "werkstatt@schreinerei-vogel.de",
+        phone: "+49 271 66012",
+        vatId: "DE369852147",
+        bank: {
+            bankName: "Sparkasse Siegen",
+            iban: "DE09500105170648489123",
+            bic: "WELADED1SIE",
+        },
+    },
+    {
+        customerType: "company",
+        companyName: "Physiotherapie Am Markt",
+        contactPerson: "Sabine Krüger",
+        street: "Am Markt 5",
+        postalCode: "34117",
+        city: "Kassel",
+        email: "praxis@physio-am-markt.de",
+        phone: "+49 561 77420",
+        vatId: "DE159753486",
+        bank: {
+            bankName: "Kasseler Sparkasse",
+            iban: "DE52520503110000123456",
+            bic: "HELADEF1KAS",
+        },
+    },
+    {
+        customerType: "private",
+        firstName: "Anna",
+        lastName: "Weber",
+        street: "Venloer Straße 312",
+        postalCode: "50823",
+        city: "Köln",
+        email: "anna.weber@example.de",
+        phone: "+49 221 445599",
+    },
+    {
+        customerType: "private",
+        firstName: "Thomas",
+        lastName: "Klein",
+        street: "Karl-Liebknecht-Straße 78",
+        postalCode: "04107",
+        city: "Leipzig",
+        email: "t.klein@example.de",
+        phone: "+49 341 2200345",
+    },
+    {
+        customerType: "private",
+        firstName: "Sabine Krüger",
+        lastName: "",
+        street: "Loschwitzer Straße 19",
+        postalCode: "01309",
+        city: "Dresden",
+        email: "s.krueger@example.de",
+        phone: "+49 351 3188220",
+    },
+];
+
+// Service catalog of the demo electrician. Prices and units mirror what a
+// small trade business actually puts on an invoice.
+const services = [
+    { title: "Arbeitszeit", description: "Facharbeit Elektroinstallation", unit: "Std.", unitPrice: 82, taxRate: 19 },
+    { title: "Anfahrt", description: "An- und Abfahrt inkl. Werkzeug", unit: "Pauschal", unitPrice: 45, taxRate: 19 },
+    { title: "Planung & Aufmaß", description: "Begehung, Aufmaß und Installationplanung", unit: "Std.", unitPrice: 78, taxRate: 19 },
+    { title: "Netzwerkkabel Cat.6", description: "Verlegung inkl. Kabelkanal", unit: "m", unitPrice: 12.5, taxRate: 19 },
+    { title: "Netzwerkdose", description: "Doppeldose, montiert und beschriftet", unit: "Stück", unitPrice: 34.9, taxRate: 19 },
+    { title: "LED-Lichtleiste", description: "60 W, neutralweiß, inkl. Montagematerial", unit: "Stück", unitPrice: 96.4, taxRate: 19 },
+    { title: "Demontage Bestandsbeleuchtung", description: "Ausbau und fachgerechte Entsorgung", unit: "Stück", unitPrice: 18, taxRate: 19 },
+    { title: "Schaltschrank-Wartung", description: "Sichtprüfung und Messung nach DGUV V3", unit: "Stück", unitPrice: 64, taxRate: 19 },
+    { title: "Thermografie", description: "Wärmebildaufnahme inkl. Dokumentation", unit: "Pauschal", unitPrice: 240, taxRate: 19 },
+    { title: "Kleinmaterial", description: "Klemmen, Adern, Befestigung", unit: "Pauschal", unitPrice: 18.5, taxRate: 19 },
+    { title: "Zählerkasten", description: "Neuer Zählerkasten inkl. Verdrahtung", unit: "Stück", unitPrice: 420, taxRate: 19 },
+    { title: "Rauchmelder", description: "Vernetzter Rauchmelder, montiert", unit: "Stück", unitPrice: 39.9, taxRate: 19 },
+    { title: "Wallbox 11 kW", description: "Ladeeinrichtung inkl. Anschluss", unit: "Stück", unitPrice: 899, taxRate: 19 },
+    { title: "Fachbuch Elektrotechnik", description: "Fachliteratur, 7 % Umsatzsteuer", unit: "Stück", unitPrice: 49.9, taxRate: 7 },
+];
+
+const offerProjects = [
+    {
+        project: "Netzwerkverkabelung Büroetage",
+        introduction: "Sehr geehrte Damen und Herren,\nvielen Dank für Ihre Anfrage. Gern unterbreiten wir Ihnen ein Angebot für die Verkabelung Ihrer Büroetage.",
+        closing: "Wir freuen uns auf Ihren Auftrag.\nMit freundlichen Grüßen",
+    },
+    {
+        project: "LED-Umrüstung Lagerhalle",
+        introduction: "Sehr geehrter Herr Hoffmann,\nbasisierend auf unserem Ortstermin erhalten Sie nachfolgend unser Angebot für die Umrüstung auf LED-Beleuchtung.",
+        closing: "Für Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung.\nMit freundlichen Grüßen",
+    },
+    {
+        project: "Wartungsvertrag Schaltschränke",
+        introduction: "Sehr geehrte Damen und Herren,\ngern bieten wir Ihnen die jährliche Wartung Ihrer Schaltschränke an.",
+        closing: "Mit freundlichen Grüßen",
+    },
+    {
+        project: "Wallbox Installation Tiefgarage",
+        introduction: "Sehr geehrter Herr Wagner,\nvielen Dank für Ihre Anfrage. Nachfolgend unser Angebot für die Installation zweier Ladepunkte.",
+        closing: "Wir freuen uns auf Ihren Auftrag.\nMit freundlichen Grüßen",
+    },
+    {
+        project: "Zählerkasten-Sanierung",
+        introduction: "Sehr geehrte Damen und Herren,\nder vorhandene Zählerkasten entspricht nicht mehr den aktuellen Vorgaben. Gern erneuern wir die Anlage.",
+        closing: "Mit freundlichen Grüßen",
+    },
+];
+
+module.exports = {
+    company,
+    customers,
+    services,
+    offerProjects,
+};

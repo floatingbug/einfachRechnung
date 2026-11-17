@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon main.js",
-    "create:test-user": "node scripts/createTestUser.js"
+    "create:test-user": "node scripts/createTestUser.js",
+    "create:test-data": "node scripts/createTestData.js"
   },
   "keywords": [],
   "author": "",
