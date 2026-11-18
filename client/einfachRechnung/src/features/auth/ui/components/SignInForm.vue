@@ -31,14 +31,14 @@ function onSubmit(){
 		</div>
 
 		<div class="input">
-			<label for="password">Password</label>
+			<label for="password">Passwort</label>
 			<InputText type="password" id="password"
 				v-model="credentials.password"
 			/>
 		</div>
 
 		<div class="no-account">
-			Don't have an account? click on <router-link to="/auth/sign-up">Sign-up</router-link>
+			Noch kein Konto? <router-link to="/auth/sign-up">Jetzt registrieren</router-link>
 		</div>
 
 		<div class="form-actions">

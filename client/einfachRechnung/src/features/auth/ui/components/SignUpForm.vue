@@ -76,7 +76,7 @@ function onSubmit(){
 		</div>
 
 		<div class="input">
-			<label for="password">Password</label>
+			<label for="password">Passwort</label>
 
 			<InputText type="password" id="password"
 				v-model="credentials.password"
@@ -96,7 +96,7 @@ function onSubmit(){
 		</div>
 
 		<div class="allready-has-account">
-			Already have an account? click on <router-link to="/auth/sign-in">Sign-in</router-link>
+			Bereits ein Konto? <router-link to="/auth/sign-in">Jetzt anmelden</router-link>
 		</div>
 
 		<Message v-if="errors.otherError"

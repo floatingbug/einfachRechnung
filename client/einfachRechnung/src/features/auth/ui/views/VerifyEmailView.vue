@@ -5,14 +5,14 @@
 	<div class="verify-email">
 		<i class="pi pi-envelope verify-icon" />
 
-		<h1>Check your email</h1>
+		<h1>E-Mail bestätigen</h1>
 
 		<p>
-			We have sent a confirmation link to your email address. Please click the link to verify
-			your account.
+			Wir haben Ihnen einen Bestätigungslink an Ihre E-Mail-Adresse geschickt. Bitte klicken
+			Sie auf den Link, um Ihr Konto zu bestätigen.
 		</p>
 
-		<p class="hint">If you don't see the email, check your spam folder.</p>
+		<p class="hint">Falls Sie die E-Mail nicht sehen, prüfen Sie bitte den Spam-Ordner.</p>
 	</div>
 </template>
 
