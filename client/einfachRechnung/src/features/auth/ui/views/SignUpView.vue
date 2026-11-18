@@ -11,7 +11,7 @@ const authStore = useAuthStore();
 const router = useRouter();
 const toast = useToast();
 
-const errors = ref();
+const errors = ref({});
 const isLoading = ref(false);
 
 
