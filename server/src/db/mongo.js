@@ -10,7 +10,7 @@ async function connect() {
     }
 
     client = new MongoClient(config.mongoUri);
-    console.log(`connecting to ${config.mongoUri} ...`)
+    console.log(`connecting to ${config.mongoUri.replace(/\/\/[^@]*@/, '//***@')} ...`)
 
     try {
         await client.connect();
