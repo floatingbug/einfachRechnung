@@ -47,7 +47,7 @@ async function start() {
 
   app.use(errorMiddleware);
 
-  app.listen(config.port, () => {
+  app.listen(config.port, process.env.HOST || '127.0.0.1', () => {
     console.log(`Server running on port ${config.port}`);
   });
 }
